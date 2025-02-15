@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SVG Polygon Clipping</title>
+    <style>
+        body { text-align: center; }
+        svg { width: 500px; height: 500px; border: 1px solid black; }
+        circle { cursor: grab; }
+    </style>
+</head>
+<body>
+    <h2>SVG Polygon Clipping - Drag Points</h2>
+
+    <svg id="svgCanvas" viewBox="0 0 500 500">
+        <!-- Background Image -->
+        <defs>
+            <pattern id="bgImage" patternUnits="userSpaceOnUse" width="500" height="500">
+                <image xlink:href="your-image-url.jpg" width="500" height="500" />
+            </pattern>
+            
+            <!-- Clipping Path (Outer Polygon) -->
+            <clipPath id="outerClip">
+                <polygon id="outerPolygon"/>
+            </clipPath>
+
+            <!-- Masking Path (Inner Polygon) -->
+            <mask id="innerMask">
+                <rect width="500" height="500" fill="white"/>
+                <polygon id="innerPolygon" fill="black"/>
+            </mask>
+        </defs>
+
+        <!-- Apply Clipping & Mask -->
+        <rect width="500" height="500" fill="url(#bgImage)" clip-path="url(#outerClip)" mask="url(#innerMask)"/>
+
+        <!-- Outer Polygon (Filled with blue) -->
+        <polygon id="outerOutline" stroke="blue" stroke-width="3" fill="rgba(0, 0, 255, 0.7)"/>
+
+        <!-- Inner Polygon (Filled with yellow) -->
+        <polygon id="innerOutline" stroke="black" stroke-width="3" fill="rgba(255, 255, 0, 0.5)"/>
+
+        <!-- Draggable Points (Red) -->
+        <g id="outerPoints"></g>
+    </svg>
+
+    <script>
+        const outerPolygon = [
+            { x: 50, y: 50 },
+            { x: 350, y: 50 },
+            { x: 450, y: 250 },
+            { x: 300, y: 400 },
+            { x: 100, y: 350 }
+        ];
+
+        const innerPolygon = [
+            { x: 200, y: 150 },
+            { x: 300, y: 150 },
+            { x: 350, y: 250 },
+            { x: 250, y: 320 },
+            { x: 150, y: 250 }
+        ];
+
+        const svg = document.getElementById("svgCanvas");
+        const outerClip = document.getElementById("outerPolygon");
+        const innerClip = document.getElementById("innerPolygon");
+        const outerOutline = document.getElementById("outerOutline");
+        const innerOutline = document.getElementById("innerOutline");
+        const outerPoints = document.getElementById("outerPoints");
+
+        let draggingPoint = null;
+
+        function updatePolygons() {
+            outerClip.setAttribute("points", outerPolygon.map(p => `${p.x},${p.y}`).join(" "));
+            innerClip.setAttribute("points", innerPolygon.map(p => `${p.x},${p.y}`).join(" "));
+            outerOutline.setAttribute("points", outerPolygon.map(p => `${p.x},${p.y}`).join(" "));
+            innerOutline.setAttribute("points", innerPolygon.map(p => `${p.x},${p.y}`).join(" "));
+
+            outerPoints.innerHTML = ""; 
+            outerPolygon.forEach(point => {
+                const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                circle.setAttribute("cx", point.x);
+                circle.setAttribute("cy", point.y);
+                circle.setAttribute("r", 5);
+                circle.setAttribute("fill", "red");
+                circle.addEventListener("mousedown", (e) => { draggingPoint = point; });
+                outerPoints.appendChild(circle);
+            });
+        }
+
+        svg.addEventListener("mousemove", (e) => {
+            if (draggingPoint) {
+                const rect = svg.getBoundingClientRect();
+                draggingPoint.x = e.clientX - rect.left;
+                draggingPoint.y = e.clientY - rect.top;
+                updatePolygons();
+            }
+        });
+
+        svg.addEventListener("mouseup", () => {
+            draggingPoint = null;
+        });
+
+        updatePolygons();
+    </script>
+</body>
+</html>

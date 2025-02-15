@@ -1,64 +1,4 @@
-// Function to clip and draw a polygonal area onto another canvas
-/*
-
-Example use case:
-
-// Define polygon clipping areas
-const clippingPolygon1 = [
-  { x: 50, y: 50 }, // Point 1 of polygon for canvas1
-  { x: 150, y: 50 }, // Point 2 of polygon for canvas1
-  { x: 150, y: 150 }, // Point 3 of polygon for canvas1
-  { x: 50, y: 150 }, // Point 4 of polygon for canvas1
-];
-
-// Define target polygon areas
-const targetPolygon1 = [
-  { x: 0, y: 0 },
-  { x: 100, y: 0 },
-  { x: 100, y: 100 },
-  { x: 0, y: 100 },
-];
-
-// Clip and draw from canvas1 to finalCanvas
-clipAndDraw(ctx1, clippingPolygon1, finalCtx, targetPolygon1);
-*/
-function clipAndDraw(originalCtx, clippingPolygon, targetCtx, targetPolygon) {
-  // Save the target context before clipping
-  targetCtx.save();
-
-  // Clip the original image with the clipping polygon
-  targetCtx.beginPath();
-  targetCtx.moveTo(clippingPolygon[0].x, clippingPolygon[0].y); // Start the path at the first point
-
-  for (let i = 1; i < clippingPolygon.length; i++) {
-    targetCtx.lineTo(clippingPolygon[i].x, clippingPolygon[i].y); // Draw lines to subsequent points
-  }
-  targetCtx.closePath(); // Close the path
-  targetCtx.clip(); // Apply the clipping path
-
-  // Draw the clipped area onto the target canvas
-  // Calculate the transformation needed to match the target polygon
-  const scaleX =
-    (targetPolygon[1].x - targetPolygon[0].x) /
-    (clippingPolygon[1].x - clippingPolygon[0].x);
-  const scaleY =
-    (targetPolygon[2].y - targetPolygon[0].y) /
-    (clippingPolygon[2].y - clippingPolygon[0].y);
-  targetCtx.drawImage(
-    originalCtx.canvas, // The source canvas (original)
-    0,
-    0,
-    originalCtx.canvas.width,
-    originalCtx.canvas.height, // Source area
-    targetPolygon[0].x,
-    targetPolygon[0].y,
-    (clippingPolygon[1].x - clippingPolygon[0].x) * scaleX,
-    (clippingPolygon[2].y - clippingPolygon[0].y) * scaleY // Target area on the final canvas
-  );
-
-  // Restore the target context
-  targetCtx.restore();
-}
+var cachedBgImage = null;
 
 // draw an image based on img url to canvas
 function drawImageOnCanvas(canvas, imgURL, callback) {
@@ -66,8 +6,18 @@ function drawImageOnCanvas(canvas, imgURL, callback) {
   const bgImage = new Image();
   bgImage.src = imgURL;
 
+  // If image is already loaded, use it directly
+  if (cachedBgImage) {
+    ctx.drawImage(cachedBgImage, 0, 0, canvas.width, canvas.height);
+    // Call the callback function after the image is drawn
+    if (callback) {
+      callback();
+    }
+  }
+
   bgImage.onload = () => {
     console.log("Image loaded successfully!");
+    cachedBgImage = bgImage; // Cache the image after loading
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.drawImage(bgImage, 0, 0, canvas.width, canvas.height);
     

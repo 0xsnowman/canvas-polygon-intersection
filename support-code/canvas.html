@@ -37,17 +37,6 @@
         ];
 
         let draggingPoint = null;
-        const bgImage = new Image();
-        bgImage.src = "map.jpg"; // Ensure this URL is correct
-
-        bgImage.onload = () => {
-            console.log("Image loaded successfully!"); // Debugging log
-            draw();
-        };
-
-        bgImage.onerror = () => {
-            console.error("Failed to load image. Check the URL!");
-        };
 
         function drawPolygon(points, fillStyle) {
             ctx.beginPath();
@@ -62,12 +51,6 @@
 
         function draw() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            // Ensure image is loaded before drawing
-            if (bgImage.complete) {
-                console.log("drawing loaded image to canvas");
-                ctx.drawImage(bgImage, 0, 0, canvas.width, canvas.height);
-            }
 
             // Draw inner polygon (white)
             drawPolygon(innerPolygon, "blue");

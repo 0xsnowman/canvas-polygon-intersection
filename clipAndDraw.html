@@ -12,36 +12,80 @@
   </head>
   <body>
     <canvas
-      id="canvas1"
+      id="tempCanvas"
       width="500"
       height="500"
-      style="display: block"
+      style="display: none"
     ></canvas>
     <canvas id="finalCanvas" width="500" height="500"></canvas>
 
     <script src="canvas.js"></script>
+    <script src="draggable-polygon.js"></script>
     <script src="solution.js"></script>
     <script src="polygon_data.js"></script>
     <script>
-      drawImageOnCanvas(canvas1, "map.png", () => {
-        // This runs AFTER the image has loaded and been drawn
-        const ctx1 = canvas1.getContext("2d");
-        const finalCtx = finalCanvas.getContext("2d");
+      function _drawFOPACAFIP(
+        outer_polygon,
+        inner_polygon,
+        outerFillStyle,
+        innerFillStyle
+      ) {
+        var finalCtx = finalCanvas.getContext("2d");
+        finalCtx.clearRect(0, 0, finalCanvas.width, finalCanvas.height);
+        console.log("clearing rect of canvas");
 
-        var two_polygons = getTwoRandomPolygons(5, 5);
+        drawImageOnCanvas(finalCanvas, "map.png", () => {
+          drawImageOnCanvas(tempCanvas, "map.png", () => {
+            // This runs AFTER the image has loaded and been drawn
 
-        var intersect_polygons = intersect(two_polygons[0], two_polygons[1]);
-        console.log("intersect_polygons:", intersect_polygons);
+            drawPolygonToCanvas(tempCanvas, outer_polygon, outerFillStyle);
+            drawPolygonToCanvas(tempCanvas, inner_polygon, innerFillStyle);
 
-        if (intersect_polygons.length > 0) {
-          intersect_polygons.forEach((polygon) => {
-            console.log("polygon:", polygon);
-            copyPolygonArea(canvas1, finalCanvas, polygon);
+            var intersect_polygons = intersect(outer_polygon, inner_polygon);
+
+            if (intersect_polygons.length > 0) {
+              intersect_polygons.forEach((polygon) => {
+                copyPolygonArea(tempCanvas, finalCanvas, polygon);
+              });
+            }
+
+            copyPolygonArea(tempCanvas, finalCanvas, outer_polygon);
+            // Draw draggable points
+            outer_polygon.forEach((point) => {
+              finalCtx.beginPath();
+              finalCtx.arc(point.x, point.y, 6, 0, Math.PI * 2);
+              finalCtx.fillStyle = "red";
+              finalCtx.fill();
+              finalCtx.strokeStyle = "black";
+              finalCtx.stroke();
+            });
           });
-        }
+        });
+      }
 
-        drawPolygonToCanvas(canvas1, two_polygons[0], "rgba(255, 0, 0, 0.8)");
-        drawPolygonToCanvas(canvas1, two_polygons[1], "rgba(0, 0, 255, 0.8)");
+      // Initialize the canvas and polygon
+      const canvas = document.getElementById("finalCanvas");
+      const inner_polygon_points = [
+        { x: 120, y: 120 },
+        { x: 230, y: 170 },
+        { x: 160, y: 180 },
+        { x: 120, y: 160 },
+      ];
+      const draggable_outer_polygon_points = [
+        { x: 100, y: 100 },
+        { x: 200, y: 80 },
+        { x: 250, y: 150 },
+        { x: 180, y: 200 },
+        { x: 120, y: 170 },
+      ];
+
+      var dragPolygonObject = null;
+      var two_polygons = getTwoRandomPolygons(4, 4);
+      var outer_polygon = draggable_outer_polygon_points;
+      var inner_polygon = inner_polygon_points;
+      
+      dragPolygonObject = new DraggablePolygon(canvas, outer_polygon, () => {
+        _drawFOPACAFIP(outer_polygon, inner_polygon, "rgba(255, 0, 0, 0.3)", "rgba(0, 0, 255, 0.4)");
       });
     </script>
   </body>
