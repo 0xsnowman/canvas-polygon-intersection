@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Polygon Intersection Test</title>
+  </head>
+  <body>
+    <h1>Polygon Intersection Test</h1>
+    <p>Open the browser console to see the result of polygon intersection.</p>
+
+    <script src="solution.js"></script>
+    <script>
+      // Example polygons
+      const polygonA = [
+        { x: 10, y: 10 },
+        { x: 50, y: 10 },
+        { x: 50, y: 50 },
+        { x: 10, y: 50 },
+      ]; // Square
+      const polygonB = [
+        { x: 30, y: 30 },
+        { x: 70, y: 30 },
+        { x: 70, y: 70 },
+        { x: 30, y: 70 },
+      ]; // Another square
+
+      // Get the intersection and log it to the console
+      const intersection = intersect(polygonA, polygonB);
+      console.log("Intersection:", intersection);
+    </script>
+  </body>
+</html>

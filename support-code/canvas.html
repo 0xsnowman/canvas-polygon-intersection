@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Polygon Clipping</title>
+    <style>
+        body { text-align: center; }
+        canvas {
+            border: 1px solid black;
+            cursor: grab;
+        }
+    </style>
+</head>
+<body>
+    <h2>Polygon Clipping - Drag Points</h2>
+    <canvas id="myCanvas" width="500" height="500"></canvas>
+
+    <script>
+        const canvas = document.getElementById("myCanvas");
+        const ctx = canvas.getContext("2d");
+
+        let outerPolygon = [
+            { x: 50, y: 50 },
+            { x: 350, y: 50 },
+            { x: 450, y: 250 },
+            { x: 300, y: 400 },
+            { x: 100, y: 350 }
+        ];
+
+        let innerPolygon = [
+            { x: 200, y: 150 },
+            { x: 300, y: 150 },
+            { x: 350, y: 250 },
+            { x: 250, y: 320 },
+            { x: 150, y: 250 }
+        ];
+
+        let draggingPoint = null;
+        const bgImage = new Image();
+        bgImage.src = "map.jpg"; // Ensure this URL is correct
+
+        bgImage.onload = () => {
+            console.log("Image loaded successfully!"); // Debugging log
+            draw();
+        };
+
+        bgImage.onerror = () => {
+            console.error("Failed to load image. Check the URL!");
+        };
+
+        function drawPolygon(points, fillStyle) {
+            ctx.beginPath();
+            ctx.moveTo(points[0].x, points[0].y);
+            for (let i = 1; i < points.length; i++) {
+                ctx.lineTo(points[i].x, points[i].y);
+            }
+            ctx.closePath();
+            ctx.fillStyle = fillStyle;
+            ctx.fill();
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Ensure image is loaded before drawing
+            if (bgImage.complete) {
+                console.log("drawing loaded image to canvas");
+                ctx.drawImage(bgImage, 0, 0, canvas.width, canvas.height);
+            }
+
+            // Draw inner polygon (white)
+            drawPolygon(innerPolygon, "blue");
+
+            // Draw outer polygon (blue)
+            drawPolygon(outerPolygon, "green");
+
+            // Remove overlapping part using composite operation
+            ctx.globalCompositeOperation = "destination-in";
+            drawPolygon(innerPolygon, "rgba(0,0,0,1)");
+
+            // Reset composite mode
+            ctx.globalCompositeOperation = "source-over";
+
+            // Draw draggable points
+            ctx.fillStyle = "red";
+            outerPolygon.forEach(point => {
+                ctx.beginPath();
+                ctx.arc(point.x, point.y, 5, 0, Math.PI * 2);
+                ctx.fill();
+            });
+        }
+
+        function getMousePos(evt) {
+            const rect = canvas.getBoundingClientRect();
+            return {
+                x: evt.clientX - rect.left,
+                y: evt.clientY - rect.top
+            };
+        }
+
+        canvas.addEventListener("mousedown", (evt) => {
+            const mousePos = getMousePos(evt);
+            outerPolygon.forEach(point => {
+                const dx = mousePos.x - point.x;
+                const dy = mousePos.y - point.y;
+                if (Math.sqrt(dx * dx + dy * dy) < 8) {
+                    draggingPoint = point;
+                    canvas.style.cursor = "grabbing";
+                }
+            });
+        });
+
+        canvas.addEventListener("mousemove", (evt) => {
+            if (draggingPoint) {
+                const mousePos = getMousePos(evt);
+                draggingPoint.x = mousePos.x;
+                draggingPoint.y = mousePos.y;
+                draw();
+            }
+        });
+
+        canvas.addEventListener("mouseup", () => {
+            draggingPoint = null;
+            canvas.style.cursor = "grab";
+        });
+
+    </script>
+</body>
+</html>

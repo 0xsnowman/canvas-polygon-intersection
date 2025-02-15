@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Canvas Polygon Clipping and Merging</title>
+    <style>
+      canvas {
+        border: 1px solid black;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas
+      id="canvas1"
+      width="500"
+      height="500"
+      style="display: block"
+    ></canvas>
+    <canvas id="finalCanvas" width="500" height="500"></canvas>
+
+    <script src="canvas.js"></script>
+    <script src="solution.js"></script>
+    <script src="polygon_data.js"></script>
+    <script>
+      drawImageOnCanvas(canvas1, "map.png", () => {
+        // This runs AFTER the image has loaded and been drawn
+        const ctx1 = canvas1.getContext("2d");
+        const finalCtx = finalCanvas.getContext("2d");
+
+        var two_polygons = getTwoRandomPolygons(5, 5);
+
+        var intersect_polygons = intersect(two_polygons[0], two_polygons[1]);
+        console.log("intersect_polygons:", intersect_polygons);
+
+        if (intersect_polygons.length > 0) {
+          intersect_polygons.forEach((polygon) => {
+            console.log("polygon:", polygon);
+            copyPolygonArea(canvas1, finalCanvas, polygon);
+          });
+        }
+
+        drawPolygonToCanvas(canvas1, two_polygons[0], "rgba(255, 0, 0, 0.8)");
+        drawPolygonToCanvas(canvas1, two_polygons[1], "rgba(0, 0, 255, 0.8)");
+      });
+    </script>
+  </body>
+</html>

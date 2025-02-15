@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SVG Polygon Masking</title>
+    <style>
+        svg {
+            border: 1px solid black;
+            width: 600px;
+            height: 400px;
+            background: white;
+        }
+        .handle {
+            fill: black;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<svg id="svgCanvas" viewBox="0 0 600 400">
+    <!-- Define the Mask -->
+    <defs>
+        <mask id="polygonMask">
+            <!-- Full white background (everything visible by default) -->
+            <rect width="600" height="400" fill="white"/>
+            <!-- Outer polygon (black area = masked out) -->
+            <polygon id="outerPolygon" points="100,100 300,80 400,200 350,300 150,250" fill="black"/>
+            <!-- Inner polygon (cut out = make it visible) -->
+            <polygon id="innerPolygon" points="200,150 300,130 330,220 220,250" fill="white"/>
+        </mask>
+    </defs>
+
+    <!-- Background that will be masked -->
+    <rect width="600" height="400" fill="white" mask="url(#polygonMask)"/>
+
+    <!-- Outer Polygon (for visibility) -->
+    <polygon id="outerPolygonOutline" points="100,100 300,80 400,200 350,300 150,250" stroke="red" fill="grey" stroke-width="2"/>
+
+    <!-- Inner Polygon (for visibility) -->
+    <polygon id="innerPolygonOutline" points="200,150 300,130 330,220 220,250" stroke="green" fill="cyan" stroke-width="2"/>
+
+    <!-- Drag Handles for Outer Polygon -->
+    <circle class="handle" cx="100" cy="100" r="5"/>
+    <circle class="handle" cx="300" cy="80" r="5"/>
+    <circle class="handle" cx="400" cy="200" r="5"/>
+    <circle class="handle" cx="350" cy="300" r="5"/>
+    <circle class="handle" cx="150" cy="250" r="5"/>
+</svg>
+
+<script>
+    const svg = document.getElementById("svgCanvas");
+    const outerPolygon = document.getElementById("outerPolygon");
+    const outerPolygonOutline = document.getElementById("outerPolygonOutline");
+    const mask = document.getElementById("polygonMask");
+    let handles = document.querySelectorAll(".handle");
+
+    let points = [
+        { x: 100, y: 100 },
+        { x: 300, y: 80 },
+        { x: 400, y: 200 },
+        { x: 350, y: 300 },
+        { x: 150, y: 250 }
+    ];
+
+    let draggingHandle = null;
+
+    function updatePolygon() {
+        const newPoints = points.map(p => `${p.x},${p.y}`).join(" ");
+        outerPolygon.setAttribute("points", newPoints);
+        outerPolygonOutline.setAttribute("points", newPoints);
+
+        handles.forEach((handle, i) => {
+            handle.setAttribute("cx", points[i].x);
+            handle.setAttribute("cy", points[i].y);
+        });
+    }
+
+    handles.forEach((handle, i) => {
+        handle.addEventListener("mousedown", (e) => {
+            draggingHandle = i;
+        });
+    });
+
+    svg.addEventListener("mousemove", (e) => {
+        if (draggingHandle !== null) {
+            const rect = svg.getBoundingClientRect();
+            points[draggingHandle].x = e.clientX - rect.left;
+            points[draggingHandle].y = e.clientY - rect.top;
+            updatePolygon();
+        }
+    });
+
+    svg.addEventListener("mouseup", () => {
+        draggingHandle = null;
+    });
+
+    updatePolygon();
+</script>
+
+</body>
+</html>

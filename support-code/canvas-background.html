@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <h1>globalCompositeOperation = "destination-atop"</h1>
+
+    <p>
+      The "destination-atop" value will keep the existing content where it
+      overlaps the new shape. The new shape is drawn behind the existing
+      content.
+    </p>
+
+    <canvas
+      id="myCanvas"
+      width="300"
+      height="150"
+      style="border: 1px solid grey"
+    >
+      Sorry, your browser does not support canvas.
+    </canvas>
+
+    <script>
+      const canvas = document.getElementById("myCanvas");
+      const ctx = canvas.getContext("2d");
+
+      const bgImage = new Image();
+      bgImage.src = "map.jpg"; // Ensure this URL is correct
+
+      bgImage.onload = () => {
+        console.log("Image loaded successfully!"); // Debugging log
+        draw();
+      };
+
+      bgImage.onerror = () => {
+        console.error("Failed to load image. Check the URL!");
+      };
+
+      function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Ensure image is loaded before drawing
+        if (bgImage.complete) {
+          console.log("drawing loaded image to canvas");
+          ctx.drawImage(bgImage, 0, 0, canvas.width, canvas.height);
+        }
+
+        // Set type of compositing
+        ctx.globalCompositeOperation = "destination-atop";
+
+        // Draw two overlapping rectangles
+        ctx.fillStyle = "blue";
+        ctx.fillRect(10, 10, 100, 100);
+        ctx.fillStyle = "rgba(255,0,0,1)";
+        ctx.fillRect(40, 40, 100, 100);
+      }
+    </script>
+  </body>
+</html>
