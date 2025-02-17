@@ -16,7 +16,7 @@ function drawImageOnCanvas(canvas, imgURL, callback) {
   }
 
   bgImage.onload = () => {
-    console.log("Image loaded successfully!");
+    // console.log("Image loaded successfully!");
     cachedBgImage = bgImage; // Cache the image after loading
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.drawImage(bgImage, 0, 0, canvas.width, canvas.height);
@@ -114,7 +114,7 @@ function _drawFOPACAFIP(
   var finalCanvas = document.getElementById(canvasId);
   var finalCtx = finalCanvas.getContext("2d");
   finalCtx.clearRect(0, 0, finalCanvas.width, finalCanvas.height);
-  console.log("clearing rect of canvas");
+  // console.log("clearing rect of canvas");
 
   drawImageOnCanvas(finalCanvas, "map.png", () => {
     drawImageOnCanvas(tempCanvas, "map.png", () => {
@@ -135,6 +135,7 @@ function _drawFOPACAFIP(
       copyPolygonArea(tempCanvas, finalCanvas, outer_polygon);
 
       if (draggablePolygonObject) {
+        draggablePolygonObject.updatePoints(outer_polygon);
         draggablePolygonObject.drawPointsAndLines();
       }
     });

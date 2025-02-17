@@ -13,13 +13,16 @@ class DraggablePolygon {
     this.canvas.addEventListener("mouseleave", () => this.onMouseUp());
 
     this.draw(); // Initial draw
+    console.log("creating new draggable polygon object....");
   }
 
-  draw() {
-    const ctx = this.ctx;
-    
+  updatePoints(points) {
+    this.points = points;
+  }
+
+  draw(camera_redraw = true) {
     if (this.clearCanvasCallback) {
-        this.clearCanvasCallback();
+        this.clearCanvasCallback(camera_redraw);
     }
   }
 
