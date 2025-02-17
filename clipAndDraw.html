@@ -23,70 +23,28 @@
     <script src="draggable-polygon.js"></script>
     <script src="solution.js"></script>
     <script src="polygon_data.js"></script>
+    <script src="camera-vision.js"></script>
     <script>
-      function _drawFOPACAFIP(
-        outer_polygon,
-        inner_polygon,
-        outerFillStyle,
-        innerFillStyle
-      ) {
-        var finalCtx = finalCanvas.getContext("2d");
-        finalCtx.clearRect(0, 0, finalCanvas.width, finalCanvas.height);
-        console.log("clearing rect of canvas");
-
-        drawImageOnCanvas(finalCanvas, "map.png", () => {
-          drawImageOnCanvas(tempCanvas, "map.png", () => {
-            // This runs AFTER the image has loaded and been drawn
-
-            drawPolygonToCanvas(tempCanvas, outer_polygon, outerFillStyle);
-            drawPolygonToCanvas(tempCanvas, inner_polygon, innerFillStyle);
-
-            var intersect_polygons = intersect(outer_polygon, inner_polygon);
-
-            if (intersect_polygons.length > 0) {
-              intersect_polygons.forEach((polygon) => {
-                copyPolygonArea(tempCanvas, finalCanvas, polygon);
-              });
-            }
-
-            copyPolygonArea(tempCanvas, finalCanvas, outer_polygon);
-            // Draw draggable points
-            outer_polygon.forEach((point) => {
-              finalCtx.beginPath();
-              finalCtx.arc(point.x, point.y, 6, 0, Math.PI * 2);
-              finalCtx.fillStyle = "red";
-              finalCtx.fill();
-              finalCtx.strokeStyle = "black";
-              finalCtx.stroke();
-            });
-          });
-        });
-      }
-
-      // Initialize the canvas and polygon
-      const canvas = document.getElementById("finalCanvas");
-      const inner_polygon_points = [
+      const in_pol1 = [
         { x: 120, y: 120 },
         { x: 230, y: 170 },
         { x: 160, y: 180 },
         { x: 120, y: 160 },
       ];
-      const draggable_outer_polygon_points = [
+      const in_pol2 = [
+        { x: 115, y: 115 },
+        { x: 215, y: 155 },
+        { x: 165, y: 185 },
+        { x: 125, y: 165 },
+      ];
+      const out_pol = [
         { x: 100, y: 100 },
         { x: 200, y: 80 },
         { x: 250, y: 150 },
         { x: 180, y: 200 },
         { x: 120, y: 170 },
       ];
-
-      var dragPolygonObject = null;
-      var two_polygons = getTwoRandomPolygons(4, 4);
-      var outer_polygon = draggable_outer_polygon_points;
-      var inner_polygon = inner_polygon_points;
-      
-      dragPolygonObject = new DraggablePolygon(canvas, outer_polygon, () => {
-        _drawFOPACAFIP(outer_polygon, inner_polygon, "rgba(255, 0, 0, 0.3)", "rgba(0, 0, 255, 0.4)");
-      });
+      var cameraVision = new CameraVision(in_pol1, in_pol2, out_pol);
     </script>
   </body>
 </html>

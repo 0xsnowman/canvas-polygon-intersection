@@ -21,28 +21,30 @@ class DraggablePolygon {
     if (this.clearCanvasCallback) {
         this.clearCanvasCallback();
     }
+  }
 
+  drawPointsAndLines() {
     // Draw polygon
-    ctx.beginPath();
-    ctx.moveTo(this.points[0].x, this.points[0].y);
+    this.ctx.beginPath();
+    this.ctx.moveTo(this.points[0].x, this.points[0].y);
     for (let i = 1; i < this.points.length; i++) {
-      ctx.lineTo(this.points[i].x, this.points[i].y);
+      this.ctx.lineTo(this.points[i].x, this.points[i].y);
     }
-    ctx.closePath();
-    ctx.strokeStyle = "black";
-    ctx.lineWidth = 2;
-    ctx.stroke();
-    ctx.fillStyle = "rgba(0, 0, 255, 0.2)";
-    ctx.fill();
+    this.ctx.closePath();
+    this.ctx.strokeStyle = "black";
+    this.ctx.lineWidth = 2;
+    this.ctx.stroke();
+    this.ctx.fillStyle = "rgba(0, 0, 255, 0.2)";
+    this.ctx.fill();
 
     // Draw draggable points
     this.points.forEach((point) => {
-      ctx.beginPath();
-      ctx.arc(point.x, point.y, 6, 0, Math.PI * 2);
-      ctx.fillStyle = "red";
-      ctx.fill();
-      ctx.strokeStyle = "black";
-      ctx.stroke();
+      this.ctx.beginPath();
+      this.ctx.arc(point.x, point.y, 6, 0, Math.PI * 2);
+      this.ctx.fillStyle = "red";
+      this.ctx.fill();
+      this.ctx.strokeStyle = "black";
+      this.ctx.stroke();
     });
   }
 

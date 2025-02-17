@@ -99,3 +99,44 @@ function copyPolygonArea(canvas1, canvas2, polygon) {
 
   ctx2.restore();
 }
+
+// Draw 3 polygons (2 inner, 1 outer) - outer is controllable on canvas
+function _drawFOPACAFIP(
+  canvasId,
+  outer_polygon,
+  inner_polygon,
+  inner_polygon2,
+  outerFillStyle,
+  innerFillStyle,
+  innerFillStyle2,
+  draggablePolygonObject
+) {
+  var finalCanvas = document.getElementById(canvasId);
+  var finalCtx = finalCanvas.getContext("2d");
+  finalCtx.clearRect(0, 0, finalCanvas.width, finalCanvas.height);
+  console.log("clearing rect of canvas");
+
+  drawImageOnCanvas(finalCanvas, "map.png", () => {
+    drawImageOnCanvas(tempCanvas, "map.png", () => {
+      // This runs AFTER the image has loaded and been drawn
+
+      drawPolygonToCanvas(tempCanvas, outer_polygon, outerFillStyle);
+      drawPolygonToCanvas(tempCanvas, inner_polygon, innerFillStyle);
+      drawPolygonToCanvas(tempCanvas, inner_polygon2, innerFillStyle2);
+
+      var intersect_polygons = intersect(outer_polygon, inner_polygon);
+
+      if (intersect_polygons.length > 0) {
+        intersect_polygons.forEach((polygon) => {
+          copyPolygonArea(tempCanvas, finalCanvas, polygon);
+        });
+      }
+
+      copyPolygonArea(tempCanvas, finalCanvas, outer_polygon);
+
+      if (draggablePolygonObject) {
+        draggablePolygonObject.drawPointsAndLines();
+      }
+    });
+  });
+}
