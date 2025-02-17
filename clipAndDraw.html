@@ -18,6 +18,7 @@
       style="display: none"
     ></canvas>
     <canvas id="finalCanvas" width="500" height="500"></canvas>
+    <button id="rotate_btn">Rotate +</button>
 
     <script src="canvas.js"></script>
     <script src="draggable-polygon.js"></script>
@@ -25,26 +26,58 @@
     <script src="polygon_data.js"></script>
     <script src="camera-vision.js"></script>
     <script>
+      const out_pol = [
+        { x: 500, y: 300 },
+        { x: 461, y: 417 },
+        { x: 376, y: 495 },
+        { x: 263, y: 495 },
+        { x: 178, y: 417 },
+        { x: 140, y: 300 },
+        { x: 178, y: 182 },
+        { x: 263, y: 104 },
+        { x: 376, y: 104 },
+        { x: 461, y: 182 },
+      ];
+
       const in_pol1 = [
-        { x: 120, y: 120 },
-        { x: 230, y: 170 },
-        { x: 160, y: 180 },
-        { x: 120, y: 160 },
+        { x: 450, y: 300 },
+        { x: 421, y: 394 },
+        { x: 359, y: 457 },
+        { x: 241, y: 457 },
+        { x: 179, y: 394 },
+        { x: 150, y: 300 },
+        { x: 179, y: 206 },
+        { x: 241, y: 143 },
+        { x: 359, y: 143 },
+        { x: 421, y: 206 },
       ];
       const in_pol2 = [
-        { x: 115, y: 115 },
-        { x: 215, y: 155 },
-        { x: 165, y: 185 },
-        { x: 125, y: 165 },
+        { x: 400, y: 300 },
+        { x: 371, y: 380 },
+        { x: 321, y: 421 },
+        { x: 239, y: 421 },
+        { x: 199, y: 380 },
+        { x: 200, y: 300 },
+        { x: 199, y: 220 },
+        { x: 239, y: 179 },
+        { x: 321, y: 179 },
+        { x: 371, y: 220 },
       ];
-      const out_pol = [
-        { x: 100, y: 100 },
-        { x: 200, y: 80 },
-        { x: 250, y: 150 },
-        { x: 180, y: 200 },
-        { x: 120, y: 170 },
-      ];
-      var cameraVision = new CameraVision(in_pol1, in_pol2, out_pol);
+
+      const center = { x: 300, y: 300 };
+      const rotation = 0;
+
+      var cameraVision = new CameraVision(
+        center,
+        rotation,
+        in_pol1,
+        in_pol2,
+        out_pol
+      );
+
+      document.getElementById("rotate_btn").addEventListener("click", () => {
+        cameraVision.rotate(5);
+      });
     </script>
   </body>
 </html>
