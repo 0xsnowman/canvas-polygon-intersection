@@ -94,4 +94,9 @@ class Camera {
       this.cameraVision.rotate(5);
     });
   }
+
+  // Orders it's outer polygon (camera vision) to restore its original polygon
+  restoreCamera() {
+    this.cameraVision.restoreVision();
+  }
 }

@@ -1,10 +1,12 @@
 class DraggablePolygon {
-  constructor(canvas, points, clearCanvasCallback) {
+  constructor(canvas, points, updateParentOuterPolygon, clearCanvasCallback) {
     this.canvas = canvas;
+    this.updateParentOuterPolygon = updateParentOuterPolygon;
     this.clearCanvasCallback = clearCanvasCallback;
     this.ctx = canvas.getContext("2d");
     this.points = points; // [{x, y}, {x, y}, ...]
     this.draggingPoint = null;
+    this.originalPolygon = [];
 
     // Mouse event listeners
     this.canvas.addEventListener("mousedown", (e) => this.onMouseDown(e));
@@ -15,13 +17,24 @@ class DraggablePolygon {
     this.draw(); // Initial draw
   }
 
+  // Restore points to original polygon
+  restorePolygon() {
+    if (this.originalPolygon.length != 0) {
+      console.log(this.originalPolygon);
+      this.points = this.originalPolygon;
+      this.originalPolygon = [];
+      this.updateParentOuterPolygon(this.points);
+      this.draw();
+    }
+  }
+
   updatePoints(points) {
     this.points = points;
   }
 
   draw(camera_redraw = true) {
     if (this.clearCanvasCallback) {
-        this.clearCanvasCallback(camera_redraw);
+      this.clearCanvasCallback(camera_redraw);
     }
   }
 
@@ -79,8 +92,26 @@ class DraggablePolygon {
   }
 
   onMouseUp() {
+    const draggingPointIndex = this.getDraggingPointIndex();
     this.draggingPoint = null;
     this.canvas.style.cursor = "default";
+
+    if (draggingPointIndex == undefined) return;
+
+    this.points.forEach((point) => {
+      this.originalPolygon.push({x: point.x, y: point.y});
+    });
+    this.points = this.addPointsAroundDraggingPoint(
+      this.points,
+      draggingPointIndex
+    );
+
+    this.drawPointsAndLines();
+
+    console.log("updated points:", this.points);
+
+    // Update parent camera vision's outer polygon
+    //this.updateParentOuterPolygon(this.points);
   }
 
   getMousePosition(event) {
@@ -95,5 +126,80 @@ class DraggablePolygon {
     const dx = point.x - x;
     const dy = point.y - y;
     return Math.sqrt(dx * dx + dy * dy) < 8; // Radius threshold
+  }
+
+  getDraggingPointIndex() {
+    if (this.draggingPoint == null) return;
+
+    var index = this.points.findIndex((point) => {
+      return point.x == this.draggingPoint.x && point.y == this.draggingPoint.y;
+    });
+
+    return index;
+  }
+
+  addPointsAroundDraggingPoint(points, draggingPointIndex) {
+    // Ensure draggingPointIndex is valid
+    if (draggingPointIndex < 0 || draggingPointIndex >= points.length) {
+      console.error("Invalid draggingPointIndex");
+      return points;
+    }
+
+    let newPrevPoint, newNextPoint;
+
+    if (draggingPointIndex === 0) {
+      // Case 1: draggingPointIndex is 0, add points between last and first, and between first and second
+      const lastPoint = points[points.length - 1];
+      const firstPoint = points[0];
+      const secondPoint = points[1];
+
+      newPrevPoint = {
+        x: (lastPoint.x + firstPoint.x) / 2,
+        y: (lastPoint.y + firstPoint.y) / 2,
+      };
+      newNextPoint = {
+        x: (firstPoint.x + secondPoint.x) / 2,
+        y: (firstPoint.y + secondPoint.y) / 2,
+      };
+
+      points.splice(draggingPointIndex, 0, newPrevPoint); // Insert before the first point
+      points.splice(draggingPointIndex + 2, 0, newNextPoint); // Insert after the first point
+    } else if (draggingPointIndex === points.length - 1) {
+      // Case 2: draggingPointIndex is the last point, add points between last and first, and between second last and last
+      const lastPoint = points[points.length - 1];
+      const firstPoint = points[0];
+      const secondLastPoint = points[points.length - 2];
+
+      newPrevPoint = {
+        x: (lastPoint.x + firstPoint.x) / 2,
+        y: (lastPoint.y + firstPoint.y) / 2,
+      };
+      newNextPoint = {
+        x: (secondLastPoint.x + lastPoint.x) / 2,
+        y: (secondLastPoint.y + lastPoint.y) / 2,
+      };
+
+      points.splice(draggingPointIndex, 0, newPrevPoint); // Insert before the last point
+      points.splice(draggingPointIndex + 2, 0, newNextPoint); // Insert after the last point
+    } else {
+      // Case 3: Normal case, add points between dragging point and its neighbors
+      const prevPoint = points[draggingPointIndex - 1];
+      const draggingPoint = points[draggingPointIndex];
+      const nextPoint = points[draggingPointIndex + 1];
+
+      newPrevPoint = {
+        x: (prevPoint.x + draggingPoint.x) / 2,
+        y: (prevPoint.y + draggingPoint.y) / 2,
+      };
+      newNextPoint = {
+        x: (draggingPoint.x + nextPoint.x) / 2,
+        y: (draggingPoint.y + nextPoint.y) / 2,
+      };
+
+      points.splice(draggingPointIndex, 0, newPrevPoint); // Insert before the dragging point
+      points.splice(draggingPointIndex + 2, 0, newNextPoint); // Insert after the dragging point
+    }
+
+    return points;
   }
 }

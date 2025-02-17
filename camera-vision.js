@@ -154,15 +154,18 @@ class CameraVision {
     ctx.closePath();
   }
 
-  _draw() {
+  _draw(replaceDraggablePolygon = false) {
     const canvas = document.getElementById("finalCanvas");
     const ctx = canvas.getContext("2d");
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    if (this.draggablePolygonObject == null) {
+    if (this.draggablePolygonObject == null || replaceDraggablePolygon) {
       this.draggablePolygonObject = new DraggablePolygon(
         canvas,
         this.outer_polygon,
+        (polygon) => {
+          this.__globalUpdateOuterPolygon(polygon);
+        },
         (camera_redraw) => {
           _drawFOPACAFIP(
             "finalCanvas",
@@ -184,6 +187,19 @@ class CameraVision {
       this.draggablePolygonObject.draw();
     } else {
       this.draggablePolygonObject.draw();
+    }
+  }
+
+  // Orders its parent to update the outer polygon and re-paint
+  __globalUpdateOuterPolygon(polygon) {
+    this.outer_polygon = polygon;
+    this._draw(true);
+  }
+
+  // Restore its original polygon
+  restoreVision() {
+    if (this.draggablePolygonObject) {
+      this.draggablePolygonObject.restorePolygon();
     }
   }
 }

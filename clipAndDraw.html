@@ -27,8 +27,15 @@
     <script src="camera-vision.js"></script>
     <script src="camera.js"></script>
     <script>
-      //const camera = new Camera("fisheye");
-      const camera2 = new Camera("zoom");
+      const camera = new Camera("fisheye");
+      //const camera2 = new Camera("zoom");
+
+      document.addEventListener("keydown", function (event) {
+        // Check if Ctrl key and Z key are pressed
+        if (event.ctrlKey && event.key === "z") {
+          camera.restoreCamera();
+        }
+      });
     </script>
   </body>
 </html>
