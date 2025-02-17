@@ -13,7 +13,6 @@ class DraggablePolygon {
     this.canvas.addEventListener("mouseleave", () => this.onMouseUp());
 
     this.draw(); // Initial draw
-    console.log("creating new draggable polygon object....");
   }
 
   updatePoints(points) {
