@@ -199,7 +199,7 @@ function classifyPoint(p, edge) {
   if (ax * bx < 0 || ay * by < 0) {
     return { loc: "BEHIND", theta: theta };
   }
-  if (Math.sqrt(ax * ax + ay * ay) < Math.sqrt(bx * bx + by * by)) {
+  if ((ax * ax + ay * ay) < (bx * bx + by * by)) {
     return { loc: "BEYOND", theta: theta };
   }
   var t;

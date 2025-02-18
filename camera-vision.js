@@ -4,8 +4,10 @@ class CameraVision {
     rotation,
     inner_polygon1,
     inner_polygon2,
-    outer_polygon
+    outer_polygon,
+    scale
   ) {
+    this.scale = scale;
     this.center_point = center_point;
     this.rotation = rotation;
     this.inner_polygon1 = this._rotatePolygon(
@@ -28,6 +30,7 @@ class CameraVision {
     this.dragStart = null;
     this.selectedPoint = null;
     this.draggablePolygonObject = null;
+    this.initialMousePosition = null;
 
     this._draw();
     this._initMouseEvents();
@@ -42,6 +45,14 @@ class CameraVision {
 
   _onMouseDown(event) {
     const { offsetX, offsetY } = event;
+
+    // Check necessity to rotate first
+    if (this._isInRotatorHandle(offsetX, offsetY)) {
+      // Calculate initial angle based on mouse click position
+      this.initialMousePosition = { x: offsetX, y: offsetY };
+    }
+
+    // Check necessity to drag after
     this.selectedPoint = this._getClickedPoint(
       { x: offsetX, y: offsetY },
       this.outer_polygon
@@ -69,6 +80,18 @@ class CameraVision {
 
     if (!this.isDragging) return;
     const { offsetX, offsetY } = event;
+
+    // Calculate the angle between the initial position and the current mouse position
+    if (this.initialMousePosition) {
+      const angleChange = this._calculateAngleChange(
+        this.initialMousePosition,
+        { x: offsetX, y: offsetY }
+      );
+      this.rotate(angleChange);
+      this.initialMousePosition = { x: offsetX, y: offsetY }; // Update the initial position for next move
+      return;
+    }
+
     const dx = offsetX - this.dragStart.x;
     const dy = offsetY - this.dragStart.y;
 
@@ -78,12 +101,40 @@ class CameraVision {
     this.inner_polygon1 = this._translatePolygon(this.inner_polygon1, dx, dy);
     this.inner_polygon2 = this._translatePolygon(this.inner_polygon2, dx, dy);
     this.dragStart = { x: offsetX, y: offsetY };
-    this._draw();
+    this._drawSketch();
+  }
+
+  _drawSketch() {
+    _drawDirectlyToMainCanvas(
+      "finalCanvas",
+      this.outer_polygon,
+      this.inner_polygon1,
+      this.inner_polygon2,
+      "rgba(255, 0, 0, 0.3)",
+      "rgba(0, 0, 255, 0.4)",
+      "rgba(0, 255, 0, 0.5)"
+    );
   }
 
   _onMouseUp() {
     this.isDragging = false;
     this.selectedPoint = null;
+    this.initialMousePosition = null; // Reset the initial position
+  }
+
+  _calculateAngleChange(initial, current) {
+    const deltaX = current.x - this.center_point.x;
+    const deltaY = current.y - this.center_point.y;
+    const initialDeltaX = initial.x - this.center_point.x;
+    const initialDeltaY = initial.y - this.center_point.y;
+
+    const initialAngle = Math.atan2(initialDeltaY, initialDeltaX);
+    const currentAngle = Math.atan2(deltaY, deltaX);
+
+    // Convert the angle difference from radians to degrees
+    const angleChange = (currentAngle - initialAngle) * (180 / Math.PI);
+
+    return angleChange;
   }
 
   _translatePolygon(polygon, dx, dy) {
@@ -150,8 +201,19 @@ class CameraVision {
     ctx.beginPath();
     ctx.arc(center.x, center.y, radius, 0, Math.PI * 2);
     ctx.fillStyle = color;
+    ctx.strokeStyle = "black";
+    ctx.lineWidth = 2;
+    ctx.stroke();
     ctx.fill();
     ctx.closePath();
+  }
+
+  _isInRotatorHandle(x, y) {
+    return (
+      (x - this.center_point.x) * (x - this.center_point.x) +
+        (y - this.center_point.y) * (y - this.center_point.y) <
+      100
+    );
   }
 
   _draw(replaceDraggablePolygon = false) {
@@ -161,13 +223,15 @@ class CameraVision {
 
     if (this.draggablePolygonObject == null || replaceDraggablePolygon) {
       this.draggablePolygonObject = new DraggablePolygon(
+        this.scale,
+        this.center_point,
         canvas,
         this.outer_polygon,
         (polygon) => {
           this.__globalUpdateOuterPolygon(polygon);
         },
         (camera_redraw) => {
-          _drawFOPACAFIP(
+          _drawToTempCanvasAndCopyToMain(
             "finalCanvas",
             this.outer_polygon,
             this.inner_polygon1,
@@ -179,7 +243,7 @@ class CameraVision {
           );
           if (camera_redraw) {
             setTimeout(() => {
-              this._drawCircle(this.center_point, 10, "red");
+              this._drawCircle(this.center_point, 10, "rgba(0, 0, 255, 1)");
             }, 100);
           }
         }

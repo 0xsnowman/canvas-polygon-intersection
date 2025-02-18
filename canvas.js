@@ -18,9 +18,9 @@ function drawImageOnCanvas(canvas, imgURL, callback) {
   bgImage.onload = () => {
     // console.log("Image loaded successfully!");
     cachedBgImage = bgImage; // Cache the image after loading
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    // ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.drawImage(bgImage, 0, 0, canvas.width, canvas.height);
-    
+
     // Call the callback function after the image is drawn
     if (callback) {
       callback();
@@ -32,14 +32,13 @@ function drawImageOnCanvas(canvas, imgURL, callback) {
   };
 }
 
-
 // Fill polygon with some color on to the canvas
 function drawPolygonToCanvas(canvas, points, fillStyle = "red") {
   var ctx = canvas.getContext("2d");
   ctx.beginPath();
   ctx.moveTo(points[0].x, points[0].y);
   for (let i = 1; i < points.length; i++) {
-      ctx.lineTo(points[i].x, points[i].y);
+    ctx.lineTo(points[i].x, points[i].y);
   }
   ctx.closePath();
   ctx.fillStyle = fillStyle;
@@ -61,11 +60,11 @@ function copyPolygonArea(canvas1, canvas2, polygon) {
   tempCtx.save();
   tempCtx.beginPath();
   polygon.forEach((point, index) => {
-      if (index === 0) {
-          tempCtx.moveTo(point.x, point.y);
-      } else {
-          tempCtx.lineTo(point.x, point.y);
-      }
+    if (index === 0) {
+      tempCtx.moveTo(point.x, point.y);
+    } else {
+      tempCtx.lineTo(point.x, point.y);
+    }
   });
   tempCtx.closePath();
   tempCtx.clip();
@@ -74,10 +73,10 @@ function copyPolygonArea(canvas1, canvas2, polygon) {
   tempCtx.drawImage(canvas1, 0, 0);
 
   // Get the bounding box of the polygon
-  const minX = Math.min(...polygon.map(p => p.x));
-  const minY = Math.min(...polygon.map(p => p.y));
-  const maxX = Math.max(...polygon.map(p => p.x));
-  const maxY = Math.max(...polygon.map(p => p.y));
+  const minX = Math.min(...polygon.map((p) => p.x));
+  const minY = Math.min(...polygon.map((p) => p.y));
+  const maxX = Math.max(...polygon.map((p) => p.x));
+  const maxY = Math.max(...polygon.map((p) => p.y));
   const width = maxX - minX;
   const height = maxY - minY;
 
@@ -85,23 +84,50 @@ function copyPolygonArea(canvas1, canvas2, polygon) {
   ctx2.save();
   ctx2.beginPath();
   polygon.forEach((point, index) => {
-      if (index === 0) {
-          ctx2.moveTo(point.x, point.y);
-      } else {
-          ctx2.lineTo(point.x, point.y);
-      }
+    if (index === 0) {
+      ctx2.moveTo(point.x, point.y);
+    } else {
+      ctx2.lineTo(point.x, point.y);
+    }
   });
   ctx2.closePath();
   ctx2.clip();
 
   // Draw the extracted polygon region onto canvas2 at the same position
-  ctx2.drawImage(tempCanvas, minX, minY, width, height, minX, minY, width, height);
+  ctx2.drawImage(
+    tempCanvas,
+    minX,
+    minY,
+    width,
+    height,
+    minX,
+    minY,
+    width,
+    height
+  );
 
   ctx2.restore();
 }
 
+function _drawDirectlyToMainCanvas(
+  canvasId,
+  outer_polygon,
+  inner_polygon,
+  inner_polygon2,
+  outerFillStyle,
+  innerFillStyle,
+  innerFillStyle2,
+) {
+  var finalCanvas = document.getElementById(canvasId);
+  drawImageOnCanvas(finalCanvas, "map.png", () => {
+    drawPolygonToCanvas(finalCanvas, outer_polygon, outerFillStyle);
+    drawPolygonToCanvas(finalCanvas, inner_polygon, innerFillStyle);
+    drawPolygonToCanvas(finalCanvas, inner_polygon2, innerFillStyle2);
+  });
+}
+
 // Draw 3 polygons (2 inner, 1 outer) - outer is controllable on canvas
-function _drawFOPACAFIP(
+function _drawToTempCanvasAndCopyToMain(
   canvasId,
   outer_polygon,
   inner_polygon,
@@ -112,8 +138,8 @@ function _drawFOPACAFIP(
   draggablePolygonObject
 ) {
   var finalCanvas = document.getElementById(canvasId);
-  var finalCtx = finalCanvas.getContext("2d");
-  finalCtx.clearRect(0, 0, finalCanvas.width, finalCanvas.height);
+  // var finalCtx = finalCanvas.getContext("2d");
+  // finalCtx.clearRect(0, 0, finalCanvas.width, finalCanvas.height);
   // console.log("clearing rect of canvas");
 
   drawImageOnCanvas(finalCanvas, "map.png", () => {

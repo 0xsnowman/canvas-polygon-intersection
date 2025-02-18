@@ -1,11 +1,21 @@
 class DraggablePolygon {
-  constructor(canvas, points, updateParentOuterPolygon, clearCanvasCallback) {
+  constructor(
+    scale,
+    center,
+    canvas,
+    points,
+    updateParentOuterPolygon,
+    clearCanvasCallback
+  ) {
+    this.scale = scale; // radius of camera vision
+    this.center = center;
     this.canvas = canvas;
     this.updateParentOuterPolygon = updateParentOuterPolygon;
     this.clearCanvasCallback = clearCanvasCallback;
     this.ctx = canvas.getContext("2d");
     this.points = points; // [{x, y}, {x, y}, ...]
     this.draggingPoint = null;
+    this.draggingPointOriginalPosition = null;
     this.originalPolygon = [];
 
     // Mouse event listeners
@@ -70,6 +80,7 @@ class DraggablePolygon {
     );
 
     if (this.draggingPoint) {
+      this.draggingPointOriginalPosition = {x: this.draggingPoint.x, y: this.draggingPoint.y};
       this.canvas.style.cursor = "grabbing";
     }
   }
@@ -81,7 +92,7 @@ class DraggablePolygon {
       // Move the point
       this.draggingPoint.x = x;
       this.draggingPoint.y = y;
-      this.draw();
+      // this.draw();
     } else {
       // Change cursor when hovering over points
       const hovering = this.points.some((point) =>
@@ -92,6 +103,20 @@ class DraggablePolygon {
   }
 
   onMouseUp() {
+    if (this.draggingPoint) {
+      if (distance(this.draggingPoint, this.center) > this.scale) {
+        this.draggingPoint.x = this.draggingPointOriginalPosition.x;
+        this.draggingPoint.y = this.draggingPointOriginalPosition.y;
+
+        this.draggingPoint = null;
+        this.draggingPointOriginalPosition = null;
+        this.canvas.style.cursor = "default";
+        this.draw();
+        alert("Max camera vision range is " + this.scale + "m.");
+        return;
+      }
+    }
+
     const draggingPointIndex = this.getDraggingPointIndex();
     this.draggingPoint = null;
     this.canvas.style.cursor = "default";
@@ -99,7 +124,7 @@ class DraggablePolygon {
     if (draggingPointIndex == undefined) return;
 
     this.points.forEach((point) => {
-      this.originalPolygon.push({x: point.x, y: point.y});
+      this.originalPolygon.push({ x: point.x, y: point.y });
     });
     this.points = this.addPointsAroundDraggingPoint(
       this.points,
@@ -125,7 +150,7 @@ class DraggablePolygon {
   isPointClicked(point, x, y) {
     const dx = point.x - x;
     const dy = point.y - y;
-    return Math.sqrt(dx * dx + dy * dy) < 8; // Radius threshold
+    return (dx * dx + dy * dy) < 64; // Radius threshold < 8?
   }
 
   getDraggingPointIndex() {

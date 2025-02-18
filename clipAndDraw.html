@@ -4,21 +4,27 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Canvas Polygon Clipping and Merging</title>
-    <style>
-      canvas {
-        border: 1px solid black;
-      }
-    </style>
+    <link rel="stylesheet" href="style.css" />
   </head>
   <body>
+    <div class="container">
+      <div class="control-panel">
+        <button id="btn_add_fisheye">Add Fisheye</button>
+        <button id="btn_add_zoom">Add Zoom</button>
+      </div>
+      <canvas id="finalCanvas" width="800" height="800"></canvas>
+      <div class="control-panel">
+        <h2>Camera Controls</h2>
+        <ul id="camera-list"></ul>
+      </div>
+    </div>
+
     <canvas
       id="tempCanvas"
-      width="500"
-      height="500"
+      width="800"
+      height="800"
       style="display: none"
     ></canvas>
-    <canvas id="finalCanvas" width="500" height="500"></canvas>
-    <button id="rotate_btn">Rotate +</button>
 
     <script src="canvas.js"></script>
     <script src="draggable-polygon.js"></script>
@@ -26,16 +32,6 @@
     <script src="polygon_data.js"></script>
     <script src="camera-vision.js"></script>
     <script src="camera.js"></script>
-    <script>
-      const camera = new Camera("fisheye");
-      //const camera2 = new Camera("zoom");
-
-      document.addEventListener("keydown", function (event) {
-        // Check if Ctrl key and Z key are pressed
-        if (event.ctrlKey && event.key === "z") {
-          camera.restoreCamera();
-        }
-      });
-    </script>
+    <script src="global.js"></script>
   </body>
 </html>
