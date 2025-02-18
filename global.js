@@ -9,26 +9,26 @@ document.getElementById("btn_add_fisheye").addEventListener("click", () => {
   li.innerText = newFisheyeCam.cameraID + " ";
 
   // Create the Remove button
-  const removeBtn = document.createElement("button");
-  removeBtn.innerText = "Remove";
-  removeBtn.style.marginLeft = "10px"; // Add spacing
+  // const removeBtn = document.createElement("button");
+  // removeBtn.innerText = "Remove";
+  // removeBtn.style.marginLeft = "10px"; // Add spacing
 
-  removeBtn.addEventListener("click", () => {
-    const cameraID = li.firstChild.textContent.trim(); // Extract camera ID from li
-    const isConfirmed = confirm(
-      `Are you sure you want to remove camera: ${cameraID}?`
-    );
+  // removeBtn.addEventListener("click", () => {
+  //   const cameraID = li.firstChild.textContent.trim(); // Extract camera ID from li
+  //   const isConfirmed = confirm(
+  //     `Are you sure you want to remove camera: ${cameraID}?`
+  //   );
 
-    if (isConfirmed) {
-      // Remove the camera from the globalCameras array
-      console.log(globalCameras);
-      globalCameras = globalCameras.filter((cam) => cam.cameraID !== cameraID);
+  //   if (isConfirmed) {
+  //     // Remove the camera from the globalCameras array
+  //     console.log(globalCameras);
+  //     globalCameras = globalCameras.filter((cam) => cam.cameraID !== cameraID);
 
-      li.remove(); // Remove the list item
-    }
-  });
+  //     li.remove(); // Remove the list item
+  //   }
+  // });
 
-  li.appendChild(removeBtn); // Append button to list item
+  // li.appendChild(removeBtn); // Append button to list item
   document.getElementById("camera-list").appendChild(li);
 });
 
