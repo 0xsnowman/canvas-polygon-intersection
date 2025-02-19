@@ -17,7 +17,7 @@ class DraggablePolygon {
     this.ctx = canvas.getContext("2d");
     this.points = [...points]; // [{x, y}, {x, y}, ...]
     this.draggingPoint = null;
-    this.draggingPointOriginalPosition = null;
+    this.originalPoints = null;
 
     // Mouse event listeners
     this.canvas.addEventListener("mousedown", (e) => this.onMouseDown(e));
@@ -68,14 +68,13 @@ class DraggablePolygon {
 
   onMouseDown(event) {
     const { x, y } = this.getMousePosition(event);
-    // console.log(x, y);
     const dragPoint = this.points.find((point) =>
       this.isPointClicked(point, x, y)
     );
 
     if (dragPoint) {
       this.draggingPoint = {x: dragPoint.x, y: dragPoint.y};
-      this.draggingPointOriginalPosition = {x: this.draggingPoint.x, y: this.draggingPoint.y};
+      this.originalPoints = [...this.points];
       this.canvas.style.cursor = "grabbing";
     }
   }
@@ -99,11 +98,8 @@ class DraggablePolygon {
   onMouseUp() {
     if (this.draggingPoint) {
       if (distance(this.draggingPoint, this.center) > this.scale) {
-        this.draggingPoint.x = this.draggingPointOriginalPosition.x;
-        this.draggingPoint.y = this.draggingPointOriginalPosition.y;
-
         this.draggingPoint = null;
-        this.draggingPointOriginalPosition = null;
+        this.points = [...this.originalPoints];
         this.canvas.style.cursor = "default";
         this.updateOuterPolygon(this.points);
         this.drawPointsAndLines();

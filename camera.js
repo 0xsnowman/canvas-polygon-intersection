@@ -115,10 +115,6 @@ class Camera {
     this.cameraVision._draw();
   }
 
-  drawSketch() {
-    this.cameraVision._drawSketch();
-  }
-
   drawTriangle() {
     const { out_pol, in_pol1, in_pol2 } = this.generateIsoscelesTriangles(
       { x: this.center.x - 15, y: this.center.y },

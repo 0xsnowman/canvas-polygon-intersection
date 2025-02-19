@@ -197,7 +197,6 @@ class CameraVision {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     if (this.draggablePolygonObject == null) {
-      // console.log("in camera-vision", this.outer_polygon[0]);
       this.draggablePolygonObject = new DraggablePolygon(
         this.cameraID,
         this.scale,

@@ -7,9 +7,7 @@ document.getElementById("tempCanvas").width = CANVAS_WIDTH;
 document.getElementById("tempCanvas").height = CANVAS_HEIGHT;
 
 document.getElementById("btn_add_fisheye").addEventListener("click", () => {
-  // console.log("before creating new cam:", globalCameras);
   var newFisheyeCam = new Camera("fisheye");
-  // console.log("after creating new cam:", globalCameras);
   globalCameras.push(newFisheyeCam);
 
   const li = document.createElement("li");
@@ -28,7 +26,6 @@ document.getElementById("btn_add_fisheye").addEventListener("click", () => {
 
     if (isConfirmed) {
       // Remove the camera from the globalCameras array
-      // console.log(globalCameras);
       globalCameras = globalCameras.filter((cam) => cam.cameraID !== cameraID);
 
       li.remove(); // Remove the list item
@@ -47,20 +44,6 @@ document.getElementById("btn_add_zoom").addEventListener("click", () => {
   li.innerText = newZoomCam.cameraID;
   document.getElementById("camera-list").appendChild(li);
 });
-
-// document.addEventListener("keydown", function (event) {
-//   if (event.ctrlKey && event.key === "z") {
-//     camera.restoreCamera();
-//   }
-// });
-
-// document.addEventListener("mousemove", function (event) {
-//   if (globalMouseFlag) {
-//     globalCameras.forEach((cam) => {
-//       cam.drawSketch();
-//     });
-//   }
-// });
 
 document.addEventListener("mouseup", function (event) {
   globalCameras.forEach((cam) => {
