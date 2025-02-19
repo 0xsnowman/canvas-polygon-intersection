@@ -61,6 +61,7 @@ class CameraVision {
     if (this._isInRotatorHandle(offsetX, offsetY)) {
       // Calculate initial angle based on mouse click position
       this.initialMousePosition = { x: offsetX, y: offsetY };
+      return;
     }
 
     // Check necessity to drag after
@@ -82,15 +83,14 @@ class CameraVision {
   }
 
   _onMouseMove(event) {
+    const { offsetX, offsetY } = event;
+
     if (this.selectedPoint) {
       this.selectedPoint.x = event.offsetX;
       this.selectedPoint.y = event.offsetY;
       this._draw();
       return;
     }
-
-    if (!this.isDragging) return;
-    const { offsetX, offsetY } = event;
 
     // Calculate the angle between the initial position and the current mouse position
     if (this.initialMousePosition) {
@@ -102,6 +102,8 @@ class CameraVision {
       this.initialMousePosition = { x: offsetX, y: offsetY }; // Update the initial position for next move
       return;
     }
+
+    if (!this.isDragging) return;
 
     const dx = offsetX - this.dragStart.x;
     const dy = offsetY - this.dragStart.y;

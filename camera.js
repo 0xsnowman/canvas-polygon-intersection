@@ -124,7 +124,7 @@ class Camera {
 
   drawTriangle() {
     const { out_pol, in_pol1, in_pol2 } = this.generateIsoscelesTriangles(
-      { x: this.center.x - 15, y: this.center.y },
+      { x: this.center.x, y: this.center.y },
       this.scale
     );
 

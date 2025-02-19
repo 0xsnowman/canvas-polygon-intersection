@@ -103,10 +103,10 @@ class DraggablePolygon {
     if (dragPoint) {
       this.draggingPoint = {x: dragPoint.x, y: dragPoint.y};
 
-      // if (this.type == "zoom" && this.getDraggingPointIndex() == 0) {
-      //   this.draggingPoint = null;
-      //   return;
-      // }
+      if (this.type == "zoom" && this.getDraggingPointIndex() == 0) {
+        this.draggingPoint = null;
+        return;
+      }
 
       this.originalPoints = [...this.points];
       this.canvas.style.cursor = "grabbing";
@@ -126,8 +126,8 @@ class DraggablePolygon {
         this.isPointClicked(point, x, y)
       );
 
-      // const hoveringIndex = this.points.findIndex((point) => this.isPointClicked(point, x, y));
-      // if (this.type == "zoom" && hoveringIndex == 0) return;
+      const hoveringIndex = this.points.findIndex((point) => this.isPointClicked(point, x, y));
+      if (this.type == "zoom" && hoveringIndex == 0) return;
       
       this.canvas.style.cursor = hovering ? "grab" : "default";
     }
