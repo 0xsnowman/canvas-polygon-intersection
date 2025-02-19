@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Canvas Polygon Clipping and Merging</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <div class="control-panel">
+        <h2>Camera Controls</h2>
+        <button id="btn_add_fisheye">Add Fisheye</button>
+        <button id="btn_add_zoom">Add Zoom</button>
+      </div>
+      <canvas id="finalCanvas" width="600" height="600"></canvas>
+      <div class="control-panel">
+        <h2>Camera List</h2>
+        <ul id="camera-list"></ul>
+      </div>
+    </div>
+
+    <canvas
+      id="tempCanvas"
+      width="600"
+      height="600"
+      style="display: none"
+    ></canvas>
+
+    <script src="constants.js"></script>
+    <script src="canvas.js"></script>
+    <script src="draggable-polygon.js"></script>
+    <script src="solution.js"></script>
+    <script src="polygon_data.js"></script>
+    <script src="camera-vision.js"></script>
+    <script src="camera.js"></script>
+    <script src="global.js"></script>
+  </body>
+</html>

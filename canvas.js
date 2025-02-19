@@ -1,4 +1,4 @@
-var cachedBgImage = null;
+let cachedBgImage = null;
 
 // draw an image based on img url to canvas
 function drawImageOnCanvas(canvas, imgURL, callback) {
@@ -47,7 +47,6 @@ function drawPolygonToCanvas(canvas, points, fillStyle = "red") {
 
 // Copy canvas1 polygon area -> canvas 2 polygon area
 function copyPolygonArea(canvas1, canvas2, polygon) {
-  const ctx1 = canvas1.getContext("2d");
   const ctx2 = canvas2.getContext("2d");
 
   // Create a temporary canvas to extract the polygon area
@@ -110,6 +109,7 @@ function copyPolygonArea(canvas1, canvas2, polygon) {
 }
 
 function _drawDirectlyToMainCanvas(
+  cameraID,
   canvasId,
   outer_polygon,
   inner_polygon,
@@ -117,20 +117,40 @@ function _drawDirectlyToMainCanvas(
   outerFillStyle,
   innerFillStyle,
   innerFillStyle2,
+  center_point,
+  draggablePolygonObject
 ) {
   var finalCanvas = document.getElementById(canvasId);
+
   drawImageOnCanvas(finalCanvas, "map.png", () => {
-    drawPolygonToCanvas(finalCanvas, outer_polygon, outerFillStyle);
-    drawPolygonToCanvas(finalCanvas, inner_polygon, innerFillStyle);
-    drawPolygonToCanvas(finalCanvas, inner_polygon2, innerFillStyle2);
+    globalCameras.forEach((cam) => {
+      drawPolygonToCanvas(finalCanvas, cam.cameraVision.outer_polygon, outerFillStyle);
+      drawPolygonToCanvas(finalCanvas, cam.cameraVision.inner_polygon1, innerFillStyle);
+      drawPolygonToCanvas(finalCanvas, cam.cameraVision.inner_polygon2, innerFillStyle2);
+      drawCircleToCanvas(finalCanvas, cam.cameraVision.center_point, CAMERA_CIRCLE_RADIUS);
+      cam.cameraVision.draggablePolygonObject.drawPointsAndLines();
+    });
   });
+}
+
+function drawCircleToCanvas(canvas, center, radius, color = "black") {
+  const ctx = canvas.getContext("2d");
+  ctx.beginPath();
+  ctx.arc(center.x, center.y, radius, 0, Math.PI * 2);
+  ctx.fillStyle = color;
+  ctx.strokeStyle = "black";
+  ctx.lineWidth = 2;
+  ctx.stroke();
+  ctx.fill();
+  ctx.closePath();
 }
 
 // Draw 3 polygons (2 inner, 1 outer) - outer is controllable on canvas
 function _drawToTempCanvasAndCopyToMain(
+  cameraID,
   canvasId,
   outer_polygon,
-  inner_polygon,
+  inner_polygon1,
   inner_polygon2,
   outerFillStyle,
   innerFillStyle,
@@ -138,32 +158,31 @@ function _drawToTempCanvasAndCopyToMain(
   draggablePolygonObject
 ) {
   var finalCanvas = document.getElementById(canvasId);
-  // var finalCtx = finalCanvas.getContext("2d");
-  // finalCtx.clearRect(0, 0, finalCanvas.width, finalCanvas.height);
-  // console.log("clearing rect of canvas");
 
   drawImageOnCanvas(finalCanvas, "map.png", () => {
     drawImageOnCanvas(tempCanvas, "map.png", () => {
       // This runs AFTER the image has loaded and been drawn
+      globalCameras.forEach((cam, index) => {
+        drawPolygonToCanvas(tempCanvas, cam.cameraVision.outer_polygon, outerFillStyle);
+        drawPolygonToCanvas(tempCanvas, cam.cameraVision.inner_polygon1, innerFillStyle);
+        drawPolygonToCanvas(tempCanvas, cam.cameraVision.inner_polygon2, innerFillStyle2);
 
-      drawPolygonToCanvas(tempCanvas, outer_polygon, outerFillStyle);
-      drawPolygonToCanvas(tempCanvas, inner_polygon, innerFillStyle);
-      drawPolygonToCanvas(tempCanvas, inner_polygon2, innerFillStyle2);
+        var intersect_polygons = intersect(cam.cameraVision.outer_polygon, cam.cameraVision.inner_polygon1);
 
-      var intersect_polygons = intersect(outer_polygon, inner_polygon);
+        if (intersect_polygons.length > 0) {
+          intersect_polygons.forEach((polygon) => {
+            copyPolygonArea(tempCanvas, finalCanvas, polygon);
+          });
+        }
 
-      if (intersect_polygons.length > 0) {
-        intersect_polygons.forEach((polygon) => {
-          copyPolygonArea(tempCanvas, finalCanvas, polygon);
-        });
-      }
+        copyPolygonArea(tempCanvas, finalCanvas, cam.cameraVision.outer_polygon);
 
-      copyPolygonArea(tempCanvas, finalCanvas, outer_polygon);
-
-      if (draggablePolygonObject) {
-        draggablePolygonObject.updatePoints(outer_polygon);
-        draggablePolygonObject.drawPointsAndLines();
-      }
+        // Drawing Control Points
+        if (draggablePolygonObject) {
+          draggablePolygonObject.updatePoints(cam.cameraVision.outer_polygon);
+          draggablePolygonObject.drawPointsAndLines();
+        }
+      });
     });
   });
 }

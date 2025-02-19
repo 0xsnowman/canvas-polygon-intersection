@@ -4,7 +4,10 @@ class Camera {
     this.cameraID = this.generateCameraID();
 
     // Example usage
-    this.center = { x: 800 * Math.random(), y: 800 * Math.random() };
+    this.center = {
+      x: CANVAS_WIDTH * Math.random(),
+      y: CANVAS_WIDTH * Math.random(),
+    };
     this.scale = 150;
     this.rotation = 0;
 
@@ -34,29 +37,29 @@ class Camera {
           y: center.y + radius * Math.sin(angle),
         });
       }
-  
+
       // Calculate midpoints and offset them outward
       let midpoints = [];
       for (let i = 0; i < 5; i++) {
         let p1 = pentagon[i];
         let p2 = pentagon[(i + 1) % 5];
-  
+
         // Midpoint of the edge
         let mx = (p1.x + p2.x) / 2;
         let my = (p1.y + p2.y) / 2;
-  
+
         midpoints.push({ x: mx, y: my });
       }
 
       let result = [];
-      for (let i = 0; i < 5; ++ i) {
+      for (let i = 0; i < 5; ++i) {
         result.push(pentagon[i]);
         result.push(midpoints[i]);
       }
-  
+
       return result;
     }
-  
+
     return {
       out_pol: createPentagon(center, scale),
       in_pol1: createPentagon(center, scale * 0.7),
@@ -71,24 +74,24 @@ class Camera {
         { x: center.x + radius, y: center.y - radius * 0.4 },
         { x: center.x + radius, y: center.y + radius * 0.4 },
       ];
-  
+
       // Calculate division points
       let p1 = triangle[1];
       let p2 = triangle[2];
-  
+
       let p3 = {
         x: p1.x + 1,
         y: p1.y + (p2.y - p1.y) / 3,
       };
-      
+
       let p4 = {
         x: p1.x + 1,
         y: p1.y + (p2.y - p1.y) * (2 / 3),
       };
- 
-      return [triangle[0], p1, p3, p4, p2 ];
+
+      return [triangle[0], p1, p3, p4, p2];
     }
-  
+
     return {
       out_pol: createTriangle(center, scale),
       in_pol1: createTriangle(center, scale * 0.7),
@@ -112,6 +115,10 @@ class Camera {
     this.cameraVision._draw();
   }
 
+  drawSketch() {
+    this.cameraVision._drawSketch();
+  }
+
   drawTriangle() {
     const { out_pol, in_pol1, in_pol2 } = this.generateIsoscelesTriangles(
       { x: this.center.x - 15, y: this.center.y },
@@ -119,12 +126,13 @@ class Camera {
     );
 
     this.cameraVision = new CameraVision(
+      this.cameraID,
       this.center,
       this.rotation,
       in_pol1,
       in_pol2,
       out_pol,
-      this.scale,
+      this.scale
     );
   }
 
@@ -135,17 +143,13 @@ class Camera {
     );
 
     this.cameraVision = new CameraVision(
+      this.cameraID,
       this.center,
       this.rotation,
       in_pol1,
       in_pol2,
       out_pol,
-      this.scale,
+      this.scale
     );
-  }
-
-  // Orders it's outer polygon (camera vision) to restore its original polygon
-  restoreCamera() {
-    this.cameraVision.restoreVision();
   }
 }

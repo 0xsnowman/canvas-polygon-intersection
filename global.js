@@ -1,34 +1,41 @@
 var globalMouseFlag = false;
 var globalCameras = [];
 
+document.getElementById("finalCanvas").width = CANVAS_WIDTH;
+document.getElementById("finalCanvas").height = CANVAS_HEIGHT;
+document.getElementById("tempCanvas").width = CANVAS_WIDTH;
+document.getElementById("tempCanvas").height = CANVAS_HEIGHT;
+
 document.getElementById("btn_add_fisheye").addEventListener("click", () => {
+  // console.log("before creating new cam:", globalCameras);
   var newFisheyeCam = new Camera("fisheye");
+  // console.log("after creating new cam:", globalCameras);
   globalCameras.push(newFisheyeCam);
 
   const li = document.createElement("li");
   li.innerText = newFisheyeCam.cameraID + " ";
 
   // Create the Remove button
-  // const removeBtn = document.createElement("button");
-  // removeBtn.innerText = "Remove";
-  // removeBtn.style.marginLeft = "10px"; // Add spacing
+  const removeBtn = document.createElement("button");
+  removeBtn.innerText = "Remove";
+  removeBtn.style.marginTop = "10px"; // Add spacing
 
-  // removeBtn.addEventListener("click", () => {
-  //   const cameraID = li.firstChild.textContent.trim(); // Extract camera ID from li
-  //   const isConfirmed = confirm(
-  //     `Are you sure you want to remove camera: ${cameraID}?`
-  //   );
+  removeBtn.addEventListener("click", () => {
+    const cameraID = li.firstChild.textContent.trim(); // Extract camera ID from li
+    const isConfirmed = confirm(
+      `Are you sure you want to remove camera: ${cameraID}?`
+    );
 
-  //   if (isConfirmed) {
-  //     // Remove the camera from the globalCameras array
-  //     console.log(globalCameras);
-  //     globalCameras = globalCameras.filter((cam) => cam.cameraID !== cameraID);
+    if (isConfirmed) {
+      // Remove the camera from the globalCameras array
+      // console.log(globalCameras);
+      globalCameras = globalCameras.filter((cam) => cam.cameraID !== cameraID);
 
-  //     li.remove(); // Remove the list item
-  //   }
-  // });
+      li.remove(); // Remove the list item
+    }
+  });
 
-  // li.appendChild(removeBtn); // Append button to list item
+  li.appendChild(removeBtn); // Append button to list item
   document.getElementById("camera-list").appendChild(li);
 });
 
@@ -41,11 +48,19 @@ document.getElementById("btn_add_zoom").addEventListener("click", () => {
   document.getElementById("camera-list").appendChild(li);
 });
 
-document.addEventListener("keydown", function (event) {
-  if (event.ctrlKey && event.key === "z") {
-    camera.restoreCamera();
-  }
-});
+// document.addEventListener("keydown", function (event) {
+//   if (event.ctrlKey && event.key === "z") {
+//     camera.restoreCamera();
+//   }
+// });
+
+// document.addEventListener("mousemove", function (event) {
+//   if (globalMouseFlag) {
+//     globalCameras.forEach((cam) => {
+//       cam.drawSketch();
+//     });
+//   }
+// });
 
 document.addEventListener("mouseup", function (event) {
   globalCameras.forEach((cam) => {

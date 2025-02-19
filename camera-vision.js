@@ -1,30 +1,20 @@
 class CameraVision {
   constructor(
+    cameraID,
     center_point,
     rotation,
     inner_polygon1,
     inner_polygon2,
     outer_polygon,
-    scale
+    scale,
   ) {
+    this.cameraID = cameraID,
     this.scale = scale;
     this.center_point = center_point;
     this.rotation = rotation;
-    this.inner_polygon1 = this._rotatePolygon(
-      inner_polygon1,
-      center_point,
-      rotation
-    );
-    this.inner_polygon2 = this._rotatePolygon(
-      inner_polygon2,
-      center_point,
-      rotation
-    );
-    this.outer_polygon = this._rotatePolygon(
-      outer_polygon,
-      center_point,
-      rotation
-    );
+    this.inner_polygon1 = this._rotatePolygon(inner_polygon1, center_point, rotation);
+    this.inner_polygon2 = this._rotatePolygon(inner_polygon2, center_point, rotation);
+    this.outer_polygon = this._rotatePolygon(outer_polygon, center_point, rotation);
 
     this.isDragging = false;
     this.dragStart = null;
@@ -34,6 +24,15 @@ class CameraVision {
 
     this._draw();
     this._initMouseEvents();
+  }
+
+  updateOuterPolygon(points) {
+    this.outer_polygon = [];
+    if (points) {
+      (points).forEach(point => {
+        this.outer_polygon.push(point);
+      });
+    }
   }
 
   _initMouseEvents() {
@@ -104,18 +103,6 @@ class CameraVision {
     this._drawSketch();
   }
 
-  _drawSketch() {
-    _drawDirectlyToMainCanvas(
-      "finalCanvas",
-      this.outer_polygon,
-      this.inner_polygon1,
-      this.inner_polygon2,
-      "rgba(255, 0, 0, 0.3)",
-      "rgba(0, 0, 255, 0.4)",
-      "rgba(0, 255, 0, 0.5)"
-    );
-  }
-
   _onMouseUp() {
     this.isDragging = false;
     this.selectedPoint = null;
@@ -165,22 +152,10 @@ class CameraVision {
 
   rotate(angle) {
     this.rotation += angle;
-    this.inner_polygon1 = this._rotatePolygon(
-      this.inner_polygon1,
-      this.center_point,
-      angle
-    );
-    this.inner_polygon2 = this._rotatePolygon(
-      this.inner_polygon2,
-      this.center_point,
-      angle
-    );
-    this.outer_polygon = this._rotatePolygon(
-      this.outer_polygon,
-      this.center_point,
-      angle
-    );
-    this._draw();
+    this.inner_polygon1 = this._rotatePolygon(this.inner_polygon1, this.center_point, angle);
+    this.inner_polygon2 = this._rotatePolygon(this.inner_polygon2, this.center_point, angle);
+    this.outer_polygon = this._rotatePolygon(this.outer_polygon, this.center_point, angle);
+    this._drawSketch();
   }
 
   _rotatePolygon(points, center, angle) {
@@ -216,54 +191,51 @@ class CameraVision {
     );
   }
 
-  _draw(replaceDraggablePolygon = false) {
+  _draw() {
     const canvas = document.getElementById("finalCanvas");
     const ctx = canvas.getContext("2d");
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    if (this.draggablePolygonObject == null || replaceDraggablePolygon) {
+    if (this.draggablePolygonObject == null) {
+      // console.log("in camera-vision", this.outer_polygon[0]);
       this.draggablePolygonObject = new DraggablePolygon(
+        this.cameraID,
         this.scale,
         this.center_point,
         canvas,
         this.outer_polygon,
-        (polygon) => {
-          this.__globalUpdateOuterPolygon(polygon);
-        },
         (camera_redraw) => {
-          _drawToTempCanvasAndCopyToMain(
-            "finalCanvas",
-            this.outer_polygon,
-            this.inner_polygon1,
-            this.inner_polygon2,
-            "rgba(255, 0, 0, 0.3)",
-            "rgba(0, 0, 255, 0.4)",
-            "rgba(0, 255, 0, 0.5)",
-            this.draggablePolygonObject
-          );
-          if (camera_redraw) {
-            setTimeout(() => {
-              this._drawCircle(this.center_point, 10, "rgba(0, 0, 255, 1)");
-            }, 100);
-          }
+          this._drawSketch();
+
+          setTimeout(() => {
+            this._drawCircle(this.center_point, CAMERA_CIRCLE_RADIUS, "rgba(0, 0, 255, 1)");
+          }, 100);
+        },
+        (points) => {
+          this.updateOuterPolygon(points);
         }
       );
-      this.draggablePolygonObject.draw();
     } else {
       this.draggablePolygonObject.draw();
     }
   }
 
-  // Orders its parent to update the outer polygon and re-paint
-  __globalUpdateOuterPolygon(polygon) {
-    this.outer_polygon = polygon;
-    this._draw(true);
-  }
-
-  // Restore its original polygon
-  restoreVision() {
+  _drawSketch() {
     if (this.draggablePolygonObject) {
-      this.draggablePolygonObject.restorePolygon();
+      this.draggablePolygonObject.updatePoints(this.outer_polygon);
     }
+
+    _drawDirectlyToMainCanvas(
+      this.cameraID,
+      "finalCanvas",
+      this.outer_polygon,
+      this.inner_polygon1,
+      this.inner_polygon2,
+      "rgba(255, 0, 0, 0.3)",
+      "rgba(0, 0, 255, 0.4)",
+      "rgba(0, 255, 0, 0.5)",
+      this.center_point,
+      this.draggablePolygonObject,
+    );
   }
 }

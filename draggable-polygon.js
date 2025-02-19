@@ -1,22 +1,23 @@
 class DraggablePolygon {
   constructor(
+    cameraID,
     scale,
     center,
     canvas,
     points,
-    updateParentOuterPolygon,
-    clearCanvasCallback
+    clearCanvasCallback, // call camera-vision's _drawSketch
+    updateOuterPolygon, // update camera-vision's outer_polygon
   ) {
+    this.cameraID = cameraID;
     this.scale = scale; // radius of camera vision
     this.center = center;
     this.canvas = canvas;
-    this.updateParentOuterPolygon = updateParentOuterPolygon;
     this.clearCanvasCallback = clearCanvasCallback;
+    this.updateOuterPolygon = updateOuterPolygon;
     this.ctx = canvas.getContext("2d");
-    this.points = points; // [{x, y}, {x, y}, ...]
+    this.points = [...points]; // [{x, y}, {x, y}, ...]
     this.draggingPoint = null;
     this.draggingPointOriginalPosition = null;
-    this.originalPolygon = [];
 
     // Mouse event listeners
     this.canvas.addEventListener("mousedown", (e) => this.onMouseDown(e));
@@ -27,19 +28,11 @@ class DraggablePolygon {
     this.draw(); // Initial draw
   }
 
-  // Restore points to original polygon
-  restorePolygon() {
-    if (this.originalPolygon.length != 0) {
-      console.log(this.originalPolygon);
-      this.points = this.originalPolygon;
-      this.originalPolygon = [];
-      this.updateParentOuterPolygon(this.points);
-      this.draw();
-    }
-  }
-
   updatePoints(points) {
-    this.points = points;
+    this.points = [];
+    points.forEach((point) => {
+      this.points.push({x: point.x, y: point.y});
+    });
   }
 
   draw(camera_redraw = true) {
@@ -75,11 +68,13 @@ class DraggablePolygon {
 
   onMouseDown(event) {
     const { x, y } = this.getMousePosition(event);
-    this.draggingPoint = this.points.find((point) =>
+    // console.log(x, y);
+    const dragPoint = this.points.find((point) =>
       this.isPointClicked(point, x, y)
     );
 
-    if (this.draggingPoint) {
+    if (dragPoint) {
+      this.draggingPoint = {x: dragPoint.x, y: dragPoint.y};
       this.draggingPointOriginalPosition = {x: this.draggingPoint.x, y: this.draggingPoint.y};
       this.canvas.style.cursor = "grabbing";
     }
@@ -92,7 +87,6 @@ class DraggablePolygon {
       // Move the point
       this.draggingPoint.x = x;
       this.draggingPoint.y = y;
-      // this.draw();
     } else {
       // Change cursor when hovering over points
       const hovering = this.points.some((point) =>
@@ -111,8 +105,8 @@ class DraggablePolygon {
         this.draggingPoint = null;
         this.draggingPointOriginalPosition = null;
         this.canvas.style.cursor = "default";
-        this.draw();
-        alert("Max camera vision range is " + this.scale + "m.");
+        this.updateOuterPolygon(this.points);
+        this.drawPointsAndLines();
         return;
       }
     }
@@ -123,20 +117,13 @@ class DraggablePolygon {
 
     if (draggingPointIndex == undefined) return;
 
-    this.points.forEach((point) => {
-      this.originalPolygon.push({ x: point.x, y: point.y });
-    });
     this.points = this.addPointsAroundDraggingPoint(
       this.points,
       draggingPointIndex
     );
 
+    this.updateOuterPolygon(this.points);
     this.drawPointsAndLines();
-
-    console.log("updated points:", this.points);
-
-    // Update parent camera vision's outer polygon
-    //this.updateParentOuterPolygon(this.points);
   }
 
   getMousePosition(event) {
@@ -150,6 +137,7 @@ class DraggablePolygon {
   isPointClicked(point, x, y) {
     const dx = point.x - x;
     const dy = point.y - y;
+
     return (dx * dx + dy * dy) < 64; // Radius threshold < 8?
   }
 
@@ -157,7 +145,7 @@ class DraggablePolygon {
     if (this.draggingPoint == null) return;
 
     var index = this.points.findIndex((point) => {
-      return point.x == this.draggingPoint.x && point.y == this.draggingPoint.y;
+      return this.isPointClicked(this.draggingPoint, point.x, point.y);
     });
 
     return index;
