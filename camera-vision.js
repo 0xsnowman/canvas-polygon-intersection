@@ -1,6 +1,8 @@
 class CameraVision {
   constructor(
     cameraID,
+    cameraName,
+    type,
     center_point,
     rotation,
     inner_polygon1,
@@ -9,6 +11,8 @@ class CameraVision {
     scale,
   ) {
     this.cameraID = cameraID,
+    this.cameraName = cameraName,
+    this.type = type,
     this.scale = scale;
     this.center_point = center_point;
     this.rotation = rotation;
@@ -24,6 +28,14 @@ class CameraVision {
 
     this._draw();
     this._initMouseEvents();
+  }
+
+  changeCameraNameInVision(cameraName) {
+    this.cameraName = cameraName;
+
+    if (this.draggablePolygonObject) {
+      this.draggablePolygonObject.changeCameraNameInPolygon(cameraName);
+    }
   }
 
   updateOuterPolygon(points) {
@@ -199,6 +211,8 @@ class CameraVision {
     if (this.draggablePolygonObject == null) {
       this.draggablePolygonObject = new DraggablePolygon(
         this.cameraID,
+        this.cameraName,
+        this.type,
         this.scale,
         this.center_point,
         canvas,

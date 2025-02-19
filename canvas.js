@@ -122,7 +122,7 @@ function _drawDirectlyToMainCanvas(
 ) {
   var finalCanvas = document.getElementById(canvasId);
 
-  drawImageOnCanvas(finalCanvas, "map.png", () => {
+  drawImageOnCanvas(finalCanvas, imgURL, () => {
     globalCameras.forEach((cam) => {
 
       var intersect_polygons1 = intersect(cam.cameraVision.outer_polygon, cam.cameraVision.inner_polygon1);

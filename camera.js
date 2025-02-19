@@ -2,6 +2,7 @@ class Camera {
   constructor(type) {
     this.type = type;
     this.cameraID = this.generateCameraID();
+    this.cameraName = (type == "fisheye" ? "F-" : "Z-") + this.cameraID;
 
     // Example usage
     this.center = {
@@ -14,17 +15,23 @@ class Camera {
     this.drawInitialPolygon();
   }
 
+  changeCameraName(cameraName) {
+    this.cameraName = cameraName;
+    
+    if (this.cameraVision) {
+      this.cameraVision.changeCameraNameInVision(cameraName);
+      this.draw();
+    }
+  }
+
   // Generates random camera ID
   generateCameraID() {
-    const letters = "abcdefghijklmnopqrstuvwxyz";
-    const firstChar = letters[Math.floor(Math.random() * letters.length)]; // Random letter
-
     let numbers = "";
     for (let i = 0; i < 4; i++) {
       numbers += Math.floor(Math.random() * 10); // Random digit (0-9)
     }
 
-    return firstChar.toUpperCase() + numbers;
+    return numbers;
   }
 
   generatePentagons(center, scale) {
@@ -123,6 +130,8 @@ class Camera {
 
     this.cameraVision = new CameraVision(
       this.cameraID,
+      this.cameraName,
+      this.type,
       this.center,
       this.rotation,
       in_pol1,
@@ -140,6 +149,8 @@ class Camera {
 
     this.cameraVision = new CameraVision(
       this.cameraID,
+      this.cameraName,
+      this.type,
       this.center,
       this.rotation,
       in_pol1,

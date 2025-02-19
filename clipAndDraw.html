@@ -9,13 +9,15 @@
   <body>
     <div class="container">
       <div class="control-panel">
-        <h2>Camera Controls</h2>
+        <h3>Camera Controls</h3>
         <button id="btn_add_fisheye">Add Fisheye</button>
         <button id="btn_add_zoom">Add Zoom</button>
+        <label id="customFileInput" for="fileInput">Choose an Image</label>
+        <input type="file" id="fileInput" accept="image/*">
       </div>
       <canvas id="finalCanvas" width="600" height="600"></canvas>
       <div class="control-panel">
-        <h2>Camera List</h2>
+        <h3>Camera List</h3>
         <ul id="camera-list"></ul>
       </div>
     </div>
@@ -28,6 +30,7 @@
     ></canvas>
 
     <script src="constants.js"></script>
+    <script src="util.js"></script>
     <script src="canvas.js"></script>
     <script src="draggable-polygon.js"></script>
     <script src="solution.js"></script>

@@ -1,6 +1,8 @@
 class DraggablePolygon {
   constructor(
     cameraID,
+    cameraName,
+    type,
     scale,
     center,
     canvas,
@@ -9,6 +11,8 @@ class DraggablePolygon {
     updateOuterPolygon, // update camera-vision's outer_polygon
   ) {
     this.cameraID = cameraID;
+    this.cameraName = cameraName;
+    this.type = type;
     this.scale = scale; // radius of camera vision
     this.center = center;
     this.canvas = canvas;
@@ -26,6 +30,28 @@ class DraggablePolygon {
     this.canvas.addEventListener("mouseleave", () => this.onMouseUp());
 
     this.draw(); // Initial draw
+  }
+
+  changeCameraNameInPolygon(cameraName) {
+    this.cameraName = cameraName;
+
+    this.drawPointsAndLines();
+  }
+
+  drawCameraName() {
+    // Set font properties
+    this.ctx.font = "20px Arial";
+    this.ctx.fillStyle = "blue"; // Text color
+    this.ctx.textAlign = "center"; // Align text
+    this.ctx.textBaseline = "middle"; // Align baseline
+
+    // Draw text
+    // this.ctx.fillText(this.cameraName, this.center.x, this.center.y - 30);
+
+    // Optionally, draw an outlined text
+    this.ctx.strokeStyle = "blue"; // Outline color
+    this.ctx.lineWidth = 2; // Outline width
+    this.ctx.strokeText(this.cameraName, this.center.x, this.center.y - 30);
   }
 
   updatePoints(points) {
@@ -64,6 +90,8 @@ class DraggablePolygon {
       this.ctx.strokeStyle = "black";
       this.ctx.stroke();
     });
+
+    this.drawCameraName();
   }
 
   onMouseDown(event) {
@@ -74,6 +102,12 @@ class DraggablePolygon {
 
     if (dragPoint) {
       this.draggingPoint = {x: dragPoint.x, y: dragPoint.y};
+
+      // if (this.type == "zoom" && this.getDraggingPointIndex() == 0) {
+      //   this.draggingPoint = null;
+      //   return;
+      // }
+
       this.originalPoints = [...this.points];
       this.canvas.style.cursor = "grabbing";
     }
@@ -91,6 +125,10 @@ class DraggablePolygon {
       const hovering = this.points.some((point) =>
         this.isPointClicked(point, x, y)
       );
+
+      // const hoveringIndex = this.points.findIndex((point) => this.isPointClicked(point, x, y));
+      // if (this.type == "zoom" && hoveringIndex == 0) return;
+      
       this.canvas.style.cursor = hovering ? "grab" : "default";
     }
   }
