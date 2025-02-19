@@ -218,12 +218,12 @@ class DraggablePolygon {
       const secondLastPoint = points[points.length - 2];
 
       newPrevPoint = {
-        x: (lastPoint.x + firstPoint.x) / 2,
-        y: (lastPoint.y + firstPoint.y) / 2,
-      };
-      newNextPoint = {
         x: (secondLastPoint.x + lastPoint.x) / 2,
         y: (secondLastPoint.y + lastPoint.y) / 2,
+      };
+      newNextPoint = {
+        x: (lastPoint.x + firstPoint.x) / 2,
+        y: (lastPoint.y + firstPoint.y) / 2,
       };
 
       points.splice(draggingPointIndex, 0, newPrevPoint); // Insert before the last point
