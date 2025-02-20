@@ -1,13 +1,13 @@
 class Camera {
-  constructor(type) {
+  constructor(type, center_x, center_y) {
     this.type = type;
     this.cameraID = this.generateCameraID();
     this.cameraName = (type == "fisheye" ? "F-" : "Z-") + this.cameraID;
 
     // Example usage
     this.center = {
-      x: CANVAS_WIDTH * Math.random(),
-      y: CANVAS_WIDTH * Math.random(),
+      x: center_x,
+      y: center_y,
     };
     this.scale = 150;
     this.rotation = 0;

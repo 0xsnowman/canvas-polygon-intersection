@@ -20,49 +20,71 @@ document.getElementById("fileInput").addEventListener("change", function(event) 
 });
 
 window.onload = () => {
-  drawImageOnCanvas(document.getElementById("finalCanvas"), imgURL, () => {});
+  // drawImageOnCanvas(document.getElementById("finalCanvas"), imgURL, () => {});
 };
 
 document.getElementById("btn_add_fisheye").addEventListener("click", (event) => {
   event.stopPropagation();
 
-  var newFisheyeCam = new Camera("fisheye");
-  globalCameras.push(newFisheyeCam);
-
-  const li = document.createElement("li");
-  li.innerText = newFisheyeCam.cameraName;
-  li.onclick = () => {
-    var cameraName = prompt(
-      "Enter new camera name:",
-      newFisheyeCam.cameraName
-    );
-    if (!cameraName) return;
-    newFisheyeCam.changeCameraName(cameraName);
-    li.innerText = shortenName(cameraName);
+  if (!document.getElementById("btn_add_fisheye").classList.contains("clicked")) {
+    document.getElementById("btn_add_fisheye").classList.add("clicked");
+    document.getElementById("btn_add_zoom").classList.remove("clicked");
+  } else {
+    document.getElementById("btn_add_fisheye").classList.remove("clicked");
   }
-
-  document.getElementById("camera-list").appendChild(li);
 });
 
 document.getElementById("btn_add_zoom").addEventListener("click", (event) => {
   event.stopPropagation();
 
-  var newZoomCam = new Camera("zoom");
-  globalCameras.push(newZoomCam);
-
-  const li = document.createElement("li");
-  li.innerText = newZoomCam.cameraName;
-
-  li.onclick = () => {
-    var cameraName = prompt(
-      "Enter new camera name:",
-      newZoomCam.cameraName
-    );
-    if (!cameraName) return;
-    newZoomCam.changeCameraName(cameraName);
-    li.innerText = shortenName(cameraName);
+  if (!document.getElementById("btn_add_zoom").classList.contains("clicked")) {
+    document.getElementById("btn_add_zoom").classList.add("clicked");
+    document.getElementById("btn_add_fisheye").classList.remove("clicked");
+  } else {
+    document.getElementById("btn_add_zoom").classList.remove("clicked");
   }
-  document.getElementById("camera-list").appendChild(li);
+});
+
+document.getElementById("finalCanvas").addEventListener("click", (event) => {
+  event.stopPropagation();
+  
+  const {offsetX, offsetY} = event;
+  if (document.getElementById("btn_add_fisheye").classList.contains("clicked")) {
+    var newFisheyeCam = new Camera("fisheye", offsetX, offsetY);
+    globalCameras.push(newFisheyeCam);
+
+    const li = document.createElement("li");
+    li.innerText = newFisheyeCam.cameraName;
+    li.onclick = () => {
+      var cameraName = prompt(
+        "Enter new camera name:",
+        newFisheyeCam.cameraName
+      );
+      if (!cameraName) return;
+      newFisheyeCam.changeCameraName(cameraName);
+      li.innerText = shortenName(cameraName);
+    }
+
+    document.getElementById("camera-list").appendChild(li);
+  }
+  if (document.getElementById("btn_add_zoom").classList.contains("clicked")) {
+    var newZoomCam = new Camera("zoom", offsetX, offsetY);
+    globalCameras.push(newZoomCam);
+
+    const li = document.createElement("li");
+    li.innerText = newZoomCam.cameraName;
+
+    li.onclick = () => {
+      var cameraName = prompt(
+        "Enter new camera name:",
+        newZoomCam.cameraName
+      );
+      if (!cameraName) return;
+      newZoomCam.changeCameraName(cameraName);
+      li.innerText = shortenName(cameraName);
+    }
+    document.getElementById("camera-list").appendChild(li);
+  }
 });
 
 document.addEventListener("mouseup", function (event) {

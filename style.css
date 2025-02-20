@@ -71,6 +71,10 @@ button:hover {
     background: #0056b3;
 }
 
+button.clicked {
+    background-color: #333;
+}
+
 /* Camera List */
 .camera-list-container {
     width: 100%;
