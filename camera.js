@@ -96,7 +96,13 @@ class Camera {
       case "fisheye":
         this.drawPentagon();
         break;
-      case "zoom":
+      case "zoom-2mp":
+        this.drawTriangle();
+        break;
+      case "zoom-4mp":
+        this.drawTriangle();
+        break;
+      case "zoom-8mp":
         this.drawTriangle();
         break;
       default:

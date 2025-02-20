@@ -12,11 +12,12 @@ document.getElementById("tempCanvas").height = CANVAS_HEIGHT;
 
 function init() {
   firstScalePoint = null;
-        secondScalePoint = null;
-        isScaleSet = false;
-        globalCameras = [];
+  secondScalePoint = null;
+  isScaleSet = false;
+  globalCameras = [];
   document.getElementById("camera-name-list").innerHTML = "";
   document.getElementById("camera-type-list").innerHTML = "";
+  document.getElementById("camera-vision-list").innerHTML = "";
 }
 
 document
@@ -41,39 +42,40 @@ window.onload = () => {
   drawImageOnCanvas(document.getElementById("finalCanvas"), imgURL, () => {});
 };
 
-document
-  .getElementById("btn_add_fisheye")
-  .addEventListener("click", (event) => {
+document.getElementById("btn_add_fisheye").addEventListener("click", (event) => {
     event.stopPropagation();
 
-    if (!isScaleSet) {
-      return;
-    }
+    if (!isScaleSet) return;
 
-    if (
-      !document.getElementById("btn_add_fisheye").classList.contains("clicked")
-    ) {
+    if (!document.getElementById("btn_add_fisheye").classList.contains("clicked")) {
       document.getElementById("btn_add_fisheye").classList.add("clicked");
-      document.getElementById("btn_add_zoom").classList.remove("clicked");
+      document.getElementById("2mp_btn").classList.remove("clicked");
+      document.getElementById("4mp_btn").classList.remove("clicked");
+      document.getElementById("8mp_btn").classList.remove("clicked");
     } else {
       document.getElementById("btn_add_fisheye").classList.remove("clicked");
     }
   });
 
-document.getElementById("btn_add_zoom").addEventListener("click", (event) => {
-  event.stopPropagation();
-
-  if (!isScaleSet) {
-    return;
-  }
-
-  if (!document.getElementById("btn_add_zoom").classList.contains("clicked")) {
-    document.getElementById("btn_add_zoom").classList.add("clicked");
-    document.getElementById("btn_add_fisheye").classList.remove("clicked");
-  } else {
-    document.getElementById("btn_add_zoom").classList.remove("clicked");
-  }
-});
+Array.from(document.getElementsByClassName("btn_add_zoom")).forEach((btn) => {
+  btn.addEventListener("click", (event) => {
+    event.stopPropagation();
+  
+    if (!isScaleSet) {
+      return;
+    }
+  
+    if (!btn.classList.contains("clicked")) {
+      Array.from(document.getElementsByClassName("btn_add_zoom")).forEach((b) => {
+        b.classList.remove("clicked");
+      });
+      document.getElementById("btn_add_fisheye").classList.remove("clicked");
+      btn.classList.add("clicked");
+    } else {
+      btn.classList.remove("clicked");
+    }
+  });
+})
 
 document.getElementById("finalCanvas").addEventListener("click", (event) => {
   event.stopPropagation();
@@ -187,60 +189,68 @@ document.getElementById("finalCanvas").addEventListener("click", (event) => {
     
     document.getElementById("camera-vision-list").appendChild(checkbox_li);
   }
-  if (document.getElementById("btn_add_zoom").classList.contains("clicked")) {
-    var newZoomCam = new Camera("zoom", offsetX, offsetY);
-    globalCameras.push(newZoomCam);
+  Array.from(document.getElementsByClassName("btn_add_zoom")).forEach((btn) => {
+    if (btn.classList.contains("clicked")) {
+      var cam_type = "2mp";
 
-    const li = document.createElement("li");
-    li.innerText = newZoomCam.cameraName;
+      if (btn.id == "2mp_btn") cam_type = "2mp";
+      if (btn.id == "4mp_btn") cam_type = "4mp";
+      if (btn.id == "8mp_btn") cam_type = "8mp";
 
-    li.onclick = () => {
-      var cameraName = prompt("Enter new camera name:", newZoomCam.cameraName);
-      if (!cameraName) return;
-      newZoomCam.changeCameraName(cameraName);
-      li.innerText = shortenName(cameraName);
-    };
-    document.getElementById("camera-name-list").appendChild(li);
-
-    const type_li = document.createElement("li");
-    type_li.innerText = "Zoom";
-    document.getElementById("camera-type-list").appendChild(type_li);
-
-    const checkbox_li = document.createElement("li");
-
-    // Create a checkbox element
-    const checkbox = document.createElement("input");
-    checkbox.type = "checkbox";
-    checkbox.checked = true;
-    // Add an event listener to detect changes
-    checkbox.addEventListener("change", function () {
-      newZoomCam.visibility_of_in1 = this.checked ? true : false;
-    });
-
-    // Create a checkbox element
-    const checkbox2 = document.createElement("input");
-    checkbox2.type = "checkbox";
-    checkbox2.checked = true;
-    // Add an event listener to detect changes
-    checkbox2.addEventListener("change", function () {
-      newZoomCam.visibility_of_in2 = this.checked ? true : false;
-    });
-
-    // Create a checkbox element
-    const checkbox_out = document.createElement("input");
-    checkbox_out.type = "checkbox";
-    checkbox_out.checked = true;
-    // Add an event listener to detect changes
-    checkbox_out.addEventListener("change", function () {
-      newZoomCam.visibility_of_out = this.checked ? true : false;
-    });
-
-    checkbox_li.appendChild(checkbox);
-    checkbox_li.appendChild(checkbox2);
-    checkbox_li.appendChild(checkbox_out);
-    
-    document.getElementById("camera-vision-list").appendChild(checkbox_li);
-  }
+      var newZoomCam = new Camera("zoom-" + cam_type, offsetX, offsetY);
+      globalCameras.push(newZoomCam);
+  
+      const li = document.createElement("li");
+      li.innerText = newZoomCam.cameraName;
+  
+      li.onclick = () => {
+        var cameraName = prompt("Enter new camera name:", newZoomCam.cameraName);
+        if (!cameraName) return;
+        newZoomCam.changeCameraName(cameraName);
+        li.innerText = shortenName(cameraName);
+      };
+      document.getElementById("camera-name-list").appendChild(li);
+  
+      const type_li = document.createElement("li");
+      type_li.innerText = "Zoom " + cam_type;
+      document.getElementById("camera-type-list").appendChild(type_li);
+  
+      const checkbox_li = document.createElement("li");
+  
+      // Create a checkbox element
+      const checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
+      checkbox.checked = true;
+      // Add an event listener to detect changes
+      checkbox.addEventListener("change", function () {
+        newZoomCam.visibility_of_in1 = this.checked ? true : false;
+      });
+  
+      // Create a checkbox element
+      const checkbox2 = document.createElement("input");
+      checkbox2.type = "checkbox";
+      checkbox2.checked = true;
+      // Add an event listener to detect changes
+      checkbox2.addEventListener("change", function () {
+        newZoomCam.visibility_of_in2 = this.checked ? true : false;
+      });
+  
+      // Create a checkbox element
+      const checkbox_out = document.createElement("input");
+      checkbox_out.type = "checkbox";
+      checkbox_out.checked = true;
+      // Add an event listener to detect changes
+      checkbox_out.addEventListener("change", function () {
+        newZoomCam.visibility_of_out = this.checked ? true : false;
+      });
+  
+      checkbox_li.appendChild(checkbox);
+      checkbox_li.appendChild(checkbox2);
+      checkbox_li.appendChild(checkbox_out);
+      
+      document.getElementById("camera-vision-list").appendChild(checkbox_li);
+    }
+  });
 });
 
 document.addEventListener("mouseup", function (event) {
