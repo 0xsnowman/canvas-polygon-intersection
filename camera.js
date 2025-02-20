@@ -36,35 +36,16 @@ class Camera {
 
   generatePentagons(center, scale) {
     function createPentagon(center, radius) {
-      let pentagon = [];
-      for (let i = 0; i < 5; i++) {
-        let angle = (2 * Math.PI * i) / 5; // 72-degree steps
+      let pentagon = [], pointCount = 20;
+      for (let i = 0; i < pointCount; i++) {
+        let angle = (2 * Math.PI * i) / pointCount; // 36-degree steps
         pentagon.push({
           x: center.x + radius * Math.cos(angle),
           y: center.y + radius * Math.sin(angle),
         });
       }
 
-      // Calculate midpoints and offset them outward
-      let midpoints = [];
-      for (let i = 0; i < 5; i++) {
-        let p1 = pentagon[i];
-        let p2 = pentagon[(i + 1) % 5];
-
-        // Midpoint of the edge
-        let mx = (p1.x + p2.x) / 2;
-        let my = (p1.y + p2.y) / 2;
-
-        midpoints.push({ x: mx, y: my });
-      }
-
-      let result = [];
-      for (let i = 0; i < 5; ++i) {
-        result.push(pentagon[i]);
-        result.push(midpoints[i]);
-      }
-
-      return result;
+      return pentagon;
     }
 
     return {
