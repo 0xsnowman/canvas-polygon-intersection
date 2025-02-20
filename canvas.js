@@ -125,25 +125,29 @@ function _drawDirectlyToMainCanvas(
   drawImageOnCanvas(finalCanvas, imgURL, () => {
     globalCameras.forEach((cam) => {
 
-      var intersect_polygons1 = intersect(cam.cameraVision.outer_polygon, cam.cameraVision.inner_polygon1);
-
-      if (intersect_polygons1.length > 0) {
-        intersect_polygons1.forEach((polygon) => {
-          drawPolygonToCanvas(finalCanvas, polygon, innerFillStyle1);
-        });
+      if (cam.visibility_of_in1) {
+        var intersect_polygons1 = intersect(cam.cameraVision.outer_polygon, cam.cameraVision.inner_polygon1);
+        if (intersect_polygons1.length > 0) {
+          intersect_polygons1.forEach((polygon) => {
+            drawPolygonToCanvas(finalCanvas, polygon, innerFillStyle1);
+          });
+        }
       }
 
-      var intersect_polygons2 = intersect(cam.cameraVision.outer_polygon, cam.cameraVision.inner_polygon2);
-
-      if (intersect_polygons2.length > 0) {
-        intersect_polygons2.forEach((polygon) => {
-          drawPolygonToCanvas(finalCanvas, polygon, innerFillStyle2);
-        });
+      if (cam.visibility_of_in2) {
+        var intersect_polygons2 = intersect(cam.cameraVision.outer_polygon, cam.cameraVision.inner_polygon2);
+        if (intersect_polygons2.length > 0) {
+          intersect_polygons2.forEach((polygon) => {
+            drawPolygonToCanvas(finalCanvas, polygon, innerFillStyle2);
+          });
+        }
       }
 
-      drawPolygonToCanvas(finalCanvas, cam.cameraVision.outer_polygon, outerFillStyle);
+      if (cam.visibility_of_out) {
+        drawPolygonToCanvas(finalCanvas, cam.cameraVision.outer_polygon, outerFillStyle);
+        cam.cameraVision.draggablePolygonObject.drawPointsAndLines();
+      }
       drawCircleToCanvas(finalCanvas, cam.cameraVision.center_point, CAMERA_CIRCLE_RADIUS);
-      cam.cameraVision.draggablePolygonObject.drawPointsAndLines();
     });
   });
 }

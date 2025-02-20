@@ -4,6 +4,10 @@ class Camera {
     this.cameraID = this.generateCameraID();
     this.cameraName = (type == "fisheye" ? "F-" : "Z-") + this.cameraID;
 
+    this.visibility_of_out = true;
+    this.visibility_of_in1 = true;
+    this.visibility_of_in2 = true;
+
     // Example usage
     this.center = {
       x: center_x,

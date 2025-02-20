@@ -98,6 +98,7 @@ button.clicked {
     text-align: center;
     font-weight: bold;
     cursor: pointer;
+    height: 35px !important;
 }
 
 .camera-list {
@@ -138,6 +139,19 @@ button.clicked {
 #camera-vision-list {
     display: flex;
     flex-direction: column;
+}
+
+#camera-vision-list li {
+    display: flex;
+    justify-self: center;
+    align-items: center;
+    gap: 5px;
+    height: 35px;
+    min-height: 35px;
+}
+
+input {
+    cursor: pointer;
 }
 
 /* File Input */
