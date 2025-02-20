@@ -76,19 +76,19 @@ button.clicked {
 }
 
 /* Camera List */
-.camera-list-container {
+.camera-name-list-container {
     width: 100%;
     text-align: center;
 }
 
-#camera-list {
+#camera-name-list {
     list-style: none;
     padding: 10px;
     width: 100%;
     max-height: 400px;
 }
 
-#camera-list li {
+#camera-name-list li {
     padding: 8px;
     background: #e3e3e3;
     margin: 5px 0;
@@ -98,7 +98,7 @@ button.clicked {
     cursor: pointer;
 }
 
-#camera-list {
+#camera-name-list {
     max-height: 400px;
     overflow-y: auto;
     /* auto to hide the scrollbar when not needed */
@@ -111,25 +111,25 @@ button.clicked {
 }
 
 /* Webkit-based browsers (Chrome, Edge, Safari) */
-#camera-list::-webkit-scrollbar {
+#camera-name-list::-webkit-scrollbar {
     width: 4px;
     /* Scrollbar width */
 }
 
-#camera-list::-webkit-scrollbar-track {
+#camera-name-list::-webkit-scrollbar-track {
     background: #f1f1f1;
     /* Track color */
     border-radius: 15px;
 }
 
-#camera-list::-webkit-scrollbar-thumb {
+#camera-name-list::-webkit-scrollbar-thumb {
     background: #888;
     /* Thumb color */
     border-radius: 15px;
     transition: background 0.3s;
 }
 
-#camera-list::-webkit-scrollbar-thumb:hover {
+#camera-name-list::-webkit-scrollbar-thumb:hover {
     background: #555;
     /* Darker thumb color on hover */
 }

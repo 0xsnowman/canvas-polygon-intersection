@@ -3,6 +3,7 @@ var globalCameras = [];
 var imgURL = "map.png";
 var firstScalePoint = null;
 var secondScalePoint = null;
+var isScaleSet = false;
 
 document.getElementById("finalCanvas").width = CANVAS_WIDTH;
 document.getElementById("finalCanvas").height = CANVAS_HEIGHT;
@@ -19,6 +20,8 @@ document
         imgURL = e.target.result;
         firstScalePoint = null;
         secondScalePoint = null;
+        isScaleSet = false;
+        globalCameras = [];
         drawImageOnCanvas(
           document.getElementById("finalCanvas"),
           e.target.result
@@ -37,6 +40,10 @@ document
   .addEventListener("click", (event) => {
     event.stopPropagation();
 
+    if (!isScaleSet) {
+      return;
+    }
+
     if (
       !document.getElementById("btn_add_fisheye").classList.contains("clicked")
     ) {
@@ -49,6 +56,10 @@ document
 
 document.getElementById("btn_add_zoom").addEventListener("click", (event) => {
   event.stopPropagation();
+
+  if (!isScaleSet) {
+    return;
+  }
 
   if (!document.getElementById("btn_add_zoom").classList.contains("clicked")) {
     document.getElementById("btn_add_zoom").classList.add("clicked");
@@ -117,6 +128,8 @@ document.getElementById("finalCanvas").addEventListener("click", (event) => {
     }
   }
 
+  if (!isScaleSet) return;
+
   if (
     document.getElementById("btn_add_fisheye").classList.contains("clicked")
   ) {
@@ -135,7 +148,7 @@ document.getElementById("finalCanvas").addEventListener("click", (event) => {
       li.innerText = shortenName(cameraName);
     };
 
-    document.getElementById("camera-list").appendChild(li);
+    document.getElementById("camera-name-list").appendChild(li);
   }
   if (document.getElementById("btn_add_zoom").classList.contains("clicked")) {
     var newZoomCam = new Camera("zoom", offsetX, offsetY);
@@ -150,13 +163,18 @@ document.getElementById("finalCanvas").addEventListener("click", (event) => {
       newZoomCam.changeCameraName(cameraName);
       li.innerText = shortenName(cameraName);
     };
-    document.getElementById("camera-list").appendChild(li);
+    document.getElementById("camera-name-list").appendChild(li);
   }
 });
 
 document.addEventListener("mouseup", function (event) {
-  globalCameras.forEach((cam) => {
-    cam.draw();
-  });
+  if (firstScalePoint && secondScalePoint) {
+    isScaleSet = true;
+    globalCameras.forEach((cam) => {
+      cam.draw();
+    });
+  } else {
+    // isScaleSet = false;
+  }
   globalMouseFlag = false;
 });
