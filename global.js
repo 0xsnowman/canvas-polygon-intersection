@@ -10,6 +10,15 @@ document.getElementById("finalCanvas").height = CANVAS_HEIGHT;
 document.getElementById("tempCanvas").width = CANVAS_WIDTH;
 document.getElementById("tempCanvas").height = CANVAS_HEIGHT;
 
+function init() {
+  firstScalePoint = null;
+        secondScalePoint = null;
+        isScaleSet = false;
+        globalCameras = [];
+  document.getElementById("camera-name-list").innerHTML = "";
+  document.getElementById("camera-type-list").innerHTML = "";
+}
+
 document
   .getElementById("fileInput")
   .addEventListener("change", function (event) {
@@ -18,10 +27,7 @@ document
       const reader = new FileReader();
       reader.onload = function (e) {
         imgURL = e.target.result;
-        firstScalePoint = null;
-        secondScalePoint = null;
-        isScaleSet = false;
-        globalCameras = [];
+        init();
         drawImageOnCanvas(
           document.getElementById("finalCanvas"),
           e.target.result
@@ -32,7 +38,7 @@ document
   });
 
 window.onload = () => {
-  // drawImageOnCanvas(document.getElementById("finalCanvas"), imgURL, () => {});
+  drawImageOnCanvas(document.getElementById("finalCanvas"), imgURL, () => {});
 };
 
 document
@@ -130,9 +136,7 @@ document.getElementById("finalCanvas").addEventListener("click", (event) => {
 
   if (!isScaleSet) return;
 
-  if (
-    document.getElementById("btn_add_fisheye").classList.contains("clicked")
-  ) {
+  if (document.getElementById("btn_add_fisheye").classList.contains("clicked")) {
     var newFisheyeCam = new Camera("fisheye", offsetX, offsetY);
     globalCameras.push(newFisheyeCam);
 
@@ -149,6 +153,39 @@ document.getElementById("finalCanvas").addEventListener("click", (event) => {
     };
 
     document.getElementById("camera-name-list").appendChild(li);
+
+    const type_li = document.createElement("li");
+    type_li.innerText = "Fisheye";
+    document.getElementById("camera-type-list").appendChild(type_li);
+
+    const checkbox_li = document.createElement("li");
+
+    // Create a checkbox element
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.id = "myCheckbox";
+    checkbox.name = "myCheckbox";
+    checkbox.value = "checkedValue";
+
+    // Create a checkbox element
+    const checkbox2 = document.createElement("input");
+    checkbox2.type = "checkbox";
+    checkbox2.id = "myCheckbox2";
+    checkbox2.name = "myCheckbox2";
+    checkbox2.value = "myCheckbox2";
+
+    // Create a checkbox element
+    const checkbox_out = document.createElement("input");
+    checkbox_out.type = "checkbox";
+    checkbox_out.id = "myCheckbox_out";
+    checkbox_out.name = "myCheckbox_out";
+    checkbox_out.value = "myCheckbox_out";
+
+    checkbox_li.appendChild(checkbox);
+    checkbox_li.appendChild(checkbox2);
+    checkbox_li.appendChild(checkbox_out);
+    
+    document.getElementById("camera-vision-list").appendChild(checkbox_li);
   }
   if (document.getElementById("btn_add_zoom").classList.contains("clicked")) {
     var newZoomCam = new Camera("zoom", offsetX, offsetY);
@@ -164,6 +201,39 @@ document.getElementById("finalCanvas").addEventListener("click", (event) => {
       li.innerText = shortenName(cameraName);
     };
     document.getElementById("camera-name-list").appendChild(li);
+
+    const type_li = document.createElement("li");
+    type_li.innerText = "Zoom";
+    document.getElementById("camera-type-list").appendChild(type_li);
+
+    const checkbox_li = document.createElement("li");
+
+    // Create a checkbox element
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.id = "myCheckbox";
+    checkbox.name = "myCheckbox";
+    checkbox.value = "checkedValue";
+
+    // Create a checkbox element
+    const checkbox2 = document.createElement("input");
+    checkbox2.type = "checkbox";
+    checkbox2.id = "myCheckbox2";
+    checkbox2.name = "myCheckbox2";
+    checkbox2.value = "myCheckbox2";
+
+    // Create a checkbox element
+    const checkbox_out = document.createElement("input");
+    checkbox_out.type = "checkbox";
+    checkbox_out.id = "myCheckbox_out";
+    checkbox_out.name = "myCheckbox_out";
+    checkbox_out.value = "myCheckbox_out";
+
+    checkbox_li.appendChild(checkbox);
+    checkbox_li.appendChild(checkbox2);
+    checkbox_li.appendChild(checkbox_out);
+    
+    document.getElementById("camera-vision-list").appendChild(checkbox_li);
   }
 });
 
