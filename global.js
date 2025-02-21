@@ -165,23 +165,30 @@ document.getElementById("finalCanvas").addEventListener("click", (event) => {
     // Create a checkbox element
     const checkbox = document.createElement("input");
     checkbox.type = "checkbox";
-    checkbox.id = "myCheckbox";
-    checkbox.name = "myCheckbox";
-    checkbox.value = "checkedValue";
+    checkbox.checked = true;
+    // Add an event listener to detect changes
+    checkbox.addEventListener("change", function () {
+      newFisheyeCam.visibility_of_in1 = this.checked ? true : false;
+    });
+
 
     // Create a checkbox element
     const checkbox2 = document.createElement("input");
     checkbox2.type = "checkbox";
-    checkbox2.id = "myCheckbox2";
-    checkbox2.name = "myCheckbox2";
-    checkbox2.value = "myCheckbox2";
+    checkbox2.checked = true;
+    // Add an event listener to detect changes
+    checkbox2.addEventListener("change", function () {
+      newFisheyeCam.visibility_of_in2 = this.checked ? true : false;
+    });
 
     // Create a checkbox element
     const checkbox_out = document.createElement("input");
     checkbox_out.type = "checkbox";
-    checkbox_out.id = "myCheckbox_out";
-    checkbox_out.name = "myCheckbox_out";
-    checkbox_out.value = "myCheckbox_out";
+    checkbox_out.checked = true;
+    // Add an event listener to detect changes
+    checkbox_out.addEventListener("change", function () {
+      newFisheyeCam.visibility_of_out = this.checked ? true : false;
+    });
 
     checkbox_li.appendChild(checkbox);
     checkbox_li.appendChild(checkbox2);
