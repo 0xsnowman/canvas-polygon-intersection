@@ -21,7 +21,7 @@ class Camera {
 
   changeCameraName(cameraName) {
     this.cameraName = cameraName;
-    
+
     if (this.cameraVision) {
       this.cameraVision.changeCameraNameInVision(cameraName);
       this.draw();
@@ -40,7 +40,8 @@ class Camera {
 
   generatePentagons(center, scale) {
     function createPentagon(center, radius) {
-      let pentagon = [], pointCount = 20;
+      let pentagon = [],
+        pointCount = 20;
       for (let i = 0; i < pointCount; i++) {
         let angle = (2 * Math.PI * i) / pointCount; // 36-degree steps
         pentagon.push({
@@ -60,34 +61,33 @@ class Camera {
   }
 
   generateIsoscelesTriangles(center, scale) {
-    function createTriangle(center, radius) {
-      let triangle = [
-        { x: center.x, y: center.y },
-        { x: center.x + radius, y: center.y - radius * 0.4 },
-        { x: center.x + radius, y: center.y + radius * 0.4 },
-      ];
+    function createSectorPoints(
+      center,
+      radius,
+      angleStart = -Math.PI / 6,
+      angleEnd = Math.PI / 6,
+      numPoints = 5
+    ) {
+      let points = [{ x: center.x, y: center.y }]; // Start at the center
 
-      // Calculate division points
-      let p1 = triangle[1];
-      let p2 = triangle[2];
+      // Calculate angle step
+      let angleStep = (angleEnd - angleStart) / (numPoints - 1);
 
-      let p3 = {
-        x: p1.x + 1,
-        y: p1.y + (p2.y - p1.y) / 3,
-      };
+      // Generate points along the arc
+      for (let i = 0; i < numPoints; i++) {
+        let angle = angleStart + angleStep * i; // Calculate current angle (in radians)
+        let x = center.x + radius * Math.cos(angle);
+        let y = center.y + radius * Math.sin(angle);
+        points.push({ x, y });
+      }
 
-      let p4 = {
-        x: p1.x + 1,
-        y: p1.y + (p2.y - p1.y) * (2 / 3),
-      };
-
-      return [triangle[0], p1, p3, p4, p2];
+      return points;
     }
 
     return {
-      out_pol: createTriangle(center, scale),
-      in_pol1: createTriangle(center, scale * 0.7),
-      in_pol2: createTriangle(center, scale * 0.85),
+      out_pol: createSectorPoints(center, scale),
+      in_pol1: createSectorPoints(center, scale * 0.7),
+      in_pol2: createSectorPoints(center, scale * 0.85),
     };
   }
 
