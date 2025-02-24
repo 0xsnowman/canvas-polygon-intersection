@@ -128,8 +128,10 @@ function _drawDirectlyToMainCanvas(
       if (cam.visibility_of_in1) {
         var intersect_polygons1 = intersect(cam.cameraVision.outer_polygon, cam.cameraVision.inner_polygon1);
         if (intersect_polygons1.length > 0) {
-          intersect_polygons1.forEach((polygon) => {
-            drawPolygonToCanvas(finalCanvas, polygon, innerFillStyle1);
+          intersect_polygons1.forEach((polygon, index) => {
+            if (index == 0) { // drawing only first intersection area
+              drawPolygonToCanvas(finalCanvas, polygon, innerFillStyle1);
+            }
           });
         }
       }
@@ -137,8 +139,10 @@ function _drawDirectlyToMainCanvas(
       if (cam.visibility_of_in2) {
         var intersect_polygons2 = intersect(cam.cameraVision.outer_polygon, cam.cameraVision.inner_polygon2);
         if (intersect_polygons2.length > 0) {
-          intersect_polygons2.forEach((polygon) => {
-            drawPolygonToCanvas(finalCanvas, polygon, innerFillStyle2);
+          intersect_polygons2.forEach((polygon, index) => {
+            if (index == 0) { // drawing only first intersection area
+              drawPolygonToCanvas(finalCanvas, polygon, innerFillStyle2);
+            }
           });
         }
       }

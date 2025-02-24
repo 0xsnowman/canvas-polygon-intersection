@@ -8,7 +8,7 @@ class DraggablePolygon {
     canvas,
     points,
     clearCanvasCallback, // call camera-vision's _drawSketch
-    updateOuterPolygon, // update camera-vision's outer_polygon
+    updateOuterPolygon // update camera-vision's outer_polygon
   ) {
     this.cameraID = cameraID;
     this.cameraName = cameraName;
@@ -57,7 +57,7 @@ class DraggablePolygon {
   updatePoints(points) {
     this.points = [];
     points.forEach((point) => {
-      this.points.push({x: point.x, y: point.y});
+      this.points.push({ x: point.x, y: point.y });
     });
   }
 
@@ -101,7 +101,7 @@ class DraggablePolygon {
     );
 
     if (dragPoint) {
-      this.draggingPoint = {x: dragPoint.x, y: dragPoint.y};
+      this.draggingPoint = { x: dragPoint.x, y: dragPoint.y };
 
       if (this.type == "zoom" && this.getDraggingPointIndex() == 0) {
         this.draggingPoint = null;
@@ -126,9 +126,11 @@ class DraggablePolygon {
         this.isPointClicked(point, x, y)
       );
 
-      const hoveringIndex = this.points.findIndex((point) => this.isPointClicked(point, x, y));
+      const hoveringIndex = this.points.findIndex((point) =>
+        this.isPointClicked(point, x, y)
+      );
       if (this.type == "zoom" && hoveringIndex == 0) return;
-      
+
       this.canvas.style.cursor = hovering ? "grab" : "default";
     }
   }
@@ -146,8 +148,6 @@ class DraggablePolygon {
     }
 
     const draggingPointIndex = this.getDraggingPointIndex();
-    this.draggingPoint = null;
-    this.canvas.style.cursor = "default";
 
     if (draggingPointIndex == undefined) return;
 
@@ -156,8 +156,106 @@ class DraggablePolygon {
       draggingPointIndex
     );
 
+    // console.log(this.draggingPoint);
+    const intersectArea = this.intersectAreaNotVisibleExist(
+      (draggingPointIndex + 1) % this.points.length
+    );
+
+    if (intersectArea.edge.length > 0) {
+      const firstCutoutIndex = (draggingPointIndex + 2) % this.points.length;
+      const secondCutoutIndex = intersectArea.index;
+
+      console.log(firstCutoutIndex, secondCutoutIndex);
+
+      var tempPoints = this.getLargerPartWithPoint(
+        this.points,
+        firstCutoutIndex,
+        secondCutoutIndex,
+        {
+          x: intersectArea.edge[0].x,
+          y: intersectArea.edge[0].y,
+        }
+      );
+      console.log(tempPoints);
+      this.updatePoints(tempPoints);
+    }
+
+    console.log(this.points.length);
+
+    this.draggingPoint = null;
+    this.canvas.style.cursor = "default";
+
     this.updateOuterPolygon(this.points);
     this.drawPointsAndLines();
+  }
+
+  removeCircularSegment(startIdx, endIdx) {
+    if (startIdx <= endIdx) {
+      return this.points
+        .slice(0, startIdx)
+        .concat(this.points.slice(endIdx + 1));
+    } else {
+      console.log("I think this case");
+      return this.points.slice(endIdx + 1, startIdx);
+    }
+  }
+
+  getLargerPartWithPoint(arr, startIdx, endIdx, point) {
+    if (startIdx > endIdx) {
+      [startIdx, endIdx] = [endIdx, startIdx]; // Ensure startIdx <= endIdx
+    }
+  
+    // Calculate the lengths of both parts
+    const lengthBefore = startIdx + 1;
+    const lengthAfter = arr.length - endIdx;
+  
+    if (lengthBefore + lengthAfter < endIdx - startIdx) {
+      // Keep the middle part (larger part)
+      return arr.slice(startIdx + 1, endIdx).concat(point);
+    } else {
+      // Keep the outside parts (before start and after end)
+      return arr.slice(0, startIdx + 1).concat(point, arr.slice(endIdx - 1));
+    }
+  }
+
+  intersectAreaNotVisibleExist(draggingPointIndex) {
+    // console.log(draggingPointIndex);
+    for (let i = 0; i < this.points.length; ++i) {
+      if (i != draggingPointIndex && (i + 1) % this.points.length != 0) {
+        const edge2Distanve = distance(this.center, this.draggingPoint);
+
+        const edge1 = [
+          this.points[i],
+          this.points[(i + 1) % this.points.length],
+        ];
+        const edge2 = [
+          this.center,
+          {
+            x:
+              this.center.x +
+              (((this.draggingPoint.x - this.center.x) * this.scale) /
+                edge2Distanve) *
+                2,
+            y:
+              this.center.y +
+              (((this.draggingPoint.y - this.center.y) * this.scale) /
+                edge2Distanve) *
+                2,
+          },
+        ];
+        const intersectEdges = findEdgeIntersection(edge1, edge2);
+
+        // console.log(edge1, edge2);
+
+        // console.log("intersect edge:", edge1);
+
+        if (intersectEdges.length > 0) {
+          console.log("common part:", intersectEdges[0]);
+          return { edge: intersectEdges, index: i };
+        }
+      }
+    }
+    return { edge: [], index: -1 };
   }
 
   getMousePosition(event) {
@@ -172,7 +270,7 @@ class DraggablePolygon {
     const dx = point.x - x;
     const dy = point.y - y;
 
-    return (dx * dx + dy * dy) < 64; // Radius threshold < 8?
+    return dx * dx + dy * dy < 64; // Radius threshold < 8?
   }
 
   getDraggingPointIndex() {

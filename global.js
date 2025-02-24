@@ -171,7 +171,6 @@ document.getElementById("finalCanvas").addEventListener("click", (event) => {
       newFisheyeCam.visibility_of_in1 = this.checked ? true : false;
     });
 
-
     // Create a checkbox element
     const checkbox2 = document.createElement("input");
     checkbox2.type = "checkbox";
