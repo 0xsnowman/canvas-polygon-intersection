@@ -194,6 +194,7 @@ document.getElementById("finalCanvas").addEventListener("click", (event) => {
     checkbox_li.appendChild(checkbox_out);
     
     document.getElementById("camera-vision-list").appendChild(checkbox_li);
+    document.getElementById("btn_add_fisheye").classList.remove("clicked");
   }
   Array.from(document.getElementsByClassName("btn_add_zoom")).forEach((btn) => {
     if (btn.classList.contains("clicked")) {
@@ -255,6 +256,7 @@ document.getElementById("finalCanvas").addEventListener("click", (event) => {
       checkbox_li.appendChild(checkbox_out);
       
       document.getElementById("camera-vision-list").appendChild(checkbox_li);
+      btn.classList.remove("clicked");
     }
   });
 });
