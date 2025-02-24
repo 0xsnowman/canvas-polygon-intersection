@@ -26,7 +26,7 @@ class DraggablePolygon {
     // Mouse event listeners
     this.canvas.addEventListener("mousedown", (e) => this.onMouseDown(e));
     this.canvas.addEventListener("mousemove", (e) => this.onMouseMove(e));
-    this.canvas.addEventListener("mouseup", () => this.onMouseUp());
+    this.canvas.addEventListener("mouseup", (e) => this.onMouseUp(e));
     this.canvas.addEventListener("mouseleave", () => this.onMouseUp());
 
     this.draw(); // Initial draw
@@ -103,7 +103,12 @@ class DraggablePolygon {
     if (dragPoint) {
       this.draggingPoint = { x: dragPoint.x, y: dragPoint.y };
 
-      if (this.type == "zoom" && this.getDraggingPointIndex() == 0) {
+      if (
+        (this.type == "zoom-2mp" ||
+          this.type == "zoom-4mp" ||
+          this.type == "zoom-8mp") &&
+        this.getDraggingPointIndex() == 0
+      ) {
         this.draggingPoint = null;
         return;
       }
@@ -135,8 +140,32 @@ class DraggablePolygon {
     }
   }
 
-  onMouseUp() {
+  onMouseUp(event) {
     if (this.draggingPoint) {
+      if (
+        this.type == "zoom-2mp" ||
+        this.type == "zoom-4mp" ||
+        this.type == "zoom-8mp"
+      ) {
+        const draggingPointIndex = this.getDraggingPointIndex();
+        if (draggingPointIndex == 1 || draggingPointIndex == 5) {
+          const restrictedPoint = this.restrictToRadius(
+            this.center.x,
+            this.center.y,
+            this.draggingPoint.x,
+            this.draggingPoint.y,
+            this.scale,
+            draggingPointIndex == 1 ? true : false
+          );
+          this.points[draggingPointIndex].x = restrictedPoint.x;
+          this.points[draggingPointIndex].y = restrictedPoint.y;
+          this.draggingPoint = null;
+          this.canvas.style.cursor = "default";
+          this.updateOuterPolygon(this.points);
+          this.drawPointsAndLines();
+          return;
+        }
+      }
       if (distance(this.draggingPoint, this.center) > this.scale) {
         this.draggingPoint = null;
         this.points = [...this.originalPoints];
@@ -165,8 +194,6 @@ class DraggablePolygon {
       const firstCutoutIndex = (draggingPointIndex + 2) % this.points.length;
       const secondCutoutIndex = intersectArea.index;
 
-      console.log(firstCutoutIndex, secondCutoutIndex);
-
       var tempPoints = this.getLargerPartWithPoint(
         this.points,
         firstCutoutIndex,
@@ -176,11 +203,8 @@ class DraggablePolygon {
           y: intersectArea.edge[0].y,
         }
       );
-      console.log(tempPoints);
       this.updatePoints(tempPoints);
     }
-
-    console.log(this.points.length);
 
     this.draggingPoint = null;
     this.canvas.style.cursor = "default";
@@ -189,13 +213,30 @@ class DraggablePolygon {
     this.drawPointsAndLines();
   }
 
+  restrictToRadius(centerX, centerY, mouseX, mouseY, radius, upOrDown) {
+    let angle = Math.PI / 6; // Calculate current angle (in radians)
+
+    const Rx = radius * Math.cos(angle);
+    const Ry = radius * Math.sin(angle);
+
+    const x = mouseX - centerX;
+    let y = centerY;
+
+    if (upOrDown) {
+      y = y - (x * Ry / Rx);
+    } else {
+      y = y + (x * Ry / Rx);
+    }
+
+    return { x: mouseX, y: y };
+  }
+
   removeCircularSegment(startIdx, endIdx) {
     if (startIdx <= endIdx) {
       return this.points
         .slice(0, startIdx)
         .concat(this.points.slice(endIdx + 1));
     } else {
-      console.log("I think this case");
       return this.points.slice(endIdx + 1, startIdx);
     }
   }
@@ -204,11 +245,11 @@ class DraggablePolygon {
     if (startIdx > endIdx) {
       [startIdx, endIdx] = [endIdx, startIdx]; // Ensure startIdx <= endIdx
     }
-  
+
     // Calculate the lengths of both parts
     const lengthBefore = startIdx + 1;
     const lengthAfter = arr.length - endIdx;
-  
+
     if (lengthBefore + lengthAfter < endIdx - startIdx) {
       // Keep the middle part (larger part)
       return arr.slice(startIdx + 1, endIdx).concat(point);
