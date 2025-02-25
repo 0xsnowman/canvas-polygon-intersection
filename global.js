@@ -6,6 +6,7 @@ var secondScalePoint = null;
 var isScaleSet = false;
 var isRotationAllowed = false;
 var isReplaceAllowed = false;
+var lastSelectedCameraID = null;
 
 document.getElementById("finalCanvas").width = CANVAS_WIDTH;
 document.getElementById("finalCanvas").height = CANVAS_HEIGHT;
@@ -157,10 +158,12 @@ document.getElementById("finalCanvas").addEventListener("click", (event) => {
       li.innerText = shortenName(cameraName);
     };
 
+    li.id = "name_li_" + newFisheyeCam.cameraID;
     document.getElementById("camera-name-list").appendChild(li);
 
     const type_li = document.createElement("li");
     type_li.innerText = "Fisheye";
+    type_li.id = "type_li_" + newFisheyeCam.cameraID;
     document.getElementById("camera-type-list").appendChild(type_li);
 
     const checkbox_li = document.createElement("li");
@@ -195,7 +198,8 @@ document.getElementById("finalCanvas").addEventListener("click", (event) => {
     checkbox_li.appendChild(checkbox);
     checkbox_li.appendChild(checkbox2);
     checkbox_li.appendChild(checkbox_out);
-    
+    checkbox_li.id = "checkbox_li_" + newFisheyeCam.cameraID;
+
     document.getElementById("camera-vision-list").appendChild(checkbox_li);
     document.getElementById("btn_add_fisheye").classList.remove("clicked");
   }
@@ -219,10 +223,12 @@ document.getElementById("finalCanvas").addEventListener("click", (event) => {
         newZoomCam.changeCameraName(cameraName);
         li.innerText = shortenName(cameraName);
       };
+      li.id = "name_li_" + newZoomCam.cameraID;
       document.getElementById("camera-name-list").appendChild(li);
   
       const type_li = document.createElement("li");
       type_li.innerText = "Zoom " + cam_type;
+      type_li.id = "type_li_" + newZoomCam.cameraID;
       document.getElementById("camera-type-list").appendChild(type_li);
   
       const checkbox_li = document.createElement("li");
@@ -258,6 +264,7 @@ document.getElementById("finalCanvas").addEventListener("click", (event) => {
       checkbox_li.appendChild(checkbox2);
       checkbox_li.appendChild(checkbox_out);
       
+      checkbox_li.id = "checkbox_li_" + newZoomCam.cameraID;
       document.getElementById("camera-vision-list").appendChild(checkbox_li);
       btn.classList.remove("clicked");
     }

@@ -62,11 +62,10 @@ class CameraVision {
     if (this._isInRotatorHandle(offsetX, offsetY)) {
       // Calculate initial angle based on mouse click position
       this.initialMousePosition = { x: offsetX, y: offsetY };
-      console.log(offsetX + rect.left, offsetY + rect.top);
-      showMenu(polygon_menu, offsetX + rect.left, offsetY + rect.top);
+      showMenu(polygon_menu, offsetX + rect.left, offsetY + rect.top, this.cameraID);
       return;
     } else {
-      hideMenu(polygon_menu);
+      // hideMenu(polygon_menu);
     }
 
     // Check necessity to drag after

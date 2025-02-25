@@ -281,12 +281,8 @@ class DraggablePolygon {
         ];
         const intersectEdges = findEdgeIntersection(edge1, edge2);
 
-        // console.log(edge1, edge2);
-
-        // console.log("intersect edge:", edge1);
-
         if (intersectEdges.length > 0) {
-          console.log("common part:", intersectEdges[0]);
+          // console.log("common part:", intersectEdges[0]);
           return { edge: intersectEdges, index: i };
         }
       }
