@@ -12,7 +12,8 @@ document.getElementById("finalCanvas").width = CANVAS_WIDTH;
 document.getElementById("finalCanvas").height = CANVAS_HEIGHT;
 document.getElementById("tempCanvas").width = CANVAS_WIDTH;
 document.getElementById("tempCanvas").height = CANVAS_HEIGHT;
-const polygon_menu = document.getElementById("polygon-menu");
+const fisheye_menu = document.getElementById("fisheye-menu");
+const zoom_menu = document.getElementById("zoom-menu");
 
 function init() {
   firstScalePoint = null;

@@ -151,6 +151,8 @@ function _drawDirectlyToMainCanvas(
         drawPolygonToCanvas(finalCanvas, cam.cameraVision.outer_polygon, outerFillStyle);
         cam.cameraVision.draggablePolygonObject.drawPointsAndLines();
       }
+
+      // Draws circle (camera) when dragging the polygon
       drawCircleToCanvas(finalCanvas, cam.cameraVision.center_point, CAMERA_CIRCLE_RADIUS);
     });
   });

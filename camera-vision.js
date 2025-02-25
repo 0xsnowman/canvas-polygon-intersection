@@ -38,6 +38,22 @@ class CameraVision {
     }
   }
 
+  updateInnerPolygons(points1, points2) {
+    this.inner_polygon1 = [];
+    if (points1) {
+      (points1).forEach(point => {
+        this.inner_polygon1.push(point);
+      });
+    }
+
+    this.inner_polygon2 = [];
+    if (points2) {
+      (points2).forEach(point => {
+        this.inner_polygon2.push(point);
+      });
+    }
+  }
+
   updateOuterPolygon(points) {
     this.outer_polygon = [];
     if (points) {
@@ -62,10 +78,14 @@ class CameraVision {
     if (this._isInRotatorHandle(offsetX, offsetY)) {
       // Calculate initial angle based on mouse click position
       this.initialMousePosition = { x: offsetX, y: offsetY };
-      showMenu(polygon_menu, offsetX + rect.left, offsetY + rect.top, this.cameraID);
+      if (this.type == "fisheye") {
+        showMenu(fisheye_menu, offsetX + rect.left, offsetY + rect.top, this.cameraID, this.type);
+      } else {
+        showMenu(zoom_menu, offsetX + rect.left, offsetY + rect.top, this.cameraID, this.type);
+      }
       return;
     } else {
-      // hideMenu(polygon_menu);
+      // hideMenu(fisheye_menu);
     }
 
     // Check necessity to drag after

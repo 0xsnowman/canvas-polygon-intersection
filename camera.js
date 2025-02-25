@@ -1,8 +1,9 @@
 class Camera {
-  constructor(type, center_x, center_y) {
+  constructor(type, center_x, center_y, angle = 30) {
     this.type = type;
     this.cameraID = this.generateCameraID();
     this.cameraName = (type == "fisheye" ? "F-" : "Z-") + this.cameraID;
+    this.m_angle = angle;
 
     this.visibility_of_out = true;
     this.visibility_of_in1 = true;
@@ -43,7 +44,7 @@ class Camera {
       let pentagon = [],
         pointCount = 20;
       for (let i = 0; i < pointCount; i++) {
-        let angle = (2 * Math.PI * i) / pointCount; // 36-degree steps
+        let angle = (2 * Math.PI * i) / pointCount; // 360-degree steps
         pentagon.push({
           x: center.x + radius * Math.cos(angle),
           y: center.y + radius * Math.sin(angle),
@@ -60,12 +61,23 @@ class Camera {
     };
   }
 
+  changeCameraAngle(angle) {
+    this.m_angle = angle;
+    const { out_pol, in_pol1, in_pol2 } = this.generateIsoscelesTriangles(
+      { x: this.center.x, y: this.center.y },
+      this.scale
+    );
+    this.cameraVision.updateInnerPolygons(in_pol1, in_pol2);
+    this.cameraVision.updateOuterPolygon(out_pol);
+    this.draw();
+  }
+
   generateIsoscelesTriangles(center, scale) {
     function createSectorPoints(
       center,
       radius,
-      angleStart = -Math.PI / 6,
-      angleEnd = Math.PI / 6,
+      angleStart,
+      angleEnd,
       numPoints = 5
     ) {
       let points = [{ x: center.x, y: center.y }]; // Start at the center
@@ -85,9 +97,9 @@ class Camera {
     }
 
     return {
-      out_pol: createSectorPoints(center, scale),
-      in_pol1: createSectorPoints(center, scale * 0.7),
-      in_pol2: createSectorPoints(center, scale * 0.85),
+      out_pol: createSectorPoints(center, scale, -toRadians(this.m_angle), toRadians(this.m_angle)),
+      in_pol1: createSectorPoints(center, scale * 0.7, -toRadians(this.m_angle), toRadians(this.m_angle)),
+      in_pol2: createSectorPoints(center, scale * 0.85, -toRadians(this.m_angle), toRadians(this.m_angle)),
     };
   }
 

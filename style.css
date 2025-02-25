@@ -172,7 +172,7 @@ input {
 }
 
 /* --  polygon menu  -- */
-#polygon-menu {
+.camera-context-menu {
     display: none;
     position: absolute;
     background: white;
@@ -182,13 +182,108 @@ input {
     z-index: 100;
 }
 
-#polygon-menu p {
+.camera-context-menu p {
     padding: 10px;
     cursor: pointer;
 }
 
-#polygon-menu p:hover {
+.camera-context-menu p:hover {
     background-color: #555;
     color: white;
     transition: 0.2s ease-in;
+}
+
+#zoom-menu {
+    display: none;
+}
+
+#zoom-menu {
+    position: absolute;
+    background-color: #f4f4f4;
+    padding: 10px;
+    width: 150px;
+    border: 1px solid #ccc;
+}
+
+#zoom-menu p {
+    margin: 0;
+    padding: 8px;
+    cursor: pointer;
+    background-color: #fff;
+}
+
+#zoom-change-angle {
+    position: relative;
+}
+
+/* Submenu styling */
+.submenu {
+    display: none;
+    position: absolute;
+    left: 100%;
+    top: 0;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    width: 100px;
+}
+
+.submenu p {
+    padding: 8px;
+    margin: 0;
+}
+
+/* Ensure submenu shows only on hover */
+#zoom-change-angle:hover .submenu {
+    display: block;
+}
+
+/* Optional hover effect */
+#zoom-menu p:hover,
+.submenu p:hover {
+    background-color: #ddd;
+}
+
+.dropbtn {
+    margin: 0;
+    padding: 8px;
+    cursor: pointer;
+    background-color: #fff;
+    color: black;
+    text-align: left;
+    border-radius: 0px;
+}
+
+#dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f1f1f1;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+    top: 115px;
+    right: -160px;
+}
+
+.dropdown-content p {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.dropdown-content p:hover {
+    background-color: #ddd;
+}
+
+.dropbtn-area:hover .dropdown-content {
+    display: block;
+}
+
+.dropbtn:hover  {
+    background-color: #ddd;
 }
