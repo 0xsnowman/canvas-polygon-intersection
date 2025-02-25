@@ -178,6 +178,7 @@ class CameraVision {
   }
 
   rotate(angle) {
+    if (this.cameraID != lastSelectedCameraID) return;
     if (!isRotationAllowed) return;
     this.rotation += angle;
     this.inner_polygon1 = this._rotatePolygon(this.inner_polygon1, this.center_point, angle);
