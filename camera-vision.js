@@ -56,12 +56,17 @@ class CameraVision {
 
   _onMouseDown(event) {
     const { offsetX, offsetY } = event;
+    const rect = document.getElementById("finalCanvas").getBoundingClientRect();
 
     // Check necessity to rotate first
     if (this._isInRotatorHandle(offsetX, offsetY)) {
       // Calculate initial angle based on mouse click position
       this.initialMousePosition = { x: offsetX, y: offsetY };
+      console.log(offsetX + rect.left, offsetY + rect.top);
+      showMenu(polygon_menu, offsetX + rect.left, offsetY + rect.top);
       return;
+    } else {
+      hideMenu(polygon_menu);
     }
 
     // Check necessity to drag after
@@ -77,8 +82,10 @@ class CameraVision {
     if (
       this._isPointInsidePolygon({ x: offsetX, y: offsetY }, this.outer_polygon)
     ) {
-      this.isDragging = true;
-      this.dragStart = { x: offsetX, y: offsetY };
+      if (isReplaceAllowed) {
+        this.isDragging = true;
+        this.dragStart = { x: offsetX, y: offsetY };
+      }
     }
   }
 
@@ -93,7 +100,7 @@ class CameraVision {
     }
 
     // Calculate the angle between the initial position and the current mouse position
-    if (this.initialMousePosition) {
+    if (this.initialMousePosition && isRotationAllowed) {
       const angleChange = this._calculateAngleChange(
         this.initialMousePosition,
         { x: offsetX, y: offsetY }
@@ -118,9 +125,16 @@ class CameraVision {
   }
 
   _onMouseUp() {
-    this.isDragging = false;
+    if (this.isDragging) {
+      isReplaceAllowed = false;
+      this.isDragging = false;
+    }
+
+    if (isRotationAllowed) {
+      isRotationAllowed = false;
+      this.initialMousePosition = null; // Reset the initial position
+    }
     this.selectedPoint = null;
-    this.initialMousePosition = null; // Reset the initial position
   }
 
   _calculateAngleChange(initial, current) {
@@ -165,6 +179,7 @@ class CameraVision {
   }
 
   rotate(angle) {
+    if (!isRotationAllowed) return;
     this.rotation += angle;
     this.inner_polygon1 = this._rotatePolygon(this.inner_polygon1, this.center_point, angle);
     this.inner_polygon2 = this._rotatePolygon(this.inner_polygon2, this.center_point, angle);

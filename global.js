@@ -4,11 +4,14 @@ var imgURL = "map.png";
 var firstScalePoint = null;
 var secondScalePoint = null;
 var isScaleSet = false;
+var isRotationAllowed = false;
+var isReplaceAllowed = false;
 
 document.getElementById("finalCanvas").width = CANVAS_WIDTH;
 document.getElementById("finalCanvas").height = CANVAS_HEIGHT;
 document.getElementById("tempCanvas").width = CANVAS_WIDTH;
 document.getElementById("tempCanvas").height = CANVAS_HEIGHT;
+const polygon_menu = document.getElementById("polygon-menu");
 
 function init() {
   firstScalePoint = null;

@@ -142,6 +142,14 @@ class DraggablePolygon {
 
   onMouseUp(event) {
     if (this.draggingPoint) {
+      if (distance(this.draggingPoint, this.center) > this.scale) {
+        this.draggingPoint = null;
+        this.points = [...this.originalPoints];
+        this.canvas.style.cursor = "default";
+        this.updateOuterPolygon(this.points);
+        this.drawPointsAndLines();
+        return;
+      }
       if (
         this.type == "zoom-2mp" ||
         this.type == "zoom-4mp" ||
@@ -159,20 +167,7 @@ class DraggablePolygon {
           );
           this.points[draggingPointIndex].x = restrictedPoint.x;
           this.points[draggingPointIndex].y = restrictedPoint.y;
-          this.draggingPoint = null;
-          this.canvas.style.cursor = "default";
-          this.updateOuterPolygon(this.points);
-          this.drawPointsAndLines();
-          return;
         }
-      }
-      if (distance(this.draggingPoint, this.center) > this.scale) {
-        this.draggingPoint = null;
-        this.points = [...this.originalPoints];
-        this.canvas.style.cursor = "default";
-        this.updateOuterPolygon(this.points);
-        this.drawPointsAndLines();
-        return;
       }
     }
 
@@ -223,9 +218,9 @@ class DraggablePolygon {
     let y = centerY;
 
     if (upOrDown) {
-      y = y - (x * Ry / Rx);
+      y = y - (x * Ry) / Rx;
     } else {
-      y = y + (x * Ry / Rx);
+      y = y + (x * Ry) / Rx;
     }
 
     return { x: mouseX, y: y };
@@ -311,7 +306,7 @@ class DraggablePolygon {
     const dx = point.x - x;
     const dy = point.y - y;
 
-    return dx * dx + dy * dy < 64; // Radius threshold < 8?
+    return dx * dx + dy * dy < 36; // Radius threshold < 6?
   }
 
   getDraggingPointIndex() {

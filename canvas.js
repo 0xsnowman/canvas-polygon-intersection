@@ -156,7 +156,7 @@ function _drawDirectlyToMainCanvas(
   });
 }
 
-function drawCircleToCanvas(canvas, center, radius, color = "black") {
+function drawCircleToCanvas(canvas, center, radius, color = "blue") {
   const ctx = canvas.getContext("2d");
   ctx.beginPath();
   ctx.arc(center.x, center.y, radius, 0, Math.PI * 2);
