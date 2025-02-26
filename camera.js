@@ -77,11 +77,11 @@ class Camera {
       center,
       radius,
       angleStart,
-      angleEnd,
-      numPoints = 5
+      angleEnd
     ) {
       let points = [{ x: center.x, y: center.y }]; // Start at the center
 
+      let numPoints = getPointsCountForAngle(angleEnd - angleStart);
       // Calculate angle step
       let angleStep = (angleEnd - angleStart) / (numPoints - 1);
 

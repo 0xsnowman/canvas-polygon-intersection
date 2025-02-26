@@ -272,7 +272,11 @@ document.getElementById("finalCanvas").addEventListener("click", (event) => {
   });
 });
 
-document.addEventListener("mouseup", function (event) {
+document.addEventListener("mouseup", function () {
+  redrawEntireCanvas();
+});
+
+function redrawEntireCanvas() {
   if (firstScalePoint && secondScalePoint) {
     isScaleSet = true;
     globalCameras.forEach((cam) => {
@@ -282,4 +286,4 @@ document.addEventListener("mouseup", function (event) {
     // isScaleSet = false;
   }
   globalMouseFlag = false;
-});
+}

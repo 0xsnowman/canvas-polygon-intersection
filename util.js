@@ -7,7 +7,7 @@ function shortenName(name) {
 }
 
 function toRadians(angle) {
-  return Math.PI / 180 * angle;
+  return (Math.PI / 180) * angle;
 }
 
 // Show the menu at the click position
@@ -23,46 +23,52 @@ function hideMenu(menu) {
   menu.style.display = "none";
 }
 
-document.getElementById("fisheye-allow-rotate").addEventListener("click", () => {
-  isRotationAllowed = true;
-  hideMenu(fisheye_menu);
-});
+document
+  .getElementById("fisheye-allow-rotate")
+  .addEventListener("click", () => {
+    isRotationAllowed = true;
+    hideMenu(fisheye_menu);
+  });
 
 document.getElementById("fisheye-allow-move").addEventListener("click", () => {
   isReplaceAllowed = true;
   hideMenu(fisheye_menu);
 });
 
-document.getElementById("fisheye-delete-polygon").addEventListener("click", () => {
-  const selectedIndex = globalCameras.findIndex(
-    (cam) => cam.cameraID == lastSelectedCameraID
-  );
+document
+  .getElementById("fisheye-delete-polygon")
+  .addEventListener("click", () => {
+    const selectedIndex = globalCameras.findIndex(
+      (cam) => cam.cameraID == lastSelectedCameraID
+    );
 
-  if (selectedIndex != undefined) {
-    document.getElementById("camera-name-list").childNodes.forEach((node) => {
-      if (node.id == "name_li_" + lastSelectedCameraID) {
-        node.remove();
-      }
-    });
-    document.getElementById("camera-type-list").childNodes.forEach((node) => {
-      if (node.id == "type_li_" + lastSelectedCameraID) {
-        node.remove();
-      }
-    });
-    document.getElementById("camera-vision-list").childNodes.forEach((node) => {
-      if (node.id == "checkbox_li_" + lastSelectedCameraID) {
-        node.remove();
-      }
-    });
-  }
-  
-  globalCameras = globalCameras.filter((cam) => {
-    return cam.cameraID != lastSelectedCameraID;
+    if (selectedIndex != undefined) {
+      document.getElementById("camera-name-list").childNodes.forEach((node) => {
+        if (node.id == "name_li_" + lastSelectedCameraID) {
+          node.remove();
+        }
+      });
+      document.getElementById("camera-type-list").childNodes.forEach((node) => {
+        if (node.id == "type_li_" + lastSelectedCameraID) {
+          node.remove();
+        }
+      });
+      document
+        .getElementById("camera-vision-list")
+        .childNodes.forEach((node) => {
+          if (node.id == "checkbox_li_" + lastSelectedCameraID) {
+            node.remove();
+          }
+        });
+    }
+
+    globalCameras = globalCameras.filter(
+      (cam) => cam.cameraID !== lastSelectedCameraID
+    );
+
+    redrawEntireCanvas();
+    hideMenu(fisheye_menu);
   });
-
-  hideMenu(fisheye_menu);
-});
-
 
 document.getElementById("zoom-allow-rotate").addEventListener("click", () => {
   isRotationAllowed = true;
@@ -96,15 +102,22 @@ document.getElementById("zoom-delete-polygon").addEventListener("click", () => {
       }
     });
   }
-  
-  globalCameras = globalCameras.filter((cam) => {
-    return cam.cameraID != lastSelectedCameraID;
-  });
+
+  globalCameras = globalCameras.filter(
+    (cam) => cam.cameraID !== lastSelectedCameraID
+  );
 
   hideMenu(zoom_menu);
+  redrawEntireCanvas();
 });
 
 function changeZoomAngle(angle) {
-  globalCameras.find((cam) => cam.cameraID == lastSelectedCameraID).changeCameraAngle(angle / 2);
+  globalCameras
+    .find((cam) => cam.cameraID == lastSelectedCameraID)
+    .changeCameraAngle(angle / 2);
   hideMenu(zoom_menu);
+}
+
+function getPointsCountForAngle(ridians) {
+  return Math.round(ridians * 5);
 }
