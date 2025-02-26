@@ -1,7 +1,7 @@
 class Camera {
   constructor(type, center_x, center_y, angle = 30) {
     this.type = type;
-    this.cameraID = this.generateCameraID();
+    this.cameraID = generateRandom4Digits();
     this.cameraName = (type == "fisheye" ? "F-" : "Z-") + this.cameraID;
     this.m_angle = angle;
 
@@ -27,16 +27,6 @@ class Camera {
       this.cameraVision.changeCameraNameInVision(cameraName);
       this.draw();
     }
-  }
-
-  // Generates random camera ID
-  generateCameraID() {
-    let numbers = "";
-    for (let i = 0; i < 4; i++) {
-      numbers += Math.floor(Math.random() * 10); // Random digit (0-9)
-    }
-
-    return numbers;
   }
 
   generatePentagons(center, scale) {

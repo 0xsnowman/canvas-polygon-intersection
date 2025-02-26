@@ -114,7 +114,7 @@ function _drawDirectlyToMainCanvas(
   innerFillStyle1,
   innerFillStyle2,
 ) {
-  var finalCanvas = document.getElementById(canvasId);
+  var finalCanvas = element_by_id(canvasId);
 
   drawImageOnCanvas(finalCanvas, imgURL, () => {
     globalCameras.forEach((cam) => {

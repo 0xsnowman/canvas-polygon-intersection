@@ -64,7 +64,7 @@ class CameraVision {
   }
 
   _initMouseEvents() {
-    const canvas = document.getElementById("finalCanvas");
+    const canvas = element_by_id("finalCanvas");
     canvas.addEventListener("mousedown", this._onMouseDown.bind(this));
     canvas.addEventListener("mousemove", this._onMouseMove.bind(this));
     canvas.addEventListener("mouseup", this._onMouseUp.bind(this));
@@ -72,7 +72,7 @@ class CameraVision {
 
   _onMouseDown(event) {
     const { offsetX, offsetY } = event;
-    const rect = document.getElementById("finalCanvas").getBoundingClientRect();
+    const rect = element_by_id("finalCanvas").getBoundingClientRect();
 
     // Check necessity to rotate first
     if (this._isInRotatorHandle(offsetX, offsetY)) {
@@ -220,7 +220,7 @@ class CameraVision {
   }
 
   _drawCircle(center, radius, color = "blue") {
-    const canvas = document.getElementById("finalCanvas");
+    const canvas = element_by_id("finalCanvas");
     const ctx = canvas.getContext("2d");
     ctx.beginPath();
     ctx.arc(center.x, center.y, radius, 0, Math.PI * 2);
@@ -241,7 +241,7 @@ class CameraVision {
   }
 
   _draw() {
-    const canvas = document.getElementById("finalCanvas");
+    const canvas = element_by_id("finalCanvas");
     const ctx = canvas.getContext("2d");
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 

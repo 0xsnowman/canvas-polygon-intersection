@@ -18,7 +18,7 @@ document
     hideMenu(fisheye_menu);
   });
 
-document.getElementById("fisheye-allow-move").addEventListener("click", () => {
+element_by_id("fisheye-allow-move").addEventListener("click", () => {
   isReplaceAllowed = true;
   hideMenu(fisheye_menu);
 });
@@ -31,12 +31,12 @@ document
     );
 
     if (selectedIndex != undefined) {
-      document.getElementById("camera-name-list").childNodes.forEach((node) => {
+      element_by_id("camera-name-list").childNodes.forEach((node) => {
         if (node.id == "name_li_" + lastSelectedCameraID) {
           node.remove();
         }
       });
-      document.getElementById("camera-type-list").childNodes.forEach((node) => {
+      element_by_id("camera-type-list").childNodes.forEach((node) => {
         if (node.id == "type_li_" + lastSelectedCameraID) {
           node.remove();
         }
@@ -58,33 +58,33 @@ document
     hideMenu(fisheye_menu);
   });
 
-document.getElementById("zoom-allow-rotate").addEventListener("click", () => {
+element_by_id("zoom-allow-rotate").addEventListener("click", () => {
   isRotationAllowed = true;
   hideMenu(zoom_menu);
 });
 
-document.getElementById("zoom-allow-move").addEventListener("click", () => {
+element_by_id("zoom-allow-move").addEventListener("click", () => {
   isReplaceAllowed = true;
   hideMenu(zoom_menu);
 });
 
-document.getElementById("zoom-delete-polygon").addEventListener("click", () => {
+element_by_id("zoom-delete-polygon").addEventListener("click", () => {
   const selectedIndex = globalCameras.findIndex(
     (cam) => cam.cameraID == lastSelectedCameraID
   );
 
   if (selectedIndex != undefined) {
-    document.getElementById("camera-name-list").childNodes.forEach((node) => {
+    element_by_id("camera-name-list").childNodes.forEach((node) => {
       if (node.id == "name_li_" + lastSelectedCameraID) {
         node.remove();
       }
     });
-    document.getElementById("camera-type-list").childNodes.forEach((node) => {
+    element_by_id("camera-type-list").childNodes.forEach((node) => {
       if (node.id == "type_li_" + lastSelectedCameraID) {
         node.remove();
       }
     });
-    document.getElementById("camera-vision-list").childNodes.forEach((node) => {
+    element_by_id("camera-vision-list").childNodes.forEach((node) => {
       if (node.id == "checkbox_li_" + lastSelectedCameraID) {
         node.remove();
       }

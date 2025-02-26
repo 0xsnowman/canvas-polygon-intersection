@@ -8,21 +8,21 @@ var isRotationAllowed = false;
 var isReplaceAllowed = false;
 var lastSelectedCameraID = null;
 
-document.getElementById("finalCanvas").width = CANVAS_WIDTH;
-document.getElementById("finalCanvas").height = CANVAS_HEIGHT;
-document.getElementById("tempCanvas").width = CANVAS_WIDTH;
-document.getElementById("tempCanvas").height = CANVAS_HEIGHT;
-const fisheye_menu = document.getElementById("fisheye-menu");
-const zoom_menu = document.getElementById("zoom-menu");
+element_by_id("finalCanvas").width = CANVAS_WIDTH;
+element_by_id("finalCanvas").height = CANVAS_HEIGHT;
+element_by_id("tempCanvas").width = CANVAS_WIDTH;
+element_by_id("tempCanvas").height = CANVAS_HEIGHT;
+const fisheye_menu = element_by_id("fisheye-menu");
+const zoom_menu = element_by_id("zoom-menu");
 
 function init() {
   firstScalePoint = null;
   secondScalePoint = null;
   isScaleSet = false;
   globalCameras = [];
-  document.getElementById("camera-name-list").innerHTML = "";
-  document.getElementById("camera-type-list").innerHTML = "";
-  document.getElementById("camera-vision-list").innerHTML = "";
+  element_by_id("camera-name-list").innerHTML = "";
+  element_by_id("camera-type-list").innerHTML = "";
+  element_by_id("camera-vision-list").innerHTML = "";
 }
 
 document
@@ -35,7 +35,7 @@ document
         imgURL = e.target.result;
         init();
         drawImageOnCanvas(
-          document.getElementById("finalCanvas"),
+          element_by_id("finalCanvas"),
           e.target.result
         );
       };
@@ -44,21 +44,21 @@ document
   });
 
 window.onload = () => {
-  drawImageOnCanvas(document.getElementById("finalCanvas"), imgURL, () => {});
+  drawImageOnCanvas(element_by_id("finalCanvas"), imgURL, () => {});
 };
 
-document.getElementById("btn_add_fisheye").addEventListener("click", (event) => {
+element_by_id("btn_add_fisheye").addEventListener("click", (event) => {
     event.stopPropagation();
 
     if (!isScaleSet) return;
 
-    if (!document.getElementById("btn_add_fisheye").classList.contains("clicked")) {
-      document.getElementById("btn_add_fisheye").classList.add("clicked");
-      document.getElementById("2mp_btn").classList.remove("clicked");
-      document.getElementById("4mp_btn").classList.remove("clicked");
-      document.getElementById("8mp_btn").classList.remove("clicked");
+    if (!element_by_id("btn_add_fisheye").classList.contains("clicked")) {
+      element_by_id("btn_add_fisheye").classList.add("clicked");
+      element_by_id("2mp_btn").classList.remove("clicked");
+      element_by_id("4mp_btn").classList.remove("clicked");
+      element_by_id("8mp_btn").classList.remove("clicked");
     } else {
-      document.getElementById("btn_add_fisheye").classList.remove("clicked");
+      element_by_id("btn_add_fisheye").classList.remove("clicked");
     }
   });
 
@@ -74,7 +74,7 @@ Array.from(document.getElementsByClassName("btn_add_zoom")).forEach((btn) => {
       Array.from(document.getElementsByClassName("btn_add_zoom")).forEach((b) => {
         b.classList.remove("clicked");
       });
-      document.getElementById("btn_add_fisheye").classList.remove("clicked");
+      element_by_id("btn_add_fisheye").classList.remove("clicked");
       btn.classList.add("clicked");
     } else {
       btn.classList.remove("clicked");
@@ -82,7 +82,7 @@ Array.from(document.getElementsByClassName("btn_add_zoom")).forEach((btn) => {
   });
 })
 
-document.getElementById("finalCanvas").addEventListener("click", (event) => {
+element_by_id("finalCanvas").addEventListener("click", (event) => {
   event.stopPropagation();
 
   const { offsetX, offsetY } = event;
@@ -90,7 +90,7 @@ document.getElementById("finalCanvas").addEventListener("click", (event) => {
   if (firstScalePoint == null) {
     firstScalePoint = { x: offsetX, y: offsetY };
     drawCircleToCanvas(
-      document.getElementById("finalCanvas"),
+      element_by_id("finalCanvas"),
       firstScalePoint,
       6,
       "red"
@@ -98,7 +98,7 @@ document.getElementById("finalCanvas").addEventListener("click", (event) => {
   } else {
     if (secondScalePoint == null) {
       secondScalePoint = { x: offsetX, y: offsetY };
-      var ctx = document.getElementById("finalCanvas").getContext("2d");
+      var ctx = element_by_id("finalCanvas").getContext("2d");
 
       ctx.beginPath();
       ctx.moveTo(firstScalePoint.x, firstScalePoint.y);
@@ -110,13 +110,13 @@ document.getElementById("finalCanvas").addEventListener("click", (event) => {
       ctx.fillStyle = "rgba(0, 0, 255, 0.2)";
       ctx.fill();
       drawCircleToCanvas(
-        document.getElementById("finalCanvas"),
+        element_by_id("finalCanvas"),
         firstScalePoint,
         6,
         "red"
       );
       drawCircleToCanvas(
-        document.getElementById("finalCanvas"),
+        element_by_id("finalCanvas"),
         secondScalePoint,
         6,
         "red"
@@ -143,7 +143,7 @@ document.getElementById("finalCanvas").addEventListener("click", (event) => {
 
   if (!isScaleSet) return;
 
-  if (document.getElementById("btn_add_fisheye").classList.contains("clicked")) {
+  if (element_by_id("btn_add_fisheye").classList.contains("clicked")) {
     var newFisheyeCam = new Camera("fisheye", offsetX, offsetY);
     globalCameras.push(newFisheyeCam);
 
@@ -160,12 +160,12 @@ document.getElementById("finalCanvas").addEventListener("click", (event) => {
     };
 
     li.id = "name_li_" + newFisheyeCam.cameraID;
-    document.getElementById("camera-name-list").appendChild(li);
+    element_by_id("camera-name-list").appendChild(li);
 
     const type_li = document.createElement("li");
     type_li.innerText = "Fisheye";
     type_li.id = "type_li_" + newFisheyeCam.cameraID;
-    document.getElementById("camera-type-list").appendChild(type_li);
+    element_by_id("camera-type-list").appendChild(type_li);
 
     const checkbox_li = document.createElement("li");
 
@@ -201,8 +201,8 @@ document.getElementById("finalCanvas").addEventListener("click", (event) => {
     checkbox_li.appendChild(checkbox_out);
     checkbox_li.id = "checkbox_li_" + newFisheyeCam.cameraID;
 
-    document.getElementById("camera-vision-list").appendChild(checkbox_li);
-    document.getElementById("btn_add_fisheye").classList.remove("clicked");
+    element_by_id("camera-vision-list").appendChild(checkbox_li);
+    element_by_id("btn_add_fisheye").classList.remove("clicked");
   }
   Array.from(document.getElementsByClassName("btn_add_zoom")).forEach((btn) => {
     if (btn.classList.contains("clicked")) {
@@ -225,12 +225,12 @@ document.getElementById("finalCanvas").addEventListener("click", (event) => {
         li.innerText = shortenName(cameraName);
       };
       li.id = "name_li_" + newZoomCam.cameraID;
-      document.getElementById("camera-name-list").appendChild(li);
+      element_by_id("camera-name-list").appendChild(li);
   
       const type_li = document.createElement("li");
       type_li.innerText = "Zoom " + cam_type;
       type_li.id = "type_li_" + newZoomCam.cameraID;
-      document.getElementById("camera-type-list").appendChild(type_li);
+      element_by_id("camera-type-list").appendChild(type_li);
   
       const checkbox_li = document.createElement("li");
   
@@ -266,7 +266,7 @@ document.getElementById("finalCanvas").addEventListener("click", (event) => {
       checkbox_li.appendChild(checkbox_out);
       
       checkbox_li.id = "checkbox_li_" + newZoomCam.cameraID;
-      document.getElementById("camera-vision-list").appendChild(checkbox_li);
+      element_by_id("camera-vision-list").appendChild(checkbox_li);
       btn.classList.remove("clicked");
     }
   });
