@@ -25,8 +25,7 @@ function init() {
   element_by_id("camera-vision-list").innerHTML = "";
 }
 
-document
-  .getElementById("fileInput")
+element_by_id("fileInput")
   .addEventListener("change", function (event) {
     const file = event.target.files[0];
     if (file) {
@@ -62,7 +61,7 @@ element_by_id("btn_add_fisheye").addEventListener("click", (event) => {
     }
   });
 
-Array.from(document.getElementsByClassName("btn_add_zoom")).forEach((btn) => {
+Array.from(elements_by_class("btn_add_zoom")).forEach((btn) => {
   btn.addEventListener("click", (event) => {
     event.stopPropagation();
   
@@ -71,7 +70,7 @@ Array.from(document.getElementsByClassName("btn_add_zoom")).forEach((btn) => {
     }
   
     if (!btn.classList.contains("clicked")) {
-      Array.from(document.getElementsByClassName("btn_add_zoom")).forEach((b) => {
+      Array.from(elements_by_class("btn_add_zoom")).forEach((b) => {
         b.classList.remove("clicked");
       });
       element_by_id("btn_add_fisheye").classList.remove("clicked");
@@ -204,7 +203,7 @@ element_by_id("finalCanvas").addEventListener("click", (event) => {
     element_by_id("camera-vision-list").appendChild(checkbox_li);
     element_by_id("btn_add_fisheye").classList.remove("clicked");
   }
-  Array.from(document.getElementsByClassName("btn_add_zoom")).forEach((btn) => {
+  Array.from(elements_by_class("btn_add_zoom")).forEach((btn) => {
     if (btn.classList.contains("clicked")) {
       var cam_type = "2mp";
 

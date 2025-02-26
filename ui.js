@@ -11,8 +11,7 @@ function hideMenu(menu) {
   menu.style.display = "none";
 }
 
-document
-  .getElementById("fisheye-allow-rotate")
+element_by_id("fisheye-allow-rotate")
   .addEventListener("click", () => {
     isRotationAllowed = true;
     hideMenu(fisheye_menu);
@@ -23,8 +22,7 @@ element_by_id("fisheye-allow-move").addEventListener("click", () => {
   hideMenu(fisheye_menu);
 });
 
-document
-  .getElementById("fisheye-delete-polygon")
+element_by_id("fisheye-delete-polygon")
   .addEventListener("click", () => {
     const selectedIndex = globalCameras.findIndex(
       (cam) => cam.cameraID == lastSelectedCameraID
@@ -41,8 +39,7 @@ document
           node.remove();
         }
       });
-      document
-        .getElementById("camera-vision-list")
+      element_by_id("camera-vision-list")
         .childNodes.forEach((node) => {
           if (node.id == "checkbox_li_" + lastSelectedCameraID) {
             node.remove();
