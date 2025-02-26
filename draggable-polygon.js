@@ -27,7 +27,6 @@ class DraggablePolygon {
     this.canvas.addEventListener("mousedown", (e) => this.onMouseDown(e));
     this.canvas.addEventListener("mousemove", (e) => this.onMouseMove(e));
     this.canvas.addEventListener("mouseup", (e) => this.onMouseUp(e));
-    this.canvas.addEventListener("mouseleave", () => this.onMouseUp());
 
     this.draw(); // Initial draw
   }
@@ -61,9 +60,9 @@ class DraggablePolygon {
     });
   }
 
-  draw(camera_redraw = true) {
+  draw() {
     if (this.clearCanvasCallback) {
-      this.clearCanvasCallback(camera_redraw);
+      this.clearCanvasCallback();
     }
   }
 
@@ -140,7 +139,7 @@ class DraggablePolygon {
     }
   }
 
-  onMouseUp(event) {
+  onMouseUp() {
     if (this.draggingPoint) {
       if (distance(this.draggingPoint, this.center) > this.scale) {
         this.draggingPoint = null;

@@ -219,7 +219,7 @@ class CameraVision {
     });
   }
 
-  _drawCircle(center, radius, color = "black") {
+  _drawCircle(center, radius, color = "blue") {
     const canvas = document.getElementById("finalCanvas");
     const ctx = canvas.getContext("2d");
     ctx.beginPath();
@@ -254,11 +254,11 @@ class CameraVision {
         this.center_point,
         canvas,
         this.outer_polygon,
-        (camera_redraw) => {
+        () => {
           this._drawSketch();
 
           setTimeout(() => {
-            this._drawCircle(this.center_point, CAMERA_CIRCLE_RADIUS, "rgba(0, 0, 255, 1)");
+            this._drawCircle(this.center_point, CAMERA_CIRCLE_RADIUS);
           }, 100);
         },
         (points) => {
@@ -276,16 +276,10 @@ class CameraVision {
     }
 
     _drawDirectlyToMainCanvas(
-      this.cameraID,
       "finalCanvas",
-      this.outer_polygon,
-      this.inner_polygon1,
-      this.inner_polygon2,
       "rgba(255, 0, 0, 0.3)",
       "rgba(0, 0, 255, 0.4)",
       "rgba(0, 255, 0, 0.5)",
-      this.center_point,
-      this.draggablePolygonObject,
     );
   }
 }

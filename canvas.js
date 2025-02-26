@@ -109,16 +109,10 @@ function copyPolygonArea(canvas1, canvas2, polygon) {
 }
 
 function _drawDirectlyToMainCanvas(
-  cameraID,
   canvasId,
-  outer_polygon,
-  inner_polygon,
-  inner_polygon2,
   outerFillStyle,
   innerFillStyle1,
   innerFillStyle2,
-  center_point,
-  draggablePolygonObject
 ) {
   var finalCanvas = document.getElementById(canvasId);
 
