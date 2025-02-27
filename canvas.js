@@ -13,23 +13,23 @@ function drawImageOnCanvas(canvas, imgURL, callback) {
     if (callback) {
       callback();
     }
+  } else {
+    bgImage.onload = () => {
+      // console.log("Image loaded successfully!");
+      cachedBgImage = bgImage; // Cache the image after loading
+      // ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(bgImage, 0, 0, canvas.width, canvas.height);
+  
+      // Call the callback function after the image is drawn
+      if (callback) {
+        callback();
+      }
+    };
+  
+    bgImage.onerror = () => {
+      console.error("Failed to load image. Check the URL!");
+    };
   }
-
-  bgImage.onload = () => {
-    // console.log("Image loaded successfully!");
-    cachedBgImage = bgImage; // Cache the image after loading
-    // ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.drawImage(bgImage, 0, 0, canvas.width, canvas.height);
-
-    // Call the callback function after the image is drawn
-    if (callback) {
-      callback();
-    }
-  };
-
-  bgImage.onerror = () => {
-    console.error("Failed to load image. Check the URL!");
-  };
 }
 
 // Fill polygon with some color on to the canvas
@@ -116,12 +116,8 @@ function _drawDirectlyToMainCanvas(
 ) {
   var finalCanvas = element_by_id(canvasId);
   
-  // console.log(globalCameras);
-
-  // drawImageOnCanvas(finalCanvas, imgURL, () => {
+  drawImageOnCanvas(finalCanvas, imgURL, () => {
     globalCameras.forEach((cam) => {
-
-      // console.log(cam);
 
       if (cam.visibility_of_in1) {
         var intersect_polygons1 = intersect(cam.cameraVision.outer_polygon, cam.cameraVision.inner_polygon1);
@@ -153,7 +149,7 @@ function _drawDirectlyToMainCanvas(
       // Draws circle (camera) when dragging the polygon
       drawCircleToCanvas(finalCanvas, cam.cameraVision.center_point, CAMERA_CIRCLE_RADIUS);
     });
-  // });
+  });
 }
 
 function drawCircleToCanvas(canvas, center, radius, color = "blue") {

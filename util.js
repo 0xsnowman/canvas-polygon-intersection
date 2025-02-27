@@ -14,7 +14,7 @@ function toRadians(angle) {
 
 // get needed points count for certain angle
 function getPointsCountForAngle(ridians) {
-  return Math.round(ridians * 5);
+  return Math.round(2 / ridians) + 3;
 }
 
 // generates random camera ID
