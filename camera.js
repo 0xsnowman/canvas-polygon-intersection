@@ -3,7 +3,7 @@ class Camera {
     this.type = type;
     this.cameraID = generateRandom4Digits();
     this.cameraName =
-      type == "fisheye-2mp" || type == "fisheye-4mp" || type == "fisheye-8mp"
+      type == "fisheye-8mp" || type == "fisheye-12mp" || type == "fisheye-125mp"
         ? "F-" + this.cameraID
         : "Z-" + this.cameraID;
     
@@ -105,13 +105,13 @@ class Camera {
 
   drawInitialPolygon() {
     switch (this.type) {
-      case "fisheye-2mp":
-        this.drawPentagon();
-        break;
-      case "fisheye-4mp":
-        this.drawPentagon();
-        break;
       case "fisheye-8mp":
+        this.drawPentagon();
+        break;
+      case "fisheye-12mp":
+        this.drawPentagon();
+        break;
+      case "fisheye-125mp":
         this.drawPentagon();
         break;
       case "zoom-2mp":
@@ -192,13 +192,13 @@ class Camera {
       if (double_angle == 90) return [7, 15, 95];
       if (double_angle == 110) return [5, 10, 67];
     }
-    if (this.type == "fisheye-2mp") {
+    if (this.type == "fisheye-8mp") {
       return [2, 5, 33];
     }
-    if (this.type == "fisheye-4mp") {
+    if (this.type == "fisheye-12mp") {
       return [3, 7, 46];
     }
-    if (this.type == "fisheye-8mp") {
+    if (this.type == "fisheye-125mp") {
       return [4, 8, 53];
     }
   }

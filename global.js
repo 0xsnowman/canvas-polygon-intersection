@@ -155,11 +155,11 @@ element_by_id("finalCanvas").addEventListener("click", (event) => {
   Array.from(elements_by_class("btn_add_fisheye")).forEach((btn) => {
     if (btn.classList.contains("clicked")) {
 
-      var cam_type = "2mp";
+      var cam_type = "8mp";
 
-      if (btn.id == "f_8mp_btn") cam_type = "2mp";
-      if (btn.id == "f_12mp_btn") cam_type = "4mp";
-      if (btn.id == "f_125mp_btn") cam_type = "8mp";
+      if (btn.id == "f_8mp_btn") cam_type = "8mp";
+      if (btn.id == "f_12mp_btn") cam_type = "12mp";
+      if (btn.id == "f_125mp_btn") cam_type = "125mp";
 
       var newFisheyeCam = new Camera("fisheye-" + cam_type, offsetX, offsetY);
       globalCameras.push(newFisheyeCam);
