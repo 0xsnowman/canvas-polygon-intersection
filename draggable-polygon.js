@@ -81,13 +81,24 @@ class DraggablePolygon {
     this.ctx.fill();
 
     // Draw draggable points
-    this.points.forEach((point) => {
+    this.points.forEach((point, index) => {
       this.ctx.beginPath();
       this.ctx.arc(point.x, point.y, 6, 0, Math.PI * 2);
       this.ctx.fillStyle = "red";
       this.ctx.fill();
       this.ctx.strokeStyle = "black";
       this.ctx.stroke();
+
+      if (globalShowPointIndexFlag) {
+        this.ctx.font = "20px Arial";
+        this.ctx.fillStyle = "red"; // Text color
+        this.ctx.textAlign = "center"; // Align text
+        this.ctx.textBaseline = "middle"; // Align baseline
+        this.ctx.fontWeight = "bold";
+
+        // Draw text
+        this.ctx.fillText(index, point.x, point.y - 15);
+      }
     });
 
     this.drawCameraName();
@@ -207,8 +218,8 @@ class DraggablePolygon {
       var directionDueToCamType = this.type.substr(0, 1) == "f" ? true : false;
       var tempPoints = [];
 
-      // Fisheye case
       if (directionDueToCamType) {
+        // Fisheye case
         tempPoints = this.optimizedCircularCut(
           this.points,
           firstCutoutIndex,
@@ -216,6 +227,7 @@ class DraggablePolygon {
           intersectArea.edge[0],
         );
       } else {
+        // Zoom case
         tempPoints = this.circularCutRestAndAddIntersect(
           this.points,
           firstCutoutIndex,
@@ -228,10 +240,10 @@ class DraggablePolygon {
       console.log(this.points);
     }
 
-    // this.points = this.addPointsAroundDraggingPoint(
-    //   this.points,
-    //   draggingPointIndex
-    // );
+    this.points = this.addPointsAroundDraggingPoint(
+      this.points,
+      draggingPointIndex
+    );
 
     this.draggingPoint = null;
     this.canvas.style.cursor = "default";
@@ -288,18 +300,20 @@ class DraggablePolygon {
     let i = firstCutOutIndex;
     while (true) {
       cutOut.push(arr[i]);
-      if (i === secondCutOutIndex) break;
+      if (i === secondCutOutIndex) {
+        cutOut.push(newPoint);
+        break;
+      }
       i = (i + 1) % n;
     }
-    cutOut.push(newPoint);
   
     // Get rest part
     let rest = [];
     i = (secondCutOutIndex + 1) % n;
-    while (i !== firstCutOutIndex) {
+    do {
       rest.push(arr[i]);
       i = (i + 1) % n;
-    }
+    } while (i !== firstCutOutIndex);
     rest.push(arr[firstCutOutIndex]);
     rest.push(newPoint);
   

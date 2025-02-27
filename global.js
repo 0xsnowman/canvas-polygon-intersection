@@ -7,6 +7,7 @@ var scaleValue = 1;
 var isRotationAllowed = false;
 var isReplaceAllowed = false;
 var lastSelectedCameraID = null;
+var globalShowPointIndexFlag = false;
 
 element_by_id("finalCanvas").width = CANVAS_WIDTH;
 element_by_id("finalCanvas").height = CANVAS_HEIGHT;

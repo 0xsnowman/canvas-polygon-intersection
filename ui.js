@@ -102,3 +102,9 @@ function changeZoomAngle(angle) {
     .changeCameraAngle(angle / 2);
   hideMenu(zoom_menu);
 }
+
+element_by_id("show-point-index").addEventListener("change", (event) => {
+  event.stopPropagation();
+  globalShowPointIndexFlag = element_by_id("show-point-index").checked;
+  redrawEntireCanvas();
+});

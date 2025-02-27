@@ -18,6 +18,10 @@
         <button class="btn_add_zoom" id="8mp_btn">Add 8MP Zoom</button>
         <label id="customFileInput" for="fileInput">Choose an Image</label>
         <input type="file" id="fileInput" accept="image/*" />
+        <div class="control-panel">
+          <input type="checkbox" id="show-point-index">
+          <label>Show Point Index</label>
+        </div>
       </div>
       <canvas id="finalCanvas" width="600" height="600"></canvas>
       <div class="control-panel">
@@ -72,7 +76,6 @@
 
     <script src="constants.js"></script>
     <script src="util.js"></script>
-    <script src="ui.js"></script>
     <script src="canvas.js"></script>
     <script src="draggable-polygon.js"></script>
     <script src="solution.js"></script>
@@ -80,5 +83,6 @@
     <script src="camera-vision.js"></script>
     <script src="camera.js"></script>
     <script src="global.js"></script>
+    <script src="ui.js"></script>
   </body>
 </html>
