@@ -26,7 +26,6 @@
       bgImage.src = "map.jpg"; // Ensure this URL is correct
 
       bgImage.onload = () => {
-        console.log("Image loaded successfully!"); // Debugging log
         draw();
       };
 
@@ -39,7 +38,6 @@
 
         // Ensure image is loaded before drawing
         if (bgImage.complete) {
-          console.log("drawing loaded image to canvas");
           ctx.drawImage(bgImage, 0, 0, canvas.width, canvas.height);
         }
 
