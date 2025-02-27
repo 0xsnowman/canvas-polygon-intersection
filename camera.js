@@ -2,7 +2,11 @@ class Camera {
   constructor(type, center_x, center_y, angle = 25) {
     this.type = type;
     this.cameraID = generateRandom4Digits();
-    this.cameraName = (type == "fisheye" ? "F-" : "Z-") + this.cameraID;
+    this.cameraName =
+      type == "fisheye-2mp" || type == "fisheye-4mp" || type == "fisheye-8mp"
+        ? "F-" + this.cameraID
+        : "Z-" + this.cameraID;
+    
     this.m_angle = angle;
 
     this.visibility_of_out = true;
@@ -32,7 +36,7 @@ class Camera {
   generatePentagons(center, scale) {
     function createPentagon(center, radius) {
       let pentagon = [],
-        pointCount = 20;
+        pointCount = 10;
       for (let i = 0; i < pointCount; i++) {
         let angle = (2 * Math.PI * i) / pointCount; // 360-degree steps
         pentagon.push({
@@ -101,7 +105,13 @@ class Camera {
 
   drawInitialPolygon() {
     switch (this.type) {
-      case "fisheye":
+      case "fisheye-2mp":
+        this.drawPentagon();
+        break;
+      case "fisheye-4mp":
+        this.drawPentagon();
+        break;
+      case "fisheye-8mp":
         this.drawPentagon();
         break;
       case "zoom-2mp":
@@ -182,8 +192,14 @@ class Camera {
       if (double_angle == 90) return [7, 15, 95];
       if (double_angle == 110) return [5, 10, 67];
     }
-    if (this.type == "fisheye") {
+    if (this.type == "fisheye-2mp") {
       return [2, 5, 33];
+    }
+    if (this.type == "fisheye-4mp") {
+      return [3, 7, 46];
+    }
+    if (this.type == "fisheye-8mp") {
+      return [4, 8, 53];
     }
   }
 }

@@ -46,34 +46,39 @@ window.onload = () => {
   drawImageOnCanvas(element_by_id("finalCanvas"), imgURL, () => {});
 };
 
-element_by_id("btn_add_fisheye").addEventListener("click", (event) => {
+Array.from(elements_by_class("btn_add_fisheye")).forEach((btn) => {
+  btn.addEventListener("click", (event) => {
     event.stopPropagation();
 
     if (!isScaleSet) return;
 
-    if (!element_by_id("btn_add_fisheye").classList.contains("clicked")) {
-      element_by_id("btn_add_fisheye").classList.add("clicked");
-      element_by_id("2mp_btn").classList.remove("clicked");
-      element_by_id("4mp_btn").classList.remove("clicked");
-      element_by_id("8mp_btn").classList.remove("clicked");
+    if (!btn.classList.contains("clicked")) {
+      Array.from(elements_by_class("btn_add_fisheye")).forEach((b) => {
+        b.classList.remove("clicked");
+      });
+      Array.from(elements_by_class("btn_add_zoom")).forEach((b) => {
+        b.classList.remove("clicked");
+      });
+      btn.classList.add("clicked");
     } else {
-      element_by_id("btn_add_fisheye").classList.remove("clicked");
+      btn.classList.remove("clicked");
     }
   });
+});
 
 Array.from(elements_by_class("btn_add_zoom")).forEach((btn) => {
   btn.addEventListener("click", (event) => {
     event.stopPropagation();
   
-    if (!isScaleSet) {
-      return;
-    }
+    if (!isScaleSet) return;
   
     if (!btn.classList.contains("clicked")) {
       Array.from(elements_by_class("btn_add_zoom")).forEach((b) => {
         b.classList.remove("clicked");
       });
-      element_by_id("btn_add_fisheye").classList.remove("clicked");
+      Array.from(elements_by_class("btn_add_fisheye")).forEach((b) => {
+        b.classList.remove("clicked");
+      });
       btn.classList.add("clicked");
     } else {
       btn.classList.remove("clicked");
@@ -147,69 +152,78 @@ element_by_id("finalCanvas").addEventListener("click", (event) => {
 
   if (!isScaleSet) return;
 
-  if (element_by_id("btn_add_fisheye").classList.contains("clicked")) {
-    var newFisheyeCam = new Camera("fisheye", offsetX, offsetY);
-    globalCameras.push(newFisheyeCam);
+  Array.from(elements_by_class("btn_add_fisheye")).forEach((btn) => {
+    if (btn.classList.contains("clicked")) {
 
-    const li = document.createElement("li");
-    li.innerText = newFisheyeCam.cameraName;
-    li.onclick = () => {
-      var cameraName = prompt(
-        "Enter new camera name:",
-        newFisheyeCam.cameraName
-      );
-      if (!cameraName) return;
-      newFisheyeCam.changeCameraName(cameraName);
-      li.innerText = shortenName(cameraName);
-    };
+      var cam_type = "2mp";
 
-    li.id = "name_li_" + newFisheyeCam.cameraID;
-    element_by_id("camera-name-list").appendChild(li);
+      if (btn.id == "f_8mp_btn") cam_type = "2mp";
+      if (btn.id == "f_12mp_btn") cam_type = "4mp";
+      if (btn.id == "f_125mp_btn") cam_type = "8mp";
 
-    const type_li = document.createElement("li");
-    type_li.innerText = "Fisheye";
-    type_li.id = "type_li_" + newFisheyeCam.cameraID;
-    element_by_id("camera-type-list").appendChild(type_li);
-
-    const checkbox_li = document.createElement("li");
-
-    // Create a checkbox element
-    const checkbox = document.createElement("input");
-    checkbox.type = "checkbox";
-    checkbox.checked = true;
-    // Add an event listener to detect changes
-    checkbox.addEventListener("change", function () {
-      newFisheyeCam.visibility_of_in1 = this.checked ? true : false;
-    });
-
-    // Create a checkbox element
-    const checkbox2 = document.createElement("input");
-    checkbox2.type = "checkbox";
-    checkbox2.checked = true;
-    // Add an event listener to detect changes
-    checkbox2.addEventListener("change", function () {
-      newFisheyeCam.visibility_of_in2 = this.checked ? true : false;
-    });
-
-    // Create a checkbox element
-    const checkbox_out = document.createElement("input");
-    checkbox_out.type = "checkbox";
-    checkbox_out.checked = true;
-    // Add an event listener to detect changes
-    checkbox_out.addEventListener("change", function () {
-      newFisheyeCam.visibility_of_out = this.checked ? true : false;
-    });
-
-    checkbox_li.appendChild(checkbox);
-    checkbox_li.appendChild(checkbox2);
-    checkbox_li.appendChild(checkbox_out);
-    checkbox_li.id = "checkbox_li_" + newFisheyeCam.cameraID;
-
-    element_by_id("camera-vision-list").appendChild(checkbox_li);
-    element_by_id("btn_add_fisheye").classList.remove("clicked");
-
-    redrawEntireCanvas();
-  }
+      var newFisheyeCam = new Camera("fisheye-" + cam_type, offsetX, offsetY);
+      globalCameras.push(newFisheyeCam);
+  
+      const li = document.createElement("li");
+      li.innerText = newFisheyeCam.cameraName;
+      li.onclick = () => {
+        var cameraName = prompt(
+          "Enter new camera name:",
+          newFisheyeCam.cameraName
+        );
+        if (!cameraName) return;
+        newFisheyeCam.changeCameraName(cameraName);
+        li.innerText = shortenName(cameraName);
+      };
+  
+      li.id = "name_li_" + newFisheyeCam.cameraID;
+      element_by_id("camera-name-list").appendChild(li);
+  
+      const type_li = document.createElement("li");
+      type_li.innerText = "Fisheye";
+      type_li.id = "type_li_" + newFisheyeCam.cameraID;
+      element_by_id("camera-type-list").appendChild(type_li);
+  
+      const checkbox_li = document.createElement("li");
+  
+      // Create a checkbox element
+      const checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
+      checkbox.checked = true;
+      // Add an event listener to detect changes
+      checkbox.addEventListener("change", function () {
+        newFisheyeCam.visibility_of_in1 = this.checked ? true : false;
+      });
+  
+      // Create a checkbox element
+      const checkbox2 = document.createElement("input");
+      checkbox2.type = "checkbox";
+      checkbox2.checked = true;
+      // Add an event listener to detect changes
+      checkbox2.addEventListener("change", function () {
+        newFisheyeCam.visibility_of_in2 = this.checked ? true : false;
+      });
+  
+      // Create a checkbox element
+      const checkbox_out = document.createElement("input");
+      checkbox_out.type = "checkbox";
+      checkbox_out.checked = true;
+      // Add an event listener to detect changes
+      checkbox_out.addEventListener("change", function () {
+        newFisheyeCam.visibility_of_out = this.checked ? true : false;
+      });
+  
+      checkbox_li.appendChild(checkbox);
+      checkbox_li.appendChild(checkbox2);
+      checkbox_li.appendChild(checkbox_out);
+      checkbox_li.id = "checkbox_li_" + newFisheyeCam.cameraID;
+  
+      element_by_id("camera-vision-list").appendChild(checkbox_li);
+      btn.classList.remove("clicked");
+  
+      redrawEntireCanvas();
+    }
+  });
   Array.from(elements_by_class("btn_add_zoom")).forEach((btn) => {
     if (btn.classList.contains("clicked")) {
       var cam_type = "2mp";
