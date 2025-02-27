@@ -180,7 +180,7 @@ element_by_id("finalCanvas").addEventListener("click", (event) => {
       element_by_id("camera-name-list").appendChild(li);
   
       const type_li = document.createElement("li");
-      type_li.innerText = "Fisheye";
+      type_li.innerText = "Fisheye " + cam_type;
       type_li.id = "type_li_" + newFisheyeCam.cameraID;
       element_by_id("camera-type-list").appendChild(type_li);
   
@@ -301,9 +301,15 @@ document.addEventListener("mouseup", function () {
 function redrawEntireCanvas() {
   if (firstScalePoint && secondScalePoint) {
     isScaleSet = true;
-    globalCameras.forEach((cam) => {
-      cam.draw();
-    });
+    // globalCameras.forEach((cam) => {
+    //   cam.draw();
+    // });
+    _drawDirectlyToMainCanvas(
+      "finalCanvas",
+      "rgba(255, 0, 0, 0.3)",
+      "rgba(0, 0, 255, 0.4)",
+      "rgba(0, 255, 0, 0.5)"
+    );
   } else {
     // isScaleSet = false;
   }

@@ -90,7 +90,11 @@ class CameraVision {
     if (this._isInRotatorHandle(offsetX, offsetY)) {
       // Calculate initial angle based on mouse click position
       this.initialMousePosition = { x: offsetX, y: offsetY };
-      if (this.type == "fisheye") {
+      if (
+        this.type == "fisheye-8mp" ||
+        this.type == "fisheye-12mp" ||
+        this.type == "fisheye-125mp"
+      ) {
         showMenu(
           fisheye_menu,
           offsetX + rect.left,
@@ -122,7 +126,9 @@ class CameraVision {
       return; // Allow reshaping instead of dragging
     }
 
-    if (this._isPointInPolygon({ x: offsetX, y: offsetY }, this.outer_polygon)) {
+    if (
+      this._isPointInPolygon({ x: offsetX, y: offsetY }, this.outer_polygon)
+    ) {
       if (isReplaceAllowed) {
         this.isDragging = true;
         this.dragStart = { x: offsetX, y: offsetY };

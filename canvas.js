@@ -43,69 +43,6 @@ function drawPolygonToCanvas(canvas, points, fillStyle = "red") {
   ctx.fill();
 }
 
-// Copy canvas1 polygon area -> canvas 2 polygon area
-function copyPolygonArea(canvas1, canvas2, polygon) {
-  const ctx2 = canvas2.getContext("2d");
-
-  // Create a temporary canvas to extract the polygon area
-  const tempCanvas = document.createElement("canvas");
-  tempCanvas.width = canvas1.width;
-  tempCanvas.height = canvas1.height;
-  const tempCtx = tempCanvas.getContext("2d");
-
-  // Clip the polygon area on tempCanvas
-  tempCtx.save();
-  tempCtx.beginPath();
-  polygon.forEach((point, index) => {
-    if (index === 0) {
-      tempCtx.moveTo(point.x, point.y);
-    } else {
-      tempCtx.lineTo(point.x, point.y);
-    }
-  });
-  tempCtx.closePath();
-  tempCtx.clip();
-
-  // Draw the clipped area from canvas1 onto tempCanvas
-  tempCtx.drawImage(canvas1, 0, 0);
-
-  // Get the bounding box of the polygon
-  const minX = Math.min(...polygon.map((p) => p.x));
-  const minY = Math.min(...polygon.map((p) => p.y));
-  const maxX = Math.max(...polygon.map((p) => p.x));
-  const maxY = Math.max(...polygon.map((p) => p.y));
-  const width = maxX - minX;
-  const height = maxY - minY;
-
-  // Clip the same polygon on canvas2
-  ctx2.save();
-  ctx2.beginPath();
-  polygon.forEach((point, index) => {
-    if (index === 0) {
-      ctx2.moveTo(point.x, point.y);
-    } else {
-      ctx2.lineTo(point.x, point.y);
-    }
-  });
-  ctx2.closePath();
-  ctx2.clip();
-
-  // Draw the extracted polygon region onto canvas2 at the same position
-  ctx2.drawImage(
-    tempCanvas,
-    minX,
-    minY,
-    width,
-    height,
-    minX,
-    minY,
-    width,
-    height
-  );
-
-  ctx2.restore();
-}
-
 function _drawDirectlyToMainCanvas(
   canvasId,
   outerFillStyle,
