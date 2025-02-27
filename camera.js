@@ -36,7 +36,7 @@ class Camera {
   generatePentagons(center, scale) {
     function createPentagon(center, radius) {
       let pentagon = [],
-        pointCount = 10;
+        pointCount = 14;
       for (let i = 0; i < pointCount; i++) {
         let angle = (2 * Math.PI * i) / pointCount; // 360-degree steps
         pentagon.push({
@@ -51,9 +51,9 @@ class Camera {
     const visionRangesValue = this.visionRanges();
 
     return {
-      out_pol: createPentagon(center, visionRangesValue[2]),
-      in_pol1: createPentagon(center, visionRangesValue[1]),
-      in_pol2: createPentagon(center, visionRangesValue[0]),
+      out_pol: createPentagon(center, visionRangesValue[2] * scale),
+      in_pol1: createPentagon(center, visionRangesValue[1] * scale),
+      in_pol2: createPentagon(center, visionRangesValue[0] * scale),
     };
   }
 
