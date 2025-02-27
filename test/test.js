@@ -76,7 +76,6 @@ function polygonate(edges) {
       }
     }
   }
-  //console.log("polygonate: " + JSON.stringify(polygons));
   return polygons;
 }
 

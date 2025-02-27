@@ -15,9 +15,7 @@ function drawImageOnCanvas(canvas, imgURL, callback) {
     }
   } else {
     bgImage.onload = () => {
-      // console.log("Image loaded successfully!");
       cachedBgImage = bgImage; // Cache the image after loading
-      // ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.drawImage(bgImage, 0, 0, canvas.width, canvas.height);
   
       // Call the callback function after the image is drawn

@@ -143,7 +143,7 @@ class DraggablePolygon {
     if (this.draggingPoint) {
       const angle = globalCameras.find((cam) => cam.cameraID == this.cameraID).m_angle;
       const out_radius = visionRanges(this.type, angle)[2] * this.scale;
-      
+
       if (distance(this.draggingPoint, this.center) > out_radius) {
         this.draggingPoint = null;
         this.points = [...this.originalPoints];
@@ -182,10 +182,11 @@ class DraggablePolygon {
       draggingPointIndex
     );
 
-    // console.log(this.draggingPoint);
     const intersectArea = this.intersectAreaNotVisibleExist(
       (draggingPointIndex + 1) % this.points.length
     );
+
+    console.log(intersectArea);
 
     if (intersectArea.edge.length > 0) {
       const firstCutoutIndex = (draggingPointIndex + 2) % this.points.length;
@@ -257,7 +258,6 @@ class DraggablePolygon {
   }
 
   intersectAreaNotVisibleExist(draggingPointIndex) {
-    // console.log(draggingPointIndex);
     for (let i = 0; i < this.points.length; ++i) {
       if (i != draggingPointIndex && (i + 1) % this.points.length != 0) {
         const edge2Distanve = distance(this.center, this.draggingPoint);
@@ -284,7 +284,6 @@ class DraggablePolygon {
         const intersectEdges = findEdgeIntersection(edge1, edge2);
 
         if (intersectEdges.length > 0) {
-          // console.log("common part:", intersectEdges[0]);
           return { edge: intersectEdges, index: i };
         }
       }
