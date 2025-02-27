@@ -115,9 +115,13 @@ function _drawDirectlyToMainCanvas(
   innerFillStyle2,
 ) {
   var finalCanvas = element_by_id(canvasId);
+  
+  // console.log(globalCameras);
 
-  drawImageOnCanvas(finalCanvas, imgURL, () => {
+  // drawImageOnCanvas(finalCanvas, imgURL, () => {
     globalCameras.forEach((cam) => {
+
+      // console.log(cam);
 
       if (cam.visibility_of_in1) {
         var intersect_polygons1 = intersect(cam.cameraVision.outer_polygon, cam.cameraVision.inner_polygon1);
@@ -149,7 +153,7 @@ function _drawDirectlyToMainCanvas(
       // Draws circle (camera) when dragging the polygon
       drawCircleToCanvas(finalCanvas, cam.cameraVision.center_point, CAMERA_CIRCLE_RADIUS);
     });
-  });
+  // });
 }
 
 function drawCircleToCanvas(canvas, center, radius, color = "blue") {

@@ -49,10 +49,10 @@ element_by_id("fisheye-delete-polygon")
 
     globalCameras = globalCameras.filter(
       (cam) => cam.cameraID !== lastSelectedCameraID
-    );
-
-    redrawEntireCanvas();
+    ); 
+    
     hideMenu(fisheye_menu);
+    redrawEntireCanvas();
   });
 
 element_by_id("zoom-allow-rotate").addEventListener("click", () => {

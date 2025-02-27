@@ -8,17 +8,29 @@ class CameraVision {
     inner_polygon1,
     inner_polygon2,
     outer_polygon,
-    scale,
+    scale
   ) {
-    this.cameraID = cameraID,
-    this.cameraName = cameraName,
-    this.type = type,
-    this.scale = scale;
+    (this.cameraID = cameraID),
+      (this.cameraName = cameraName),
+      (this.type = type),
+      (this.scale = scale);
     this.center_point = center_point;
     this.rotation = rotation;
-    this.inner_polygon1 = this._rotatePolygon(inner_polygon1, center_point, rotation);
-    this.inner_polygon2 = this._rotatePolygon(inner_polygon2, center_point, rotation);
-    this.outer_polygon = this._rotatePolygon(outer_polygon, center_point, rotation);
+    this.inner_polygon1 = this._rotatePolygon(
+      inner_polygon1,
+      center_point,
+      rotation
+    );
+    this.inner_polygon2 = this._rotatePolygon(
+      inner_polygon2,
+      center_point,
+      rotation
+    );
+    this.outer_polygon = this._rotatePolygon(
+      outer_polygon,
+      center_point,
+      rotation
+    );
 
     this.isDragging = false;
     this.dragStart = null;
@@ -41,14 +53,14 @@ class CameraVision {
   updateInnerPolygons(points1, points2) {
     this.inner_polygon1 = [];
     if (points1) {
-      (points1).forEach(point => {
+      points1.forEach((point) => {
         this.inner_polygon1.push(point);
       });
     }
 
     this.inner_polygon2 = [];
     if (points2) {
-      (points2).forEach(point => {
+      points2.forEach((point) => {
         this.inner_polygon2.push(point);
       });
     }
@@ -57,7 +69,7 @@ class CameraVision {
   updateOuterPolygon(points) {
     this.outer_polygon = [];
     if (points) {
-      (points).forEach(point => {
+      points.forEach((point) => {
         this.outer_polygon.push(point);
       });
     }
@@ -79,9 +91,21 @@ class CameraVision {
       // Calculate initial angle based on mouse click position
       this.initialMousePosition = { x: offsetX, y: offsetY };
       if (this.type == "fisheye") {
-        showMenu(fisheye_menu, offsetX + rect.left, offsetY + rect.top, this.cameraID, this.type);
+        showMenu(
+          fisheye_menu,
+          offsetX + rect.left,
+          offsetY + rect.top,
+          this.cameraID,
+          this.type
+        );
       } else {
-        showMenu(zoom_menu, offsetX + rect.left, offsetY + rect.top, this.cameraID, this.type);
+        showMenu(
+          zoom_menu,
+          offsetX + rect.left,
+          offsetY + rect.top,
+          this.cameraID,
+          this.type
+        );
       }
       return;
     } else {
@@ -98,9 +122,7 @@ class CameraVision {
       return; // Allow reshaping instead of dragging
     }
 
-    if (
-      this._isPointInsidePolygon({ x: offsetX, y: offsetY }, this.outer_polygon)
-    ) {
+    if (this._isPointInPolygon({ x: offsetX, y: offsetY }, this.outer_polygon)) {
       if (isReplaceAllowed) {
         this.isDragging = true;
         this.dragStart = { x: offsetX, y: offsetY };
@@ -120,7 +142,7 @@ class CameraVision {
 
     // Calculate the angle between the initial position and the current mouse position
     if (this.initialMousePosition && isRotationAllowed) {
-      const angleChange = this._calculateAngleChange(
+      const angleChange = this._calcAngleChangeFromMousePosition(
         this.initialMousePosition,
         { x: offsetX, y: offsetY }
       );
@@ -156,7 +178,7 @@ class CameraVision {
     this.selectedPoint = null;
   }
 
-  _calculateAngleChange(initial, current) {
+  _calcAngleChangeFromMousePosition(initial, current) {
     const deltaX = current.x - this.center_point.x;
     const deltaY = current.y - this.center_point.y;
     const initialDeltaX = initial.x - this.center_point.x;
@@ -182,7 +204,7 @@ class CameraVision {
     );
   }
 
-  _isPointInsidePolygon(point, polygon) {
+  _isPointInPolygon(point, polygon) {
     let inside = false;
     for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
       const xi = polygon[i].x,
@@ -201,9 +223,21 @@ class CameraVision {
     if (this.cameraID != lastSelectedCameraID) return;
     if (!isRotationAllowed) return;
     this.rotation += angle;
-    this.inner_polygon1 = this._rotatePolygon(this.inner_polygon1, this.center_point, angle);
-    this.inner_polygon2 = this._rotatePolygon(this.inner_polygon2, this.center_point, angle);
-    this.outer_polygon = this._rotatePolygon(this.outer_polygon, this.center_point, angle);
+    this.inner_polygon1 = this._rotatePolygon(
+      this.inner_polygon1,
+      this.center_point,
+      angle
+    );
+    this.inner_polygon2 = this._rotatePolygon(
+      this.inner_polygon2,
+      this.center_point,
+      angle
+    );
+    this.outer_polygon = this._rotatePolygon(
+      this.outer_polygon,
+      this.center_point,
+      angle
+    );
     this._drawSketch();
   }
 
@@ -217,19 +251,6 @@ class CameraVision {
         y: Math.sin(radians) * dx + Math.cos(radians) * dy + center.y,
       };
     });
-  }
-
-  _drawCircle(center, radius, color = "blue") {
-    const canvas = element_by_id("finalCanvas");
-    const ctx = canvas.getContext("2d");
-    ctx.beginPath();
-    ctx.arc(center.x, center.y, radius, 0, Math.PI * 2);
-    ctx.fillStyle = color;
-    ctx.strokeStyle = "black";
-    ctx.lineWidth = 2;
-    ctx.stroke();
-    ctx.fill();
-    ctx.closePath();
   }
 
   _isInRotatorHandle(x, y) {
@@ -258,7 +279,12 @@ class CameraVision {
           this._drawSketch();
 
           setTimeout(() => {
-            this._drawCircle(this.center_point, CAMERA_CIRCLE_RADIUS);
+            drawCircleToCanvas(
+              element_by_id("finalCanvas"),
+              this.center_point,
+              CAMERA_CIRCLE_RADIUS,
+              "blue"
+            );
           }, 100);
         },
         (points) => {
@@ -279,7 +305,7 @@ class CameraVision {
       "finalCanvas",
       "rgba(255, 0, 0, 0.3)",
       "rgba(0, 0, 255, 0.4)",
-      "rgba(0, 255, 0, 0.5)",
+      "rgba(0, 255, 0, 0.5)"
     );
   }
 }

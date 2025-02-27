@@ -1,9 +1,9 @@
-var globalMouseFlag = false;
 var globalCameras = [];
 var imgURL = "map.png";
 var firstScalePoint = null;
 var secondScalePoint = null;
 var isScaleSet = false;
+var scaleValue = 1;
 var isRotationAllowed = false;
 var isReplaceAllowed = false;
 var lastSelectedCameraID = null;
@@ -87,15 +87,20 @@ element_by_id("finalCanvas").addEventListener("click", (event) => {
   const { offsetX, offsetY } = event;
 
   if (firstScalePoint == null) {
+
     firstScalePoint = { x: offsetX, y: offsetY };
+
     drawCircleToCanvas(
       element_by_id("finalCanvas"),
       firstScalePoint,
       6,
       "red"
     );
+
   } else {
+
     if (secondScalePoint == null) {
+      
       secondScalePoint = { x: offsetX, y: offsetY };
       var ctx = element_by_id("finalCanvas").getContext("2d");
 
@@ -122,7 +127,7 @@ element_by_id("finalCanvas").addEventListener("click", (event) => {
       );
 
       setTimeout(() => {
-        var distance = prompt("Enter Distance in meters:", "1");
+        scaleValue = prompt("Enter Distance in meters:", "1");
         ctx.font = "20px Arial";
         ctx.fillStyle = "blue"; // Text color
         ctx.textAlign = "center"; // Align text
@@ -132,7 +137,7 @@ element_by_id("finalCanvas").addEventListener("click", (event) => {
         ctx.strokeStyle = "blue"; // Outline color
         ctx.lineWidth = 2; // Outline width
         ctx.strokeText(
-          distance + "m",
+          scaleValue + "m",
           (firstScalePoint.x + secondScalePoint.x) / 2,
           (firstScalePoint.y + secondScalePoint.y) / 2
         );
@@ -202,6 +207,8 @@ element_by_id("finalCanvas").addEventListener("click", (event) => {
 
     element_by_id("camera-vision-list").appendChild(checkbox_li);
     element_by_id("btn_add_fisheye").classList.remove("clicked");
+
+    redrawEntireCanvas();
   }
   Array.from(elements_by_class("btn_add_zoom")).forEach((btn) => {
     if (btn.classList.contains("clicked")) {
@@ -267,6 +274,8 @@ element_by_id("finalCanvas").addEventListener("click", (event) => {
       checkbox_li.id = "checkbox_li_" + newZoomCam.cameraID;
       element_by_id("camera-vision-list").appendChild(checkbox_li);
       btn.classList.remove("clicked");
+
+      redrawEntireCanvas();
     }
   });
 });
@@ -284,5 +293,4 @@ function redrawEntireCanvas() {
   } else {
     // isScaleSet = false;
   }
-  globalMouseFlag = false;
 }
