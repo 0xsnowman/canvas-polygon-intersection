@@ -123,7 +123,6 @@ class DraggablePolygon {
     const { x, y } = this.getMousePosition(event);
     
     if (this.draggingPoint) {
-      console.log("{" + x + ", " + y + "}");
       // Move the point
       this.draggingPoint.x = x;
       this.draggingPoint.y = y;
@@ -146,8 +145,6 @@ class DraggablePolygon {
     if (this.draggingPoint) {
       const angle = globalCameras.find((cam) => cam.cameraID == this.cameraID).m_angle;
       const out_radius = visionRanges(this.type, angle)[2] * this.scale;
-
-      console.log('distance(this.draggingPoint, this.center): ', distance(this.draggingPoint, this.center), 'out_radius: ', out_radius);
 
       if (distance(this.draggingPoint, this.center) > out_radius) {
         this.draggingPoint = null;
@@ -190,7 +187,6 @@ class DraggablePolygon {
 
     const draggingPointIndex = this.getDraggingPointIndex();
 
-    console.log("this.draggingPoint: ", this.draggingPoint, "draggingPointIndex: ", draggingPointIndex);
     if (draggingPointIndex == undefined) return;
 
     this.points = this.addPointsAroundDraggingPoint(
@@ -201,8 +197,6 @@ class DraggablePolygon {
     const intersectArea = this.intersectAreaNotVisibleExist(
       (draggingPointIndex + 1) % this.points.length
     );
-
-    console.log(intersectArea);
 
     if (intersectArea.edge.length > 0) {
       const firstCutoutIndex = (draggingPointIndex + 2) % this.points.length;
@@ -324,12 +318,9 @@ class DraggablePolygon {
   getDraggingPointIndex() {
     if (this.draggingPoint == null) return;
 
-    console.log("-------start-----------");
     var index = this.points.findIndex((point) => {
-      console.log(this.draggingPoint, point.x, point.y);
       return this.isPointClicked(this.draggingPoint, point.x, point.y);
     });
-    console.log("---------end----------");
 
     return index;
   }
