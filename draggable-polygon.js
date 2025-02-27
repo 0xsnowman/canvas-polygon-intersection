@@ -189,30 +189,49 @@ class DraggablePolygon {
 
     if (draggingPointIndex == undefined) return;
 
-    this.points = this.addPointsAroundDraggingPoint(
-      this.points,
-      draggingPointIndex
-    );
-
     const intersectArea = this.intersectAreaNotVisibleExist(
       (draggingPointIndex + 1) % this.points.length
     );
 
     if (intersectArea.edge.length > 0) {
-      const firstCutoutIndex = (draggingPointIndex + 2) % this.points.length;
+      console.log("intersectArea: ", intersectArea);
+      const firstCutoutIndex = draggingPointIndex;
       const secondCutoutIndex = intersectArea.index;
 
-      var tempPoints = this.getLargerPartWithPoint(
-        this.points,
-        firstCutoutIndex,
-        secondCutoutIndex,
-        {
-          x: intersectArea.edge[0].x,
-          y: intersectArea.edge[0].y,
-        }
-      );
+      console.log("this.points: ", this.points);
+
+      console.log("draggingPointIndex: ", draggingPointIndex);
+      console.log("firstCutoutIndex: ", firstCutoutIndex);
+      console.log("secondCutoutIndex: ", secondCutoutIndex);
+
+      var directionDueToCamType = this.type.substr(0, 1) == "f" ? true : false;
+      var tempPoints = [];
+
+      // Fisheye case
+      if (directionDueToCamType) {
+        tempPoints = this.optimizedCircularCut(
+          this.points,
+          firstCutoutIndex,
+          secondCutoutIndex,
+          intersectArea.edge[0],
+        );
+      } else {
+        tempPoints = this.circularCutRestAndAddIntersect(
+          this.points,
+          firstCutoutIndex,
+          secondCutoutIndex,
+          intersectArea.edge[0],
+        );
+      }
+
       this.updatePoints(tempPoints);
+      console.log(this.points);
     }
+
+    // this.points = this.addPointsAroundDraggingPoint(
+    //   this.points,
+    //   draggingPointIndex
+    // );
 
     this.draggingPoint = null;
     this.canvas.style.cursor = "default";
@@ -249,22 +268,70 @@ class DraggablePolygon {
     }
   }
 
-  getLargerPartWithPoint(arr, startIdx, endIdx, point) {
-    if (startIdx > endIdx) {
-      [startIdx, endIdx] = [endIdx, startIdx]; // Ensure startIdx <= endIdx
+  optimizedCircularCut(arr, firstCutOutIndex, secondCutOutIndex, newPoint) {
+    if (!Array.isArray(arr) || arr.length === 0) {
+      throw new Error('Invalid array');
+    }
+  
+    const n = arr.length;
+    if (firstCutOutIndex < 0 || secondCutOutIndex < 0 || 
+        firstCutOutIndex >= n || secondCutOutIndex >= n) {
+      throw new Error('Invalid indices');
+    }
+  
+    if (firstCutOutIndex === secondCutOutIndex) {
+      return []; // Everything would be cut out
+    }
+  
+    // Get cut-out part
+    let cutOut = [];
+    let i = firstCutOutIndex;
+    while (true) {
+      cutOut.push(arr[i]);
+      if (i === secondCutOutIndex) break;
+      i = (i + 1) % n;
+    }
+    cutOut.push(newPoint);
+  
+    // Get rest part
+    let rest = [];
+    i = (secondCutOutIndex + 1) % n;
+    while (i !== firstCutOutIndex) {
+      rest.push(arr[i]);
+      i = (i + 1) % n;
+    }
+    rest.push(arr[firstCutOutIndex]);
+    rest.push(newPoint);
+  
+    // Return the smaller portion to be cut out
+    return cutOut.length <= rest.length ? rest : cutOut;
+  }
+
+  circularCutRestAndAddIntersect(arr, firstCutOutIndex, secondCutOutIndex, newPoint, directionDueToCamType) {
+    if (!Array.isArray(arr) || arr.length === 0) {
+      throw new Error('Invalid array');
+    }
+  
+    const n = arr.length;
+    if (firstCutOutIndex < 0 || secondCutOutIndex < 0 || 
+        firstCutOutIndex >= n || secondCutOutIndex >= n) {
+      throw new Error('Invalid indices');
+    }
+  
+    var flag = false;
+
+    if (firstCutOutIndex > secondCutOutIndex) {
+      var temp = firstCutOutIndex;
+      firstCutOutIndex = secondCutOutIndex;
+      secondCutOutIndex = temp;
+      flag = true;
     }
 
-    // Calculate the lengths of both parts
-    const lengthBefore = startIdx + 1;
-    const lengthAfter = arr.length - endIdx;
-
-    if (lengthBefore + lengthAfter < endIdx - startIdx) {
-      // Keep the middle part (larger part)
-      return arr.slice(startIdx + 1, endIdx).concat(point);
-    } else {
-      // Keep the outside parts (before start and after end)
-      return arr.slice(0, startIdx + 1).concat(point, arr.slice(endIdx - 1));
-    }
+    return arr.filter((point, index) => {
+      return index <= firstCutOutIndex
+    }).concat(newPoint).concat(arr.filter((point, index) => {
+      return flag ? (index >= secondCutOutIndex) : (index > secondCutOutIndex)
+    }));
   }
 
   intersectAreaNotVisibleExist(draggingPointIndex) {
@@ -272,7 +339,7 @@ class DraggablePolygon {
     const out_radius = visionRanges(this.type, angle)[2] * this.scale;
 
     for (let i = 0; i < this.points.length; ++i) {
-      if (i != draggingPointIndex && (i + 1) % this.points.length != 0) {
+      if (i != draggingPointIndex && (i + 1) % this.points.length != draggingPointIndex) {
         const edge2Distanve = distance(this.center, this.draggingPoint);
 
         const edge1 = [
