@@ -132,7 +132,7 @@ element_by_id("finalCanvas").addEventListener("click", (event) => {
       );
 
       setTimeout(() => {
-        scaleValue = prompt("Enter Distance in meters:", "1");
+        scaleValue = prompt("Enter Distance in meters:", "2");
         ctx.font = "20px Arial";
         ctx.fillStyle = "blue"; // Text color
         ctx.textAlign = "center"; // Align text
@@ -301,9 +301,6 @@ document.addEventListener("mouseup", function () {
 function redrawEntireCanvas() {
   if (firstScalePoint && secondScalePoint) {
     isScaleSet = true;
-    // globalCameras.forEach((cam) => {
-    //   cam.draw();
-    // });
     _drawDirectlyToMainCanvas(
       "finalCanvas",
       "rgba(255, 0, 0, 0.3)",

@@ -102,6 +102,7 @@ class DraggablePolygon {
     if (dragPoint) {
       this.draggingPoint = { x: dragPoint.x, y: dragPoint.y };
 
+      // Keep the original point at camera position in Zoom
       if (
         (this.type == "zoom-2mp" ||
           this.type == "zoom-4mp" ||
@@ -112,15 +113,17 @@ class DraggablePolygon {
         return;
       }
 
-      this.originalPoints = [...this.points];
+      this.originalPoints = [];
+      this.points.forEach((point) => this.originalPoints.push({x: point.x, y: point.y}));
       this.canvas.style.cursor = "grabbing";
     }
   }
 
   onMouseMove(event) {
     const { x, y } = this.getMousePosition(event);
-
+    
     if (this.draggingPoint) {
+      console.log("{" + x + ", " + y + "}");
       // Move the point
       this.draggingPoint.x = x;
       this.draggingPoint.y = y;
@@ -144,9 +147,12 @@ class DraggablePolygon {
       const angle = globalCameras.find((cam) => cam.cameraID == this.cameraID).m_angle;
       const out_radius = visionRanges(this.type, angle)[2] * this.scale;
 
+      console.log('distance(this.draggingPoint, this.center): ', distance(this.draggingPoint, this.center), 'out_radius: ', out_radius);
+
       if (distance(this.draggingPoint, this.center) > out_radius) {
         this.draggingPoint = null;
-        this.points = [...this.originalPoints];
+        this.points = [];
+        this.originalPoints.forEach(point => this.points.push({x: point.x, y: point.y}));
         this.canvas.style.cursor = "default";
         this.updateOuterPolygon(this.points);
         this.drawPointsAndLines();
@@ -158,23 +164,33 @@ class DraggablePolygon {
         this.type == "zoom-8mp"
       ) {
         const draggingPointIndex = this.getDraggingPointIndex();
-        if (draggingPointIndex == 1 || draggingPointIndex == 5) {
+
+        // Keep the 1st and Last point of vision arc on the 'yellow' line
+        if (draggingPointIndex == 1 || draggingPointIndex == this.points.length - 1) {
           const restrictedPoint = this.restrictToRadius(
             this.center.x,
             this.center.y,
             this.draggingPoint.x,
             this.draggingPoint.y,
-            this.scale,
+            out_radius,
             draggingPointIndex == 1 ? true : false
           );
           this.points[draggingPointIndex].x = restrictedPoint.x;
           this.points[draggingPointIndex].y = restrictedPoint.y;
+
+          this.draggingPoint = null;
+          this.canvas.style.cursor = "default";
+
+          this.updateOuterPolygon(this.points);
+          this.drawPointsAndLines();
+          return;
         }
       }
     }
 
     const draggingPointIndex = this.getDraggingPointIndex();
 
+    console.log("this.draggingPoint: ", this.draggingPoint, "draggingPointIndex: ", draggingPointIndex);
     if (draggingPointIndex == undefined) return;
 
     this.points = this.addPointsAroundDraggingPoint(
@@ -212,7 +228,7 @@ class DraggablePolygon {
   }
 
   restrictToRadius(centerX, centerY, mouseX, mouseY, radius, upOrDown) {
-    let angle = Math.PI / 6; // Calculate current angle (in radians)
+    const angle = toRadians(globalCameras.find((cam) => cam.cameraID == this.cameraID).m_angle);
 
     const Rx = radius * Math.cos(angle);
     const Ry = radius * Math.sin(angle);
@@ -258,6 +274,9 @@ class DraggablePolygon {
   }
 
   intersectAreaNotVisibleExist(draggingPointIndex) {
+    const angle = globalCameras.find((cam) => cam.cameraID == this.cameraID).m_angle;
+    const out_radius = visionRanges(this.type, angle)[2] * this.scale;
+
     for (let i = 0; i < this.points.length; ++i) {
       if (i != draggingPointIndex && (i + 1) % this.points.length != 0) {
         const edge2Distanve = distance(this.center, this.draggingPoint);
@@ -271,14 +290,10 @@ class DraggablePolygon {
           {
             x:
               this.center.x +
-              (((this.draggingPoint.x - this.center.x) * this.scale) /
-                edge2Distanve) *
-                2,
+              (((this.draggingPoint.x - this.center.x) * out_radius) / edge2Distanve) * 2,
             y:
               this.center.y +
-              (((this.draggingPoint.y - this.center.y) * this.scale) /
-                edge2Distanve) *
-                2,
+              (((this.draggingPoint.y - this.center.y) * out_radius) / edge2Distanve) * 2,
           },
         ];
         const intersectEdges = findEdgeIntersection(edge1, edge2);
@@ -309,9 +324,12 @@ class DraggablePolygon {
   getDraggingPointIndex() {
     if (this.draggingPoint == null) return;
 
+    console.log("-------start-----------");
     var index = this.points.findIndex((point) => {
+      console.log(this.draggingPoint, point.x, point.y);
       return this.isPointClicked(this.draggingPoint, point.x, point.y);
     });
+    console.log("---------end----------");
 
     return index;
   }
@@ -319,7 +337,7 @@ class DraggablePolygon {
   addPointsAroundDraggingPoint(points, draggingPointIndex) {
     // Ensure draggingPointIndex is valid
     if (draggingPointIndex < 0 || draggingPointIndex >= points.length) {
-      console.error("Invalid draggingPointIndex");
+      console.error("Invalid draggingPointIndex", draggingPointIndex);
       return points;
     }
 
