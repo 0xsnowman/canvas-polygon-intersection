@@ -141,7 +141,10 @@ class DraggablePolygon {
 
   onMouseUp() {
     if (this.draggingPoint) {
-      if (distance(this.draggingPoint, this.center) > this.scale) {
+      const angle = globalCameras.find((cam) => cam.cameraID == this.cameraID).m_angle;
+      const out_radius = visionRanges(this.type, angle)[2] * this.scale;
+      
+      if (distance(this.draggingPoint, this.center) > out_radius) {
         this.draggingPoint = null;
         this.points = [...this.originalPoints];
         this.canvas.style.cursor = "default";

@@ -48,7 +48,7 @@ class Camera {
       return pentagon;
     }
 
-    const visionRangesValue = this.visionRanges();
+    const visionRangesValue = visionRanges(this.type, this.m_angle);
 
     return {
       out_pol: createPentagon(center, visionRangesValue[2] * scale),
@@ -92,9 +92,7 @@ class Camera {
       return points;
     }
 
-    const visionRangesValue = this.visionRanges();
-
-    console.log('visionRangesValue: ', visionRangesValue);
+    const visionRangesValue = visionRanges(this.type, this.m_angle);
 
     return {
       out_pol: createSectorPoints(center, scale * visionRangesValue[2], -toRadians(this.m_angle), toRadians(this.m_angle)),
@@ -167,39 +165,5 @@ class Camera {
       out_pol,
       this.scale
     );
-  }
-
-  visionRanges() {
-    const double_angle = this.m_angle * 2;
-    if (this.type == "zoom-2mp") {
-      if (double_angle == 30) return [17, 28, 179];
-      if (double_angle == 50) return [8, 16, 102];
-      if (double_angle == 70) return [5, 10, 67];
-      if (double_angle == 90) return [3, 7, 47];
-      if (double_angle == 110) return [2, 5, 33];
-    }
-    if (this.type == "zoom-4mp") {
-      if (double_angle == 30) return [20, 40, 250];
-      if (double_angle == 50) return [11, 25, 144];
-      if (double_angle == 70) return [7, 15, 95];
-      if (double_angle == 90) return [5, 10, 67];
-      if (double_angle == 110) return [3, 7, 47];
-    }
-    if (this.type == "zoom-8mp") {
-      if (double_angle == 30) return [28, 57, 358];
-      if (double_angle == 50) return [16, 32, 205];
-      if (double_angle == 70) return [10, 21, 137];
-      if (double_angle == 90) return [7, 15, 95];
-      if (double_angle == 110) return [5, 10, 67];
-    }
-    if (this.type == "fisheye-8mp") {
-      return [2, 5, 33];
-    }
-    if (this.type == "fisheye-12mp") {
-      return [3, 7, 46];
-    }
-    if (this.type == "fisheye-125mp") {
-      return [4, 8, 53];
-    }
   }
 }
