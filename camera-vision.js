@@ -70,7 +70,9 @@ class CameraVision {
     this.outer_polygon = [];
     if (points) {
       points.forEach((point) => {
-        this.outer_polygon.push(point);
+        if (point.isReal) {
+          this.outer_polygon.push(point);
+        }
       });
     }
   }
@@ -131,7 +133,7 @@ class CameraVision {
     ) {
       if (isReplaceAllowed) {
         this.isDragging = true;
-        this.dragStart = { x: offsetX, y: offsetY };
+        this.dragStart = { x: offsetX, y: offsetY, isReal: true };
       }
     }
   }
@@ -200,7 +202,7 @@ class CameraVision {
   }
 
   _translatePolygon(polygon, dx, dy) {
-    return polygon.map(({ x, y }) => ({ x: x + dx, y: y + dy }));
+    return polygon.map(({ x, y, isReal }) => ({ x: x + dx, y: y + dy, isReal: isReal }));
   }
 
   _getClickedPoint(point, polygon) {
@@ -249,12 +251,13 @@ class CameraVision {
 
   _rotatePolygon(points, center, angle) {
     const radians = (Math.PI / 180) * angle;
-    return points.map(({ x, y }) => {
+    return points.map(({ x, y, isReal }) => {
       const dx = x - center.x;
       const dy = y - center.y;
       return {
         x: Math.cos(radians) * dx - Math.sin(radians) * dy + center.x,
         y: Math.sin(radians) * dx + Math.cos(radians) * dy + center.y,
+        isReal: isReal
       };
     });
   }

@@ -19,8 +19,11 @@ class DraggablePolygon {
     this.clearCanvasCallback = clearCanvasCallback;
     this.updateOuterPolygon = updateOuterPolygon;
     this.ctx = canvas.getContext("2d");
-    this.points = [...points]; // [{x, y}, {x, y}, ...]
-    this.draggingPoint = null;
+    this.points = [];
+    points.forEach((point) => {
+      this.points.push(new Point(point.x, point.y, true))
+    });
+    this.draggingPointIndex = null;
     this.originalPoints = null;
 
     // Mouse event listeners
@@ -56,7 +59,7 @@ class DraggablePolygon {
   updatePoints(points) {
     this.points = [];
     points.forEach((point) => {
-      this.points.push({ x: point.x, y: point.y });
+      this.points.push(new Point(point.x, point.y, point.isReal));
     });
   }
 
@@ -71,7 +74,9 @@ class DraggablePolygon {
     this.ctx.beginPath();
     this.ctx.moveTo(this.points[0].x, this.points[0].y);
     for (let i = 1; i < this.points.length; i++) {
-      this.ctx.lineTo(this.points[i].x, this.points[i].y);
+      if (this.points[i].isReal) {
+        this.ctx.lineTo(this.points[i].x, this.points[i].y);
+      }
     }
     this.ctx.closePath();
     this.ctx.strokeStyle = "black";
@@ -82,23 +87,7 @@ class DraggablePolygon {
 
     // Draw draggable points
     this.points.forEach((point, index) => {
-      this.ctx.beginPath();
-      this.ctx.arc(point.x, point.y, 6, 0, Math.PI * 2);
-      this.ctx.fillStyle = "red";
-      this.ctx.fill();
-      this.ctx.strokeStyle = "black";
-      this.ctx.stroke();
-
-      if (globalShowPointIndexFlag) {
-        this.ctx.font = "20px Arial";
-        this.ctx.fillStyle = "red"; // Text color
-        this.ctx.textAlign = "center"; // Align text
-        this.ctx.textBaseline = "middle"; // Align baseline
-        this.ctx.fontWeight = "bold";
-
-        // Draw text
-        this.ctx.fillText(index, point.x, point.y - 15);
-      }
+      point.draw(this.ctx, index);
     });
 
     this.drawCameraName();
@@ -106,26 +95,30 @@ class DraggablePolygon {
 
   onMouseDown(event) {
     const { x, y } = this.getMousePosition(event);
-    const dragPoint = this.points.find((point) =>
+    const dragPointIndex = this.points.findIndex((point) =>
       this.isPointClicked(point, x, y)
     );
 
-    if (dragPoint) {
-      this.draggingPoint = { x: dragPoint.x, y: dragPoint.y };
+    if (is_index_valid(dragPointIndex)) {
+      this.draggingPointIndex = dragPointIndex;
 
       // Keep the original point at camera position in Zoom
       if (
         (this.type == "zoom-2mp" ||
           this.type == "zoom-4mp" ||
           this.type == "zoom-8mp") &&
-        this.getDraggingPointIndex() == 0
+        this.draggingPointIndex == 0
       ) {
-        this.draggingPoint = null;
+        this.draggingPointIndex = null;
         return;
       }
 
+      if (this.points[this.draggingPointIndex].isReal == false) {
+        this.points[this.draggingPointIndex].isReal = true;
+      }
+      
       this.originalPoints = [];
-      this.points.forEach((point) => this.originalPoints.push({x: point.x, y: point.y}));
+      this.points.forEach((point) => this.originalPoints.push(new Point(point.x, point.y, point.isReal)));
       this.canvas.style.cursor = "grabbing";
     }
   }
@@ -133,10 +126,17 @@ class DraggablePolygon {
   onMouseMove(event) {
     const { x, y } = this.getMousePosition(event);
     
-    if (this.draggingPoint) {
+    if (is_index_valid(this.draggingPointIndex)) {
+      console.log("this.draggingPointIndex: ", this.draggingPointIndex);
       // Move the point
-      this.draggingPoint.x = x;
-      this.draggingPoint.y = y;
+      // this.points[this.draggingPointIndex].x = x;
+      // this.points[this.draggingPointIndex].y = y;
+
+      // const draggingPointIndex = this.getDraggingPointIndex();
+      this.points[this.draggingPointIndex].x = x;
+      this.points[this.draggingPointIndex].y = y;
+      // this.points[this.draggingPointIndex].isReal = true;
+      console.log("isReal of draggingPoint: ", this.points[this.draggingPointIndex].isReal);
     } else {
       // Change cursor when hovering over points
       const hovering = this.points.some((point) =>
@@ -153,14 +153,14 @@ class DraggablePolygon {
   }
 
   onMouseUp() {
-    if (this.draggingPoint) {
+    if (is_index_valid(this.draggingPointIndex)) {
       const angle = globalCameras.find((cam) => cam.cameraID == this.cameraID).m_angle;
       const out_radius = visionRanges(this.type, angle)[2] * this.scale;
 
-      if (distance(this.draggingPoint, this.center) > out_radius) {
-        this.draggingPoint = null;
+      if (distance(this.points[this.draggingPointIndex], this.center) > out_radius) {
+        this.draggingPointIndex = null;
         this.points = [];
-        this.originalPoints.forEach(point => this.points.push({x: point.x, y: point.y}));
+        this.originalPoints.forEach(point => this.points.push(new Point(point.x, point.y, point.isReal)));
         this.canvas.style.cursor = "default";
         this.updateOuterPolygon(this.points);
         this.drawPointsAndLines();
@@ -171,22 +171,23 @@ class DraggablePolygon {
         this.type == "zoom-4mp" ||
         this.type == "zoom-8mp"
       ) {
-        const draggingPointIndex = this.getDraggingPointIndex();
+        // const draggingPointIndex = this.getDraggingPointIndex();
 
         // Keep the 1st and Last point of vision arc on the 'yellow' line
-        if (draggingPointIndex == 1 || draggingPointIndex == this.points.length - 1) {
+        if (this.draggingPointIndex == 1 || this.draggingPointIndex == this.points.length - 1) {
           const restrictedPoint = this.restrictToRadius(
             this.center.x,
             this.center.y,
-            this.draggingPoint.x,
-            this.draggingPoint.y,
+            this.points[this.draggingPointIndex].x,
+            this.points[this.draggingPointIndex].y,
             out_radius,
-            draggingPointIndex == 1 ? true : false
+            this.draggingPointIndex == 1 ? true : false
           );
-          this.points[draggingPointIndex].x = restrictedPoint.x;
-          this.points[draggingPointIndex].y = restrictedPoint.y;
+          this.points[this.draggingPointIndex].x = restrictedPoint.x;
+          this.points[this.draggingPointIndex].y = restrictedPoint.y;
+          this.points[this.draggingPointIndex].isReal = true;
 
-          this.draggingPoint = null;
+          this.draggingPointIndex = null;
           this.canvas.style.cursor = "default";
 
           this.updateOuterPolygon(this.points);
@@ -196,22 +197,22 @@ class DraggablePolygon {
       }
     }
 
-    const draggingPointIndex = this.getDraggingPointIndex();
+    const arrivedPoint = this.points[this.draggingPointIndex];
 
-    if (draggingPointIndex == undefined) return;
+    if (!is_index_valid(this.draggingPointIndex)) return;
 
     const intersectArea = this.intersectAreaNotVisibleExist(
-      (draggingPointIndex + 1) % this.points.length
+      // (this.draggingPointIndex + 1) % this.points.length
     );
 
     if (intersectArea.edge.length > 0) {
       console.log("intersectArea: ", intersectArea);
-      const firstCutoutIndex = draggingPointIndex;
+      const firstCutoutIndex = this.draggingPointIndex;
       const secondCutoutIndex = intersectArea.index;
 
       console.log("this.points: ", this.points);
 
-      console.log("draggingPointIndex: ", draggingPointIndex);
+      console.log("draggingPointIndex: ", this.draggingPointIndex);
       console.log("firstCutoutIndex: ", firstCutoutIndex);
       console.log("secondCutoutIndex: ", secondCutoutIndex);
 
@@ -240,12 +241,9 @@ class DraggablePolygon {
       console.log(this.points);
     }
 
-    this.points = this.addPointsAroundDraggingPoint(
-      this.points,
-      draggingPointIndex
-    );
+    this.points = this.addPointsAroundDraggingPoint(arrivedPoint);
 
-    this.draggingPoint = null;
+    this.draggingPointIndex = null;
     this.canvas.style.cursor = "default";
 
     this.updateOuterPolygon(this.points);
@@ -348,13 +346,14 @@ class DraggablePolygon {
     }));
   }
 
-  intersectAreaNotVisibleExist(draggingPointIndex) {
+  // intersectAreaNotVisibleExist(draggingPointIndex) {
+  intersectAreaNotVisibleExist() {
     const angle = globalCameras.find((cam) => cam.cameraID == this.cameraID).m_angle;
     const out_radius = visionRanges(this.type, angle)[2] * this.scale;
 
     for (let i = 0; i < this.points.length; ++i) {
-      if (i != draggingPointIndex && (i + 1) % this.points.length != draggingPointIndex) {
-        const edge2Distanve = distance(this.center, this.draggingPoint);
+      if (i != this.draggingPointIndex && (i + 1) % this.points.length != this.draggingPointIndex) {
+        const edge2Distanve = distance(this.center, this.points[this.draggingPointIndex]);
 
         const edge1 = [
           this.points[i],
@@ -365,10 +364,10 @@ class DraggablePolygon {
           {
             x:
               this.center.x +
-              (((this.draggingPoint.x - this.center.x) * out_radius) / edge2Distanve) * 2,
+              (((this.points[this.draggingPointIndex].x - this.center.x) * out_radius) / edge2Distanve) * 2,
             y:
               this.center.y +
-              (((this.draggingPoint.y - this.center.y) * out_radius) / edge2Distanve) * 2,
+              (((this.points[this.draggingPointIndex].y - this.center.y) * out_radius) / edge2Distanve) * 2,
           },
         ];
         const intersectEdges = findEdgeIntersection(edge1, edge2);
@@ -396,78 +395,75 @@ class DraggablePolygon {
     return dx * dx + dy * dy < 36; // Radius threshold < 6?
   }
 
-  getDraggingPointIndex() {
-    if (this.draggingPoint == null) return;
-
-    var index = this.points.findIndex((point) => {
-      return this.isPointClicked(this.draggingPoint, point.x, point.y);
-    });
-
-    return index;
-  }
-
-  addPointsAroundDraggingPoint(points, draggingPointIndex) {
+  addPointsAroundDraggingPoint(arrivedPoint) {
+    const arrivedPointIndex = this.points.findIndex((point) => this.isPointClicked(point, arrivedPoint.x, arrivedPoint.y));
     // Ensure draggingPointIndex is valid
-    if (draggingPointIndex < 0 || draggingPointIndex >= points.length) {
-      console.error("Invalid draggingPointIndex", draggingPointIndex);
-      return points;
+    if (arrivedPointIndex < 0 || arrivedPointIndex >= this.points.length) {
+      console.error("Invalid draggingPointIndex", arrivedPointIndex);
+      return this.points;
     }
 
     let newPrevPoint, newNextPoint;
 
-    if (draggingPointIndex === 0) {
-      // Case 1: draggingPointIndex is 0, add points between last and first, and between first and second
-      const lastPoint = points[points.length - 1];
-      const firstPoint = points[0];
-      const secondPoint = points[1];
+    if (arrivedPointIndex === 0) {
+      // Case 1: arrivedPointIndex is 0, add points between last and first, and between first and second
+      const lastPoint = this.points[this.points.length - 1];
+      const firstPoint = this.points[0];
+      const secondPoint = this.points[1];
 
-      newPrevPoint = {
-        x: (lastPoint.x + firstPoint.x) / 2,
-        y: (lastPoint.y + firstPoint.y) / 2,
-      };
-      newNextPoint = {
-        x: (firstPoint.x + secondPoint.x) / 2,
-        y: (firstPoint.y + secondPoint.y) / 2,
-      };
+      newPrevPoint = new Point(
+        (lastPoint.x + firstPoint.x) / 2,
+        (lastPoint.y + firstPoint.y) / 2,
+        false,
+      );
+      newNextPoint = new Point(
+        (firstPoint.x + secondPoint.x) / 2,
+        (firstPoint.y + secondPoint.y) / 2,
+        false,
+      );
 
-      points.splice(draggingPointIndex, 0, newPrevPoint); // Insert before the first point
-      points.splice(draggingPointIndex + 2, 0, newNextPoint); // Insert after the first point
-    } else if (draggingPointIndex === points.length - 1) {
-      // Case 2: draggingPointIndex is the last point, add points between last and first, and between second last and last
-      const lastPoint = points[points.length - 1];
-      const firstPoint = points[0];
-      const secondLastPoint = points[points.length - 2];
+      this.points.splice(arrivedPointIndex, 0, newPrevPoint); // Insert before the first point
+      this.points.splice(arrivedPointIndex + 2, 0, newNextPoint); // Insert after the first point
+    } else if (arrivedPointIndex === this.points.length - 1) {
+      // Case 2: arrivedPointIndex is the last point, add points between last and first, and between second last and last
+      const lastPoint = this.points[points.length - 1];
+      const firstPoint = this.points[0];
+      const secondLastPoint = this.points[this.points.length - 2];
 
-      newPrevPoint = {
-        x: (secondLastPoint.x + lastPoint.x) / 2,
-        y: (secondLastPoint.y + lastPoint.y) / 2,
-      };
-      newNextPoint = {
-        x: (lastPoint.x + firstPoint.x) / 2,
-        y: (lastPoint.y + firstPoint.y) / 2,
-      };
+      newPrevPoint = new Point(
+        (secondLastPoint.x + lastPoint.x) / 2,
+        (secondLastPoint.y + lastPoint.y) / 2,
+        false,
+      );
+      newNextPoint = new Point(
+        (lastPoint.x + firstPoint.x) / 2,
+        (lastPoint.y + firstPoint.y) / 2,
+        false,
+      );
 
-      points.splice(draggingPointIndex, 0, newPrevPoint); // Insert before the last point
-      points.splice(draggingPointIndex + 2, 0, newNextPoint); // Insert after the last point
+      this.points.splice(arrivedPointIndex, 0, newPrevPoint); // Insert before the last point
+      this.points.splice(arrivedPointIndex + 2, 0, newNextPoint); // Insert after the last point
     } else {
       // Case 3: Normal case, add points between dragging point and its neighbors
-      const prevPoint = points[draggingPointIndex - 1];
-      const draggingPoint = points[draggingPointIndex];
-      const nextPoint = points[draggingPointIndex + 1];
+      const prevPoint = this.points[arrivedPointIndex - 1];
+      const draggingPoint = this.points[arrivedPointIndex];
+      const nextPoint = this.points[arrivedPointIndex + 1];
 
-      newPrevPoint = {
-        x: (prevPoint.x + draggingPoint.x) / 2,
-        y: (prevPoint.y + draggingPoint.y) / 2,
-      };
-      newNextPoint = {
-        x: (draggingPoint.x + nextPoint.x) / 2,
-        y: (draggingPoint.y + nextPoint.y) / 2,
-      };
+      newPrevPoint = new Point(
+        (prevPoint.x + draggingPoint.x) / 2,
+        (prevPoint.y + draggingPoint.y) / 2,
+        false,
+      );
+      newNextPoint = new Point(
+        (draggingPoint.x + nextPoint.x) / 2,
+        (draggingPoint.y + nextPoint.y) / 2,
+        false,
+      );
 
-      points.splice(draggingPointIndex, 0, newPrevPoint); // Insert before the dragging point
-      points.splice(draggingPointIndex + 2, 0, newNextPoint); // Insert after the dragging point
+      this.points.splice(arrivedPointIndex, 0, newPrevPoint); // Insert before the dragging point
+      this.points.splice(arrivedPointIndex + 2, 0, newNextPoint); // Insert after the dragging point
     }
 
-    return points;
+    return this.points;
   }
 }

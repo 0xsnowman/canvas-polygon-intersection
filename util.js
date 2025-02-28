@@ -36,3 +36,8 @@ function element_by_id(id) {
 function elements_by_class(className) {
   return document.getElementsByClassName(className);
 }
+
+// index validation
+function is_index_valid(index) {
+  return (index && index != undefined && index >= 0);
+}

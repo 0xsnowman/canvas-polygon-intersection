@@ -39,10 +39,11 @@ class Camera {
         pointCount = 14;
       for (let i = 0; i < pointCount; i++) {
         let angle = (2 * Math.PI * i) / pointCount; // 360-degree steps
-        pentagon.push({
-          x: center.x + radius * Math.cos(angle),
-          y: center.y + radius * Math.sin(angle),
-        });
+        pentagon.push(new Point(
+          center.x + radius * Math.cos(angle),
+          center.y + radius * Math.sin(angle),
+          true
+        ));
       }
 
       return pentagon;
@@ -75,7 +76,7 @@ class Camera {
       angleStart,
       angleEnd
     ) {
-      let points = [{ x: center.x, y: center.y }]; // Start at the center
+      let points = [new Point(center.x, center.y, true)]; // Start at the center
 
       let numPoints = getPointsCountForAngle(angleEnd - angleStart);
       // Calculate angle step
@@ -86,7 +87,7 @@ class Camera {
         let angle = angleStart + angleStep * i; // Calculate current angle (in radians)
         let x = center.x + radius * Math.cos(angle);
         let y = center.y + radius * Math.sin(angle);
-        points.push({ x, y });
+        points.push(new Point(x, y, true));
       }
 
       return points;
@@ -131,7 +132,7 @@ class Camera {
 
   drawTriangle() {
     const { out_pol, in_pol1, in_pol2 } = this.generateIsoscelesTriangles(
-      { x: this.center.x, y: this.center.y },
+      new Point(this.center.x, this.center.y, true),
       this.scale
     );
 
