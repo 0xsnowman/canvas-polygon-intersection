@@ -1,5 +1,3 @@
-let cachedBgImage = null;
-
 // draw an image based on img url to canvas
 function drawImageOnCanvas(canvas, imgURL, callback) {
   const ctx = canvas.getContext("2d");

@@ -133,7 +133,7 @@ class CameraVision {
     ) {
       if (isReplaceAllowed) {
         this.isDragging = true;
-        this.dragStart = { x: offsetX, y: offsetY, isReal: true };
+        this.dragStart = new Point(offsetX, offsetY, true);
       }
     }
   }
@@ -169,7 +169,7 @@ class CameraVision {
     this.outer_polygon = this._translatePolygon(this.outer_polygon, dx, dy);
     this.inner_polygon1 = this._translatePolygon(this.inner_polygon1, dx, dy);
     this.inner_polygon2 = this._translatePolygon(this.inner_polygon2, dx, dy);
-    this.dragStart = { x: offsetX, y: offsetY };
+    this.dragStart = new Point(offsetX, offsetY, true);
     this._drawSketch();
   }
 

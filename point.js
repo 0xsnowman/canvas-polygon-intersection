@@ -20,10 +20,10 @@ class Point {
 
   draw(ctx, index) {
     ctx.beginPath();
-    ctx.arc(this.x, this.y, 6, 0, Math.PI * 2);
-    ctx.fillStyle = this.isReal ? "red" : "blue";
+    ctx.arc(this.x, this.y, this.isReal ? 6 : 5, 0, Math.PI * 2);
+    ctx.fillStyle = this.isReal ? "red" : "rgba(0, 0, 255, 0.8)";
     ctx.fill();
-    ctx.strokeStyle = "black";
+    ctx.strokeStyle = this.isReal ? "black" : "rgba(0, 0, 0, 0.3)";
     ctx.stroke();
 
     if (globalShowPointIndexFlag) {

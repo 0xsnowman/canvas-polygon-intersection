@@ -8,6 +8,7 @@ var isRotationAllowed = false;
 var isReplaceAllowed = false;
 var lastSelectedCameraID = null;
 var globalShowPointIndexFlag = false;
+let cachedBgImage = null;
 
 element_by_id("finalCanvas").width = CANVAS_WIDTH;
 element_by_id("finalCanvas").height = CANVAS_HEIGHT;
@@ -21,9 +22,11 @@ function init() {
   secondScalePoint = null;
   isScaleSet = false;
   globalCameras = [];
+  cachedBgImage = null;
   element_by_id("camera-name-list").innerHTML = "";
   element_by_id("camera-type-list").innerHTML = "";
   element_by_id("camera-vision-list").innerHTML = "";
+  alert("Click on the plan to set the scale");
 }
 
 element_by_id("fileInput")
@@ -36,7 +39,7 @@ element_by_id("fileInput")
         init();
         drawImageOnCanvas(
           element_by_id("finalCanvas"),
-          e.target.result
+          imgURL
         );
       };
       reader.readAsDataURL(file);
@@ -44,6 +47,7 @@ element_by_id("fileInput")
   });
 
 window.onload = () => {
+  init();
   drawImageOnCanvas(element_by_id("finalCanvas"), imgURL, () => {});
 };
 

@@ -43,6 +43,10 @@ canvas {
     width: 400px;
 }
 
+.never-show-box-shadow {
+    box-shadow: none;
+}
+
 .control-panel h3 {
     padding-bottom: 12px;
 }

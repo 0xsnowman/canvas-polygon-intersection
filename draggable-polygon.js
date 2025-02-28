@@ -210,7 +210,7 @@ class DraggablePolygon {
       const firstCutoutIndex = this.draggingPointIndex;
       const secondCutoutIndex = intersectArea.index;
 
-      console.log("this.points: ", this.points);
+      // console.log("this.points: ", this.points);
 
       console.log("draggingPointIndex: ", this.draggingPointIndex);
       console.log("firstCutoutIndex: ", firstCutoutIndex);
