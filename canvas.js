@@ -29,12 +29,12 @@ function drawImageOnCanvas(canvas, imgURL, callback) {
 }
 
 // Fill polygon with some color on to the canvas
-function drawPolygonToCanvas(canvas, points, fillStyle = "red") {
+function drawPolygonToCanvas(canvas, points, fillStyle = "red", isRealRelated = false) {
   var ctx = canvas.getContext("2d");
   ctx.beginPath();
   ctx.moveTo(points[0].x, points[0].y);
   for (let i = 1; i < points.length; i++) {
-    if (points[i].isReal) {
+    if (!isRealRelated || points[i].isReal) {
       ctx.lineTo(points[i].x, points[i].y);
     }
   }
@@ -77,7 +77,7 @@ function _drawDirectlyToMainCanvas(
       }
 
       if (cam.visibility_of_out) {
-        drawPolygonToCanvas(finalCanvas, cam.cameraVision.outer_polygon, outerFillStyle);
+        drawPolygonToCanvas(finalCanvas, cam.cameraVision.outer_polygon, outerFillStyle, true);
         cam.cameraVision.draggablePolygonObject.drawPointsAndLines();
       }
 
