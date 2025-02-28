@@ -198,6 +198,7 @@ element_by_id("finalCanvas").addEventListener("click", (event) => {
       // Add an event listener to detect changes
       checkbox.addEventListener("change", function () {
         newFisheyeCam.visibility_of_in1 = this.checked ? true : false;
+        redrawEntireCanvas();
       });
   
       // Create a checkbox element
@@ -207,6 +208,7 @@ element_by_id("finalCanvas").addEventListener("click", (event) => {
       // Add an event listener to detect changes
       checkbox2.addEventListener("change", function () {
         newFisheyeCam.visibility_of_in2 = this.checked ? true : false;
+        redrawEntireCanvas();
       });
   
       // Create a checkbox element
@@ -216,6 +218,7 @@ element_by_id("finalCanvas").addEventListener("click", (event) => {
       // Add an event listener to detect changes
       checkbox_out.addEventListener("change", function () {
         newFisheyeCam.visibility_of_out = this.checked ? true : false;
+        redrawEntireCanvas();
       });
   
       checkbox_li.appendChild(checkbox);
@@ -266,6 +269,7 @@ element_by_id("finalCanvas").addEventListener("click", (event) => {
       // Add an event listener to detect changes
       checkbox.addEventListener("change", function () {
         newZoomCam.visibility_of_in1 = this.checked ? true : false;
+        redrawEntireCanvas();
       });
   
       // Create a checkbox element
@@ -275,6 +279,7 @@ element_by_id("finalCanvas").addEventListener("click", (event) => {
       // Add an event listener to detect changes
       checkbox2.addEventListener("change", function () {
         newZoomCam.visibility_of_in2 = this.checked ? true : false;
+        redrawEntireCanvas();
       });
   
       // Create a checkbox element
@@ -284,6 +289,7 @@ element_by_id("finalCanvas").addEventListener("click", (event) => {
       // Add an event listener to detect changes
       checkbox_out.addEventListener("change", function () {
         newZoomCam.visibility_of_out = this.checked ? true : false;
+        redrawEntireCanvas();
       });
   
       checkbox_li.appendChild(checkbox);

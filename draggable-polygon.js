@@ -133,16 +133,8 @@ class DraggablePolygon {
     const { x, y } = this.getMousePosition(event);
     
     if (is_index_valid(this.draggingPointIndex)) {
-      console.log("this.draggingPointIndex: ", this.draggingPointIndex);
-      // Move the point
-      // this.points[this.draggingPointIndex].x = x;
-      // this.points[this.draggingPointIndex].y = y;
-
-      // const draggingPointIndex = this.getDraggingPointIndex();
       this.points[this.draggingPointIndex].x = x;
       this.points[this.draggingPointIndex].y = y;
-      // this.points[this.draggingPointIndex].makeReal();
-      console.log("isReal of draggingPoint: ", this.points[this.draggingPointIndex].isReal);
     } else {
       // Change cursor when hovering over points
       const hovering = this.points.some((point) =>
@@ -212,15 +204,8 @@ class DraggablePolygon {
     );
 
     if (intersectArea.edge.length > 0) {
-      console.log("intersectArea: ", intersectArea);
       const firstCutoutIndex = this.draggingPointIndex;
       const secondCutoutIndex = intersectArea.index;
-
-      // console.log("this.points: ", this.points);
-
-      console.log("draggingPointIndex: ", this.draggingPointIndex);
-      console.log("firstCutoutIndex: ", firstCutoutIndex);
-      console.log("secondCutoutIndex: ", secondCutoutIndex);
 
       var directionDueToCamType = this.type.substr(0, 1) == "f" ? true : false;
       var tempPoints = [];
@@ -244,7 +229,6 @@ class DraggablePolygon {
       }
 
       this.updatePoints(tempPoints);
-      console.log(this.points);
     }
 
     this.points = this.addPointsAroundDraggingPoint(arrivedPoint);
