@@ -114,8 +114,14 @@ class DraggablePolygon {
       }
 
       if (this.points[this.draggingPointIndex].isReal == false) {
-        this.points[this.draggingPointIndex].isReal = true;
+        this.points[this.draggingPointIndex].makeReal();
       }
+
+      this.points = this.points.filter((point) => point.isReal);
+
+      this.draggingPointIndex = this.points.findIndex((point) =>
+        this.isPointClicked(point, x, y)
+      );
       
       this.originalPoints = [];
       this.points.forEach((point) => this.originalPoints.push(new Point(point.x, point.y, point.isReal)));
@@ -135,7 +141,7 @@ class DraggablePolygon {
       // const draggingPointIndex = this.getDraggingPointIndex();
       this.points[this.draggingPointIndex].x = x;
       this.points[this.draggingPointIndex].y = y;
-      // this.points[this.draggingPointIndex].isReal = true;
+      // this.points[this.draggingPointIndex].makeReal();
       console.log("isReal of draggingPoint: ", this.points[this.draggingPointIndex].isReal);
     } else {
       // Change cursor when hovering over points
@@ -185,7 +191,7 @@ class DraggablePolygon {
           );
           this.points[this.draggingPointIndex].x = restrictedPoint.x;
           this.points[this.draggingPointIndex].y = restrictedPoint.y;
-          this.points[this.draggingPointIndex].isReal = true;
+          this.points[this.draggingPointIndex].makeReal();
 
           this.draggingPointIndex = null;
           this.canvas.style.cursor = "default";

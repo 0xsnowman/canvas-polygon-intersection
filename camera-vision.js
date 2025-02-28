@@ -70,9 +70,9 @@ class CameraVision {
     this.outer_polygon = [];
     if (points) {
       points.forEach((point) => {
-        if (point.isReal) {
+        // if (point.isReal) {
           this.outer_polygon.push(point);
-        }
+        // }
       });
     }
   }
@@ -125,6 +125,9 @@ class CameraVision {
     );
 
     if (this.selectedPoint) {
+      if (this.selectedPoint.isReal) {
+        this.outer_polygon = this.outer_polygon.filter((point) => point.isReal);
+      }
       return; // Allow reshaping instead of dragging
     }
 
