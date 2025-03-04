@@ -1,0 +1,327 @@
+class CameraVision {
+  constructor(
+    cameraID,
+    cameraName,
+    type,
+    center_point,
+    rotation,
+    inner_polygon1,
+    inner_polygon2,
+    outer_polygon,
+    scale
+  ) {
+    (this.cameraID = cameraID),
+      (this.cameraName = cameraName),
+      (this.type = type),
+      (this.scale = scale);
+    this.center_point = center_point;
+    this.rotation = rotation;
+    this.inner_polygon1 = this._rotatePolygon(
+      inner_polygon1,
+      center_point,
+      rotation
+    );
+    this.inner_polygon2 = this._rotatePolygon(
+      inner_polygon2,
+      center_point,
+      rotation
+    );
+    this.outer_polygon = this._rotatePolygon(
+      outer_polygon,
+      center_point,
+      rotation
+    );
+
+    this.isDragging = false;
+    this.dragStart = null;
+    this.selectedPoint = null;
+    this.draggablePolygonObject = null;
+    this.initialMousePosition = null;
+
+    this._draw();
+    this._initMouseEvents();
+  }
+
+  changeCameraNameInVision(cameraName) {
+    this.cameraName = cameraName;
+
+    if (this.draggablePolygonObject) {
+      this.draggablePolygonObject.changeCameraNameInPolygon(cameraName);
+    }
+  }
+
+  updateInnerPolygons(points1, points2) {
+    this.inner_polygon1 = [];
+    if (points1) {
+      points1.forEach((point) => {
+        this.inner_polygon1.push(point);
+      });
+    }
+
+    this.inner_polygon2 = [];
+    if (points2) {
+      points2.forEach((point) => {
+        this.inner_polygon2.push(point);
+      });
+    }
+  }
+
+  updateOuterPolygon(points) {
+    this.outer_polygon = [];
+    if (points) {
+      points.forEach((point) => {
+        // if (point.isReal) {
+        this.outer_polygon.push(point);
+        // }
+      });
+    }
+  }
+
+  _initMouseEvents() {
+    const canvas = element_by_id("finalCanvas");
+    canvas.addEventListener("mousedown", this._onMouseDown.bind(this));
+    canvas.addEventListener("mousemove", this._onMouseMove.bind(this));
+    canvas.addEventListener("mouseup", this._onMouseUp.bind(this));
+  }
+
+  _onMouseDown(event) {
+    const { offsetX, offsetY } = event;
+    const rect = element_by_id("finalCanvas").getBoundingClientRect();
+
+    // Check necessity to rotate first
+    if (this._isInRotatorHandle(offsetX, offsetY)) {
+      // Calculate initial angle based on mouse click position
+      this.initialMousePosition = { x: offsetX, y: offsetY };
+      if (
+        this.type == "fisheye-8mp" ||
+        this.type == "fisheye-12mp" ||
+        this.type == "fisheye-125mp"
+      ) {
+        showMenu(
+          fisheye_menu,
+          offsetX + rect.left,
+          offsetY + rect.top,
+          this.cameraID,
+          this.type
+        );
+      } else {
+        showMenu(
+          zoom_menu,
+          offsetX + rect.left,
+          offsetY + rect.top,
+          this.cameraID,
+          this.type
+        );
+      }
+      return;
+    } else {
+      // hideMenu(fisheye_menu);
+    }
+
+    // Check necessity to drag after
+    this.selectedPoint = this._getClickedPoint(
+      { x: offsetX, y: offsetY },
+      this.outer_polygon
+    );
+
+    if (this.selectedPoint) {
+      if (this.selectedPoint.isReal) {
+        this.outer_polygon = this.outer_polygon.filter((point) => point.isReal);
+      }
+      return; // Allow reshaping instead of dragging
+    }
+
+    if (
+      this._isPointInPolygon({ x: offsetX, y: offsetY }, this.outer_polygon)
+    ) {
+      if (isReplaceAllowed) {
+        this.isDragging = true;
+        this.dragStart = new Point(offsetX, offsetY, true);
+      }
+    }
+  }
+
+  _onMouseMove(event) {
+    const { offsetX, offsetY } = event;
+
+    if (this.selectedPoint) {
+      this.selectedPoint.x = event.offsetX;
+      this.selectedPoint.y = event.offsetY;
+      this._draw();
+      return;
+    }
+
+    // Calculate the angle between the initial position and the current mouse position
+    if (this.initialMousePosition && isRotationAllowed) {
+      const angleChange = this._calcAngleChangeFromMousePosition(
+        this.initialMousePosition,
+        { x: offsetX, y: offsetY }
+      );
+      this.rotate(angleChange);
+      this.initialMousePosition = { x: offsetX, y: offsetY }; // Update the initial position for next move
+      return;
+    }
+
+    if (!this.isDragging) return;
+
+    const dx = offsetX - this.dragStart.x;
+    const dy = offsetY - this.dragStart.y;
+
+    this.center_point.x += dx;
+    this.center_point.y += dy;
+    this.outer_polygon = this._translatePolygon(this.outer_polygon, dx, dy);
+    this.inner_polygon1 = this._translatePolygon(this.inner_polygon1, dx, dy);
+    this.inner_polygon2 = this._translatePolygon(this.inner_polygon2, dx, dy);
+    this.dragStart = new Point(offsetX, offsetY, true);
+    this._drawSketch();
+  }
+
+  _onMouseUp() {
+    if (this.isDragging) {
+      isReplaceAllowed = false;
+      this.isDragging = false;
+    }
+
+    if (isRotationAllowed) {
+      isRotationAllowed = false;
+      this.initialMousePosition = null; // Reset the initial position
+    }
+    this.selectedPoint = null;
+  }
+
+  _calcAngleChangeFromMousePosition(initial, current) {
+    const deltaX = current.x - this.center_point.x;
+    const deltaY = current.y - this.center_point.y;
+    const initialDeltaX = initial.x - this.center_point.x;
+    const initialDeltaY = initial.y - this.center_point.y;
+
+    const initialAngle = Math.atan2(initialDeltaY, initialDeltaX);
+    const currentAngle = Math.atan2(deltaY, deltaX);
+
+    // Convert the angle difference from radians to degrees
+    const angleChange = (currentAngle - initialAngle) * (180 / Math.PI);
+
+    return angleChange;
+  }
+
+  _translatePolygon(polygon, dx, dy) {
+    return polygon.map(({ x, y, isReal }) => ({
+      x: x + dx,
+      y: y + dy,
+      isReal: isReal,
+    }));
+  }
+
+  _getClickedPoint(point, polygon) {
+    return (
+      polygon.find(({ x, y }) => Math.hypot(x - point.x, y - point.y) < 5) ||
+      null
+    );
+  }
+
+  _isPointInPolygon(point, polygon) {
+    let inside = false;
+    for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+      const xi = polygon[i].x,
+        yi = polygon[i].y;
+      const xj = polygon[j].x,
+        yj = polygon[j].y;
+      const intersect =
+        yi > point.y !== yj > point.y &&
+        point.x < ((xj - xi) * (point.y - yi)) / (yj - yi) + xi;
+      if (intersect) inside = !inside;
+    }
+    return inside;
+  }
+
+  rotate(angle) {
+    if (this.cameraID != lastSelectedCameraID) return;
+    if (!isRotationAllowed) return;
+    this.rotation += angle;
+    this.inner_polygon1 = this._rotatePolygon(
+      this.inner_polygon1,
+      this.center_point,
+      angle
+    );
+    this.inner_polygon2 = this._rotatePolygon(
+      this.inner_polygon2,
+      this.center_point,
+      angle
+    );
+    this.outer_polygon = this._rotatePolygon(
+      this.outer_polygon,
+      this.center_point,
+      angle
+    );
+    this._drawSketch();
+  }
+
+  _rotatePolygon(points, center, angle) {
+    const radians = (Math.PI / 180) * angle;
+    return points.map(({ x, y, isReal }) => {
+      const dx = x - center.x;
+      const dy = y - center.y;
+      return {
+        x: Math.cos(radians) * dx - Math.sin(radians) * dy + center.x,
+        y: Math.sin(radians) * dx + Math.cos(radians) * dy + center.y,
+        isReal: isReal,
+      };
+    });
+  }
+
+  _isInRotatorHandle(x, y) {
+    return (
+      (x - this.center_point.x) * (x - this.center_point.x) +
+        (y - this.center_point.y) * (y - this.center_point.y) <
+      100
+    );
+  }
+
+  _draw() {
+    const canvas = element_by_id("finalCanvas");
+    const ctx = canvas.getContext("2d");
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    if (this.draggablePolygonObject == null) {
+      this.draggablePolygonObject = new DraggablePolygon(
+        this.cameraID,
+        this.cameraName,
+        this.type,
+        this.scale,
+        this.center_point,
+        canvas,
+        this.outer_polygon,
+        () => {
+          this._drawSketch();
+
+          setTimeout(() => {
+            drawCircleToCanvas(
+              element_by_id("finalCanvas"),
+              this.center_point,
+              CAMERA_CIRCLE_RADIUS,
+              "blue"
+            );
+          }, 100);
+        },
+        (points) => {
+          this.updateOuterPolygon(points);
+        }
+      );
+    } else {
+      this.draggablePolygonObject.draw();
+    }
+  }
+
+  _drawSketch() {
+    if (this.draggablePolygonObject) {
+      this.draggablePolygonObject.updatePoints(this.outer_polygon);
+    }
+
+    _drawDirectlyToMainCanvas(
+      "finalCanvas",
+      "rgba(255, 0, 0, 0.3)",
+      "rgba(0, 0, 255, 0.4)",
+      "rgba(0, 255, 0, 0.5)"
+    );
+  }
+}
