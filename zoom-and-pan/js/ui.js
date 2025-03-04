@@ -1,10 +1,10 @@
-const canvas = document.getElementById('finalCanvas');
+const canvas = element_by_id('finalCanvas');
 const ctx = canvas.getContext('2d');
-const fileInput = document.getElementById('fileInput');
-const burgerIconForSidePanel = document.getElementById('burgerIconForSidePanel');
-const cameraListPanel = document.getElementById('cameraListPanel');
+const fileInput = element_by_id('fileInput');
+const burgerIconForSidePanel = element_by_id('burgerIconForSidePanel');
+const cameraListPanel = element_by_id('cameraListPanel');
 const cameraButtons = document.querySelectorAll('.buttons button');
-const showPointIndexCheckbox = document.getElementById('showPointIndex');
+const showPointIndexCheckbox = element_by_id('showPointIndex');
 
 function resizeCanvas() {
   canvas.width = window.innerWidth;
@@ -79,16 +79,16 @@ cameraButtons.forEach((button, index) => {
 });
 
 function closeSidePanel() {
-  const sidePanel = document.getElementById('sidePanel');
+  const sidePanel = element_by_id('sidePanel');
   sidePanel.classList.add('hidden');
 }
 
 function closeStatePanel() {
-  const statePanel = document.getElementById('statePanel');
+  const statePanel = element_by_id('statePanel');
   statePanel.classList.add('hidden');
 }
 
 function closeCameraListPanel() {
-  const cameraListPanel = document.getElementById('cameraListPanel');
+  const cameraListPanel = element_by_id('cameraListPanel');
   cameraListPanel.classList.add('hidden');
 }

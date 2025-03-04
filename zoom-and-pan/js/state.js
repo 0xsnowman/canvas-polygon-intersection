@@ -1,11 +1,11 @@
 function updateStatePanel() {
-    document.getElementById('scaleValue').textContent = scale.toFixed(2);
-    document.getElementById('originXValue').textContent = Math.round(originX);
-    document.getElementById('originYValue').textContent = Math.round(originY);
-    document.getElementById('canvasWidth').textContent = canvas.width;
-    document.getElementById('canvasHeight').textContent = canvas.height;
-    document.getElementById('mouseXValue').textContent = startX;
-    document.getElementById('mouseYValue').textContent = startY;
-    document.getElementById('isDraggingValue').textContent = isDragging;
+    element_by_id('scaleValue').textContent = scale.toFixed(2);
+    element_by_id('originXValue').textContent = Math.round(originX);
+    element_by_id('originYValue').textContent = Math.round(originY);
+    element_by_id('canvasWidth').textContent = canvas.width;
+    element_by_id('canvasHeight').textContent = canvas.height;
+    element_by_id('mouseXValue').textContent = startX;
+    element_by_id('mouseYValue').textContent = startY;
+    element_by_id('isDraggingValue').textContent = isDragging;
 }
   
