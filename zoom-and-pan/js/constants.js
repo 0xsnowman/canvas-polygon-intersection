@@ -3,7 +3,7 @@ const ZOOM_INTENSITY = 0.05;
 const MIN_SCALE = 0.5;
 const MAX_SCALE = 3;
 const GRID_SCALE = 5;
-CAMERA_CIRCLE_RADIUS = 10;
+const CAMERA_CIRCLE_RADIUS = 10;
 
 // Returns distance for each types, angles
 function visionRanges(type, angle) {
