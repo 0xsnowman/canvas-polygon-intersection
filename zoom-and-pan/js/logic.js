@@ -38,6 +38,7 @@ function startDragging(e) {
   startX = e.clientX - originX;
   startY = e.clientY - originY;
   canvas.style.cursor = 'grabbing';
+  updateStatePanel();
 }
 
 function drag(e) {
@@ -45,9 +46,11 @@ function drag(e) {
   originX = e.clientX - startX;
   originY = e.clientY - startY;
   drawImage();
+  updateStatePanel();
 }
 
 function stopDragging() {
   isDragging = false;
   canvas.style.cursor = 'grab';
+  updateStatePanel();
 }

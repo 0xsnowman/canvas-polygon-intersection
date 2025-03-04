@@ -10,6 +10,7 @@ function resizeCanvas() {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
   drawImage();
+  updateStatePanel();
 }
 
 function clearCanvas() {
@@ -59,6 +60,7 @@ function drawImage() {
     ctx.drawImage(image, 0, 0);
   }
   ctx.restore();
+  updateStatePanel();
 }
 
 function togglePanel() {
