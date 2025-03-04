@@ -1,6 +1,7 @@
 body {
   margin: 0;
   overflow: hidden;
+  font-family: Arial, sans-serif;
 }
 
 canvas {
@@ -13,4 +14,25 @@ canvas {
   top: 10px;
   left: 10px;
   z-index: 10;
+}
+
+#statePanel {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  width: 250px;
+  padding: 10px;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+#statePanel h3 {
+  margin-top: 0;
+  font-size: 16px;
+}
+
+#statePanel p {
+  margin: 5px 0;
 }

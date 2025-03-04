@@ -9,10 +9,22 @@
 <body>
   <input type="file" id="fileInput" accept="image/*">
   <canvas id="myCanvas"></canvas>
+
+  <!-- Side Panel -->
+  <div id="statePanel">
+    <h3>Canvas State</h3>
+    <p><strong>Scale:</strong> <span id="scaleValue">1</span></p>
+    <p><strong>Origin X:</strong> <span id="originXValue">0</span></p>
+    <p><strong>Origin Y:</strong> <span id="originYValue">0</span></p>
+    <p><strong>Canvas Width:</strong> <span id="canvasWidth">0</span></p>
+    <p><strong>Canvas Height:</strong> <span id="canvasHeight">0</span></p>
+  </div>
+
   <script src="js/constants.js"></script>
   <script src="js/ui.js"></script>
   <script src="js/logic.js"></script>
   <script src="js/events.js"></script>
+  <script src="js/state.js"></script>
   <script src="js/main.js"></script>
 </body>
 </html>

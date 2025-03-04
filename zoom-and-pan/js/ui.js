@@ -5,6 +5,7 @@ const fileInput = document.getElementById('fileInput');
 function resizeCanvas() {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
+  updateStatePanel();
   drawImage();
 }
 
@@ -21,4 +22,5 @@ function drawImage() {
     ctx.drawImage(image, 0, 0);
   }
   ctx.restore();
+  updateStatePanel();
 }
