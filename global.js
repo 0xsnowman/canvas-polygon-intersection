@@ -9,12 +9,10 @@ var isReplaceAllowed = false; // is move allowed
 var lastSelectedCameraID = null; // last selected camera id
 var globalShowPointIndexFlag = false; // show point index of polygon (outer_polygon)
 let cachedBgImage = null; // image cache
-let scaleForZoomAndPan = 1; // Initial zoom level
 
 element_by_id("finalCanvas").width = CANVAS_WIDTH;
 element_by_id("finalCanvas").height = CANVAS_HEIGHT;
-element_by_id("tempCanvas").width = CANVAS_WIDTH;
-element_by_id("tempCanvas").height = CANVAS_HEIGHT;
+
 const fisheye_menu = element_by_id("fisheye-menu");
 const zoom_menu = element_by_id("zoom-menu");
 
@@ -46,20 +44,6 @@ element_by_id("fileInput")
       reader.readAsDataURL(file);
     }
   });
-
-element_by_id("finalCanvas").addEventListener('wheel', (e) => {
-  e.stopPropagation();
-  const zoomIntensity = 0.05;
-  const zoomFactor = e.deltaY > 0 ? 1 - zoomIntensity : 1 + zoomIntensity;
-
-  scaleForZoomAndPan *= zoomFactor;
-
-  // Limit zoom level
-  scaleForZoomAndPan = Math.min(Math.max(0.5, scaleForZoomAndPan), 10);
-  console.log("scaleForZoomAndPan", scaleForZoomAndPan);
-
-  redrawEntireCanvas();
-});
 
 window.onload = () => {
   init();

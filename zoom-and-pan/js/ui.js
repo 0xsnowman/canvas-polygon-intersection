@@ -1,4 +1,4 @@
-const canvas = document.getElementById('myCanvas');
+const canvas = document.getElementById('finalCanvas');
 const ctx = canvas.getContext('2d');
 const fileInput = document.getElementById('fileInput');
 const burgerIconForSidePanel = document.getElementById('burgerIconForSidePanel');
