@@ -50,7 +50,12 @@ function _drawDirectlyToMainCanvas(
   innerFillStyle2,
 ) {
   var finalCanvas = element_by_id(canvasId);
-  
+  const ctx = finalCanvas.getContext('2d');
+  ctx.clearRect(0, 0, finalCanvas.width, finalCanvas.height);
+  ctx.save();
+  // ctx.translate(originX, originY);
+  ctx.scale(scaleForZoomAndPan, scaleForZoomAndPan);
+
   drawImageOnCanvas(finalCanvas, imgURL, () => {
     globalCameras.forEach((cam) => {
 
@@ -83,6 +88,7 @@ function _drawDirectlyToMainCanvas(
 
       // Draws circle (camera) when dragging the polygon
       drawCircleToCanvas(finalCanvas, cam.cameraVision.center_point, CAMERA_CIRCLE_RADIUS);
+      ctx.restore();
     });
   });
 }
