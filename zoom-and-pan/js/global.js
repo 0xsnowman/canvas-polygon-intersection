@@ -22,7 +22,6 @@ function init() {
   element_by_id("camera-name-list").innerHTML = "";
   element_by_id("camera-type-list").innerHTML = "";
   element_by_id("camera-vision-list").innerHTML = "";
-  alert("Click on the plan to set the scale");
 }
 
 element_by_id("fileInput").addEventListener("change", function (event) {
@@ -32,7 +31,9 @@ element_by_id("fileInput").addEventListener("change", function (event) {
     reader.onload = function (e) {
       imgURL = e.target.result;
       init();
-      drawImageOnCanvas(element_by_id("finalCanvas"), imgURL);
+      drawImageOnCanvas(element_by_id("finalCanvas"), imgURL, () => {
+        alert("Click on the plan to set the scale");
+      });
     };
     reader.readAsDataURL(file);
   }

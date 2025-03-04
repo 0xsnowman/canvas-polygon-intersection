@@ -20,14 +20,19 @@ function zoom(e) {
 }
 
 function startDragging(e) {
-  isDragging = true;
-  startX = e.clientX - originX;
-  startY = e.clientY - originY;
-  canvas.style.cursor = 'grabbing';
-  updateStatePanel();
+  if (!isReplaceAllowed && !isRotationAllowed && !isAnyOfPointsOfOuterPolygonsClicked(e.clientX, e.clientY)) {
+    isDragging = true;
+    startX = e.clientX - originX;
+    startY = e.clientY - originY;
+    canvas.style.cursor = 'grabbing';
+    updateStatePanel();
+  }
 }
 
 function drag(e) {
+  if (!isScaleSet) canvas.style.cursor = 'default';
+  else canvas.style.cursor = 'grab';
+
   if (!isDragging) return;
   originX = e.clientX - startX;
   originY = e.clientY - startY;
@@ -39,4 +44,21 @@ function stopDragging() {
   isDragging = false;
   canvas.style.cursor = 'grab';
   updateStatePanel();
+}
+
+function isAnyOfPointsOfOuterPolygonsClicked(x, y) {
+  var flag = false;
+  
+  globalCameras.forEach((cam) => {
+    cam.cameraVision.draggablePolygonObject.points.forEach((point) => {
+      const dx = point.x - x;
+      const dy = point.y - y;
+
+      if (dx * dx + dy * dy < 36) {
+        flag = true;
+      }
+    })
+  });
+
+  return flag;
 }

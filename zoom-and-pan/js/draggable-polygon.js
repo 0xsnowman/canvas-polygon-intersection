@@ -94,7 +94,7 @@ class DraggablePolygon {
   }
 
   onMouseDown(event) {
-    const { x, y } = this.getMousePosition(event);
+  const { x, y } = this.getMousePosition(event);
     const dragPointIndex = this.points.findIndex((point) =>
       this.isPointClicked(point, x, y)
     );
