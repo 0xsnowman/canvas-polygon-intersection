@@ -1,0 +1,233 @@
+/* Canvas */
+canvas {
+    border: 2px solid #333;
+    background: white;
+}
+
+button {
+    padding: 7px 15px;
+    font-size: 14px;
+    border: none;
+    border-radius: 5px;
+    background: #007bff;
+    color: white;
+    cursor: pointer;
+    transition: 0.3s;
+    width: 100%;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #0056b3;
+}
+
+button.clicked {
+    background-color: #333;
+}
+
+/* Camera List */
+
+#cam-list0 {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.camera-list {
+    list-style: none;
+    padding: 10px;
+}
+
+.camera-list li {
+    padding: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    margin-bottom: 5px;
+    border-radius: 5px;
+    text-align: center;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.camera-list {
+    max-height: 400px;
+    /* auto to hide the scrollbar when not needed */
+
+    /* Styling the scrollbar */
+    scrollbar-width: thin;
+    /* Firefox */
+    scrollbar-color: #888 #f1f1f1;
+    /* Firefox: thumb and track color */
+}
+
+#camera-vision-list li {
+    height: auto !important;
+    min-height: auto !important;
+}
+
+/* Webkit-based browsers (Chrome, Edge, Safari) */
+*::-webkit-scrollbar {
+    width: 4px;
+    /* Scrollbar width */
+}
+
+*::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    /* Track color */
+    border-radius: 15px;
+}
+
+*::-webkit-scrollbar-thumb {
+    background: #888;
+    /* Thumb color */
+    border-radius: 15px;
+    transition: background 0.3s;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+    background: #555;
+    /* Darker thumb color on hover */
+}
+
+#camera-vision-list {
+    display: flex;
+    flex-direction: column;
+}
+
+#camera-vision-list li {
+    display: flex;
+    justify-self: center;
+    align-items: center;
+    gap: 5px;
+    height: 35px;
+    min-height: 35px;
+}
+
+input {
+    cursor: pointer;
+}
+
+/* --  polygon menu  -- */
+#fisheye-menu {
+    display: none;
+    position: absolute;
+    background: white;
+    border: 1px solid #ccc;
+    padding: 5px;
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.5);
+    z-index: 100;
+    width: 160px;
+}
+
+#fisheye-menu p {
+    padding: 10px;
+    cursor: pointer;
+}
+
+#fisheye-menu p:hover {
+    background-color: #555;
+    color: white;
+    transition: 0.2s ease-in;
+}
+
+#zoom-menu {
+    display: none;
+}
+
+#zoom-menu {
+    position: absolute;
+    background-color: #f4f4f4;
+    padding: 10px;
+    width: 150px;
+    border: 1px solid #ccc;
+}
+
+#zoom-menu p {
+    margin: 0;
+    padding: 8px;
+    cursor: pointer;
+    background-color: #fff;
+}
+
+#zoom-change-angle {
+    position: relative;
+}
+
+/* Submenu styling */
+.submenu {
+    display: none;
+    position: absolute;
+    left: 100%;
+    top: 0;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    width: 100px;
+}
+
+.submenu p {
+    padding: 8px;
+    margin: 0;
+}
+
+/* Ensure submenu shows only on hover */
+#zoom-change-angle:hover .submenu {
+    display: block;
+}
+
+/* Optional hover effect */
+#zoom-menu p:hover,
+.submenu p:hover {
+    background-color: #ddd;
+}
+
+.dropbtn {
+    margin: 0;
+    padding: 8px;
+    cursor: pointer;
+    background-color: #fff;
+    color: black;
+    text-align: left;
+    border-radius: 0px;
+}
+
+#dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f1f1f1;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+    top: 115px;
+    right: -160px;
+}
+
+.dropdown-content p {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.dropdown-content p:hover {
+    background-color: #ddd;
+}
+
+.dropbtn-area:hover .dropdown-content {
+    display: block;
+}
+
+.dropbtn:hover  {
+    background-color: #ddd;
+}
+
+/* Button group */
+
+.buttons {
+    padding-top: 10px;
+}

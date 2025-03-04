@@ -25,7 +25,7 @@ canvas {
   transition: left 0.3s ease;
 }
 
-.side-panel input,
+/* .side-panel input, */
 .side-panel button,
 .side-panel label {
   display: block;
@@ -35,7 +35,7 @@ canvas {
 
 /* Burger Menu Icon */
 .burger-icon {
-  background-color: black;
+  background-color: transparent;
   position: fixed;
   top: 20px;
   left: 20px;
@@ -51,13 +51,13 @@ canvas {
 .burger-icon .bar {
   width: 20px;
   height: 3px;
-  background-color: white;
+  background-color: red;
   border-radius: 2px;
 }
 
 /* Burger Menu Icon */
 #burgerIconForCameraListPanel {
-  background-color: black;
+  background-color: transparent;
   position: fixed;
   top: 20px;
   left: auto !important;
@@ -156,7 +156,7 @@ label > input {
   top: 0;
   right: 0px;
   left: auto !important;
-  width: 250px;
+  width: 400px;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.8);
   color: white;
@@ -166,5 +166,5 @@ label > input {
 }
 
 #cameraListPanel.hidden {
-  right: -300px !important;
+  right: -450px !important;
 }

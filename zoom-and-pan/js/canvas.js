@@ -4,9 +4,20 @@ function drawImageOnCanvas(canvas, imgURL, callback) {
   const bgImage = new Image();
   bgImage.src = imgURL;
 
+  clearCanvas();
+  ctx.save();
+  ctx.translate(originX, originY);
+  ctx.scale(scale, scale);
+
+  if (flagShowGrid) {
+    drawGrid();
+  }
+
   // If image is already loaded, use it directly
   if (cachedBgImage) {
-    ctx.drawImage(cachedBgImage, 0, 0, canvas.width, canvas.height);
+    ctx.drawImage(cachedBgImage, 0, 0, cachedBgImage.width, cachedBgImage.height);
+    ctx.restore();
+    updateStatePanel();
     // Call the callback function after the image is drawn
     if (callback) {
       callback();
@@ -14,7 +25,9 @@ function drawImageOnCanvas(canvas, imgURL, callback) {
   } else {
     bgImage.onload = () => {
       cachedBgImage = bgImage; // Cache the image after loading
-      ctx.drawImage(bgImage, 0, 0, canvas.width, canvas.height);
+      ctx.drawImage(bgImage, 0, 0, bgImage.width, bgImage.height);
+      ctx.restore();
+      updateStatePanel();
 
       // Call the callback function after the image is drawn
       if (callback) {

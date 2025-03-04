@@ -100,8 +100,8 @@ function changeZoomAngle(angle) {
   hideMenu(zoom_menu);
 }
 
-element_by_id("show-point-index").addEventListener("change", (event) => {
+element_by_id("showPointIndex").addEventListener("change", (event) => {
   event.stopPropagation();
-  globalShowPointIndexFlag = element_by_id("show-point-index").checked;
+  globalShowPointIndexFlag = element_by_id("showPointIndex").checked;
   redrawEntireCanvas();
 });
