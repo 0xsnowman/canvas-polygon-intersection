@@ -1,11 +1,14 @@
 const canvas = document.getElementById('myCanvas');
 const ctx = canvas.getContext('2d');
 const fileInput = document.getElementById('fileInput');
+const burgerIcon = document.getElementById('burgerIcon');
+const sidePanel = document.getElementById('sidePanel');
+const cameraButtons = document.querySelectorAll('.buttons button');
+const showPointIndexCheckbox = document.getElementById('showPointIndex');
 
 function resizeCanvas() {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
-  updateStatePanel();
   drawImage();
 }
 
@@ -22,5 +25,15 @@ function drawImage() {
     ctx.drawImage(image, 0, 0);
   }
   ctx.restore();
-  updateStatePanel();
 }
+
+function togglePanel() {
+  sidePanel.classList.toggle('hidden');
+}
+
+cameraButtons.forEach((button, index) => {
+  button.addEventListener('click', () => {
+    console.log(`Camera ${index + 1} clicked`);
+    // Add camera switch logic here
+  });
+});

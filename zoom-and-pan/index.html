@@ -7,10 +7,34 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <input type="file" id="fileInput" accept="image/*">
+  <!-- Burger Icon to Toggle Panel -->
+  <div id="burgerIcon" class="burger-icon" onclick="togglePanel()">
+    <div class="bar"></div>
+    <div class="bar"></div>
+    <div class="bar"></div>
+  </div>
+
+  <!-- Side Panel Left -->
+  <div id="sidePanel" class="side-panel hidden">
+    <input type="file" id="fileInput" accept="image/*">
+    <div class="buttons">
+      <button id="camera1">Camera 1</button>
+      <button id="camera2">Camera 2</button>
+      <button id="camera3">Camera 3</button>
+      <button id="camera4">Camera 4</button>
+      <button id="camera5">Camera 5</button>
+      <button id="camera6">Camera 6</button>
+    </div>
+    <label>
+      <input type="checkbox" id="showPointIndex">
+      Show Point Index
+    </label>
+  </div>
+
+  <!-- Canvas Area -->
   <canvas id="myCanvas"></canvas>
 
-  <!-- Side Panel -->
+  <!-- State Panel Right -->
   <div id="statePanel">
     <h3>Canvas State</h3>
     <p><strong>Scale:</strong> <span id="scaleValue">1</span></p>
@@ -18,6 +42,10 @@
     <p><strong>Origin Y:</strong> <span id="originYValue">0</span></p>
     <p><strong>Canvas Width:</strong> <span id="canvasWidth">0</span></p>
     <p><strong>Canvas Height:</strong> <span id="canvasHeight">0</span></p>
+    <h3>Mouse State</h3>
+    <p><strong>Mouse X:</strong> <span id="mouseXValue">0</span></p>
+    <p><strong>Mouse Y:</strong> <span id="mouseYValue">0</span></p>
+    <p><strong>Is Dragging:</strong> <span id="isDraggingValue">false</span></p>
   </div>
 
   <script src="js/constants.js"></script>

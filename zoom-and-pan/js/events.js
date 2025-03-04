@@ -10,3 +10,8 @@ canvas.addEventListener('mousedown', startDragging);
 canvas.addEventListener('mousemove', drag);
 canvas.addEventListener('mouseup', stopDragging);
 canvas.addEventListener('mouseleave', stopDragging);
+
+showPointIndexCheckbox.addEventListener('change', (e) => {
+  const isChecked = e.target.checked;
+  console.log('Show Point Index:', isChecked);
+});
