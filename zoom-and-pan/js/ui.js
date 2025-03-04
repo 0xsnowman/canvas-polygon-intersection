@@ -1,8 +1,8 @@
 const canvas = document.getElementById('myCanvas');
 const ctx = canvas.getContext('2d');
 const fileInput = document.getElementById('fileInput');
-const burgerIcon = document.getElementById('burgerIcon');
-const sidePanel = document.getElementById('sidePanel');
+const burgerIconForSidePanel = document.getElementById('burgerIconForSidePanel');
+const cameraListPanel = document.getElementById('cameraListPanel');
 const cameraButtons = document.querySelectorAll('.buttons button');
 const showPointIndexCheckbox = document.getElementById('showPointIndex');
 
@@ -63,8 +63,12 @@ function drawImage() {
   updateStatePanel();
 }
 
-function togglePanel() {
+function toggleSidePanel() {
   sidePanel.classList.toggle('hidden');
+}
+
+function toggleCameraListPanel() {
+  cameraListPanel.classList.toggle('hidden');
 }
 
 cameraButtons.forEach((button, index) => {
@@ -74,11 +78,17 @@ cameraButtons.forEach((button, index) => {
   });
 });
 
-function closePanel() {
+function closeSidePanel() {
+  const sidePanel = document.getElementById('sidePanel');
   sidePanel.classList.add('hidden');
 }
 
 function closeStatePanel() {
   const statePanel = document.getElementById('statePanel');
   statePanel.classList.add('hidden');
+}
+
+function closeCameraListPanel() {
+  const cameraListPanel = document.getElementById('cameraListPanel');
+  cameraListPanel.classList.add('hidden');
 }

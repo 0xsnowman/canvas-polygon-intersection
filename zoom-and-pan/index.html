@@ -7,8 +7,8 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- Burger Icon to Toggle Panel -->
-  <div id="burgerIcon" class="burger-icon" onclick="togglePanel()">
+  <!-- Burger Icon to Toggle Left Side Panel -->
+  <div id="burgerIconForSidePanel" class="burger-icon" onclick="toggleSidePanel()">
     <div class="bar"></div>
     <div class="bar"></div>
     <div class="bar"></div>
@@ -17,7 +17,7 @@
   <!-- Side Panel Left -->
   <div id="sidePanel" class="side-panel hidden">
     <!-- Close Button -->
-    <div id="closeButton" class="close-btn" onclick="closePanel()">×</div>
+    <div id="sidePanelCloseButton" class="close-btn" onclick="closeSidePanel()">×</div>
     
     <input type="file" id="fileInput" accept="image/*">
     <div class="buttons">
@@ -50,6 +50,28 @@
     <p><strong>Logical X:</strong> <span id="mouseXValue">0</span></p>
     <p><strong>Logical Y:</strong> <span id="mouseYValue">0</span></p>
     <p><strong>Is Dragging:</strong> <span id="isDraggingValue">false</span></p>
+  </div>
+
+  <!-- Burger Icon to Toggle Right Camera List Panel -->
+  <div id="burgerIconForCameraListPanel" class="burger-icon" onclick="toggleCameraListPanel()">
+    <div class="bar"></div>
+    <div class="bar"></div>
+    <div class="bar"></div>
+  </div>
+
+  <!-- Side Panel Left -->
+  <div id="cameraListPanel" class="side-panel hidden">
+    <!-- Close Button -->
+    <div id="cameraListPanelCloseButton" class="close-btn" onclick="closeCameraListPanel()">×</div>
+    
+    <div class="buttons">
+      <button>Camera 1</button>
+      <button>Camera 2</button>
+      <button>Camera 3</button>
+      <button>Camera 4</button>
+      <button>Camera 5</button>
+      <button>Camera 6</button>
+    </div>
   </div>
 
   <script src="js/constants.js"></script>
