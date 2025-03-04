@@ -4,6 +4,12 @@ let originX = 0;
 let originY = 0;
 let isDragging = false;
 let startX, startY;
+let flagShowGrid = true;
+
+// Variables for grid settings
+const gridSize = 30; // Size of each grid square (adjust as needed)
+const gridColor = '#cccccc'; // Color of the grid lines
+
 
 function loadImage(file) {
   const reader = new FileReader();
@@ -17,6 +23,7 @@ image.onload = () => {
   resizeCanvas();
   drawImage();
 };
+
 
 function zoom(e) {
   e.preventDefault();

@@ -15,3 +15,9 @@ showPointIndexCheckbox.addEventListener('change', (e) => {
   const isChecked = e.target.checked;
   console.log('Show Point Index:', isChecked);
 });
+
+const closeButton = document.getElementById('closeButton');
+closeButton.addEventListener('click', closePanel);
+
+const statePanelCloseButton = document.getElementById('statePanelCloseButton');
+statePanelCloseButton.addEventListener('click', closeStatePanel);

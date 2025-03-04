@@ -35,12 +35,12 @@ canvas {
 
 /* Burger Menu Icon */
 .burger-icon {
-  background-color: red;
+  background-color: black;
   position: fixed;
   top: 20px;
   left: 20px;
-  width: 30px;
-  height: 30px;
+  width: 20px;
+  height: 20px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -49,8 +49,8 @@ canvas {
 }
 
 .burger-icon .bar {
-  width: 30px;
-  height: 4px;
+  width: 20px;
+  height: 3px;
   background-color: white;
   border-radius: 2px;
 }
@@ -79,5 +79,58 @@ canvas {
 
 /* Hidden Side Panel */
 .side-panel.hidden {
-  left: -250px;
+  left: -300px;
+}
+
+/* Close Button for Side Panel */
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 24px;
+  color: white;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  padding: 5px;
+  transition: color 0.3s;
+}
+
+.close-btn:hover {
+  color: red;
+}
+
+/* Align checkbox and label on the same line */
+label {
+  display: inline-flex;
+  align-items: center;  /* Vertically center the checkbox and label text */
+  gap: 10px;  /* Space between checkbox and label text */
+  cursor: pointer;
+}
+
+label > input {
+  display: inline-flex !important;
+  width: 20px !important;
+}
+
+/* Close Button for Canvas State Panel */
+#statePanel .close-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 24px;
+  color: white;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  padding: 5px;
+  transition: color 0.3s;
+}
+
+#statePanel .close-btn:hover {
+  color: red;
+}
+
+#statePanel.hidden {
+  display: none;
 }

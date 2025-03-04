@@ -16,6 +16,9 @@
 
   <!-- Side Panel Left -->
   <div id="sidePanel" class="side-panel hidden">
+    <!-- Close Button -->
+    <div id="closeButton" class="close-btn" onclick="closePanel()">×</div>
+    
     <input type="file" id="fileInput" accept="image/*">
     <div class="buttons">
       <button id="camera1">Camera 1</button>
@@ -36,6 +39,7 @@
 
   <!-- State Panel Right -->
   <div id="statePanel">
+    <div id="statePanelCloseButton" class="close-btn" onclick="closeStatePanel()">×</div>
     <h3>Canvas State</h3>
     <p><strong>Scale:</strong> <span id="scaleValue">1</span></p>
     <p><strong>Origin X:</strong> <span id="originXValue">0</span></p>
