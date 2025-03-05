@@ -8,7 +8,7 @@ let flagShowGrid = true;
 
 // Variables for grid settings
 const gridSize = 30; // Size of each grid square (adjust as needed)
-const gridColor = '#cccccc'; // Color of the grid lines
+const gridColor = "#cccccc"; // Color of the grid lines
 
 function zoom(e) {
   e.preventDefault();
@@ -20,18 +20,22 @@ function zoom(e) {
 }
 
 function startDragging(e) {
-  if (!isReplaceAllowed && !isRotationAllowed && !isAnyOfPointsOfOuterPolygonsClicked(e.clientX, e.clientY)) {
+  if (
+    !isReplaceAllowed &&
+    !isRotationAllowed &&
+    !isAnyOfPointsOfOuterPolygonsClicked(e.clientX - originX, e.clientY - originY)
+  ) {
     isDragging = true;
     startX = e.clientX - originX;
     startY = e.clientY - originY;
-    canvas.style.cursor = 'grabbing';
+    canvas.style.cursor = "grabbing";
     updateStatePanel();
   }
 }
 
 function drag(e) {
-  if (!isScaleSet) canvas.style.cursor = 'default';
-  else canvas.style.cursor = 'grab';
+  if (!isScaleSet) canvas.style.cursor = "default";
+  else canvas.style.cursor = "grab";
 
   if (!isDragging) return;
   originX = e.clientX - startX;
@@ -42,13 +46,13 @@ function drag(e) {
 
 function stopDragging() {
   isDragging = false;
-  canvas.style.cursor = 'grab';
+  canvas.style.cursor = "grab";
   updateStatePanel();
 }
 
 function isAnyOfPointsOfOuterPolygonsClicked(x, y) {
   var flag = false;
-  
+
   globalCameras.forEach((cam) => {
     cam.cameraVision.draggablePolygonObject.points.forEach((point) => {
       const dx = point.x - x;
@@ -57,7 +61,7 @@ function isAnyOfPointsOfOuterPolygonsClicked(x, y) {
       if (dx * dx + dy * dy < 36) {
         flag = true;
       }
-    })
+    });
   });
 
   return flag;

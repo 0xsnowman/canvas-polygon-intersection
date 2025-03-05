@@ -1,103 +1,132 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Draggable Circle on Google Maps</title>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD4osxhfNtaLK3w-YiNpsM6aTznfajuAUk&callback=initMap" async defer></script>
+    <script
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD4osxhfNtaLK3w-YiNpsM6aTznfajuAUk&callback=initMap"
+      async
+      defer
+    ></script>
     <style>
-        #map {
-            width: 1200px;
-            height: 800px;
-        }
+      #map {
+        width: 1200px;
+        height: 800px;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <h1>Draggable Circle on Google Maps</h1>
     <div id="map"></div>
 
     <script>
-        let map;
+      let map;
 
-        // Circle properties
-        let circle = { lat: 37.7749, lng: -122.4194, radius: 50, dragging: false, svgElement: null };
+      // Circle properties
+      let circle = {
+        lat: 37.7749,
+        lng: -122.4194,
+        radius: 50,
+        dragging: false,
+        svgElement: null,
+      };
 
-        // Initialize Google Map
-        function initMap() {
-            map = new google.maps.Map(document.getElementById('map'), {
-                center: { lat: 37.7749, lng: -122.4194 },
-                zoom: 12,
-            });
+      // Initialize Google Map
+      function initMap() {
+        map = new google.maps.Map(document.getElementById("map"), {
+          center: { lat: 37.7749, lng: -122.4194 },
+          zoom: 12,
+        });
 
-            // Create the custom overlay
-            const circleOverlay = new CircleOverlay(map, circle);
-            circleOverlay.setMap(map);
+        // Create the custom overlay
+        const circleOverlay = new CircleOverlay(map, circle);
+        circleOverlay.setMap(map);
+      }
+
+      // Custom Overlay class for the draggable circle
+      class CircleOverlay extends google.maps.OverlayView {
+        constructor(map, circle) {
+          super();
+          this.map = map;
+          this.circle = circle;
+          this.setMap(map); // Attach this overlay to the map
+
+          // Create SVG element (the circle)
+          this.circle.svgElement = document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "circle"
+          );
+          this.circle.svgElement.setAttribute("cx", this.circle.lng);
+          this.circle.svgElement.setAttribute("cy", this.circle.lat);
+          this.circle.svgElement.setAttribute("r", this.circle.radius);
+          this.circle.svgElement.setAttribute("fill", "blue");
+          this.circle.svgElement.setAttribute("pointer-events", "all");
+          this.getPanes().overlayLayer.appendChild(this.circle.svgElement);
+
+          // Add event listeners for dragging
+          google.maps.event.addDomListener(
+            this.circle.svgElement,
+            "mousedown",
+            this.onMouseDown.bind(this)
+          );
+          google.maps.event.addDomListener(
+            this.circle.svgElement,
+            "mousemove",
+            this.onMouseMove.bind(this)
+          );
+          google.maps.event.addDomListener(
+            this.circle.svgElement,
+            "mouseup",
+            this.onMouseUp.bind(this)
+          );
+
+          this.dragging = false;
         }
 
-        // Custom Overlay class for the draggable circle
-        class CircleOverlay extends google.maps.OverlayView {
-            constructor(map, circle) {
-                super();
-                this.map = map;
-                this.circle = circle;
-                this.setMap(map); // Attach this overlay to the map
-
-                // Create SVG element (the circle)
-                this.circle.svgElement = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-                this.circle.svgElement.setAttribute("cx", this.circle.lng);
-                this.circle.svgElement.setAttribute("cy", this.circle.lat);
-                this.circle.svgElement.setAttribute("r", this.circle.radius);
-                this.circle.svgElement.setAttribute("fill", "blue");
-                this.circle.svgElement.setAttribute("pointer-events", "all");
-                this.getPanes().overlayLayer.appendChild(this.circle.svgElement);
-
-                // Add event listeners for dragging
-                google.maps.event.addDomListener(this.circle.svgElement, 'mousedown', this.onMouseDown.bind(this));
-                google.maps.event.addDomListener(this.circle.svgElement, 'mousemove', this.onMouseMove.bind(this));
-                google.maps.event.addDomListener(this.circle.svgElement, 'mouseup', this.onMouseUp.bind(this));
-
-                this.dragging = false;
-            }
-
-            // Draw function for updating the circle's position
-            draw() {
-                const projection = this.getProjection();
-                const position = projection.fromLatLngToDivPixel(new google.maps.LatLng(this.circle.lat, this.circle.lng));
-                this.circle.svgElement.setAttribute("cx", position.x);
-                this.circle.svgElement.setAttribute("cy", position.y);
-            }
-
-            // Mouse events for dragging
-            onMouseDown(e) {
-                e.preventDefault();
-                this.dragging = true;
-                this.offsetX = e.clientX - this.circle.svgElement.getBoundingClientRect().left;
-                this.offsetY = e.clientY - this.circle.svgElement.getBoundingClientRect().top;
-            }
-
-            onMouseMove(e) {
-                if (!this.dragging) return;
-
-                const projection = this.getProjection();
-                const mouseLatLng = projection.fromDivPixelToLatLng({
-                    x: e.clientX - this.offsetX,
-                    y: e.clientY - this.offsetY
-                });
-
-                // Update circle's position
-                this.circle.lat = mouseLatLng.lat();
-                this.circle.lng = mouseLatLng.lng();
-
-                this.draw(); // Redraw the circle at new position
-            }
-
-            onMouseUp() {
-                this.dragging = false;
-                alert('Circle clicked or moved!');
-            }
+        // Draw function for updating the circle's position
+        draw() {
+          const projection = this.getProjection();
+          const position = projection.fromLatLngToDivPixel(
+            new google.maps.LatLng(this.circle.lat, this.circle.lng)
+          );
+          this.circle.svgElement.setAttribute("cx", position.x);
+          this.circle.svgElement.setAttribute("cy", position.y);
         }
 
-        window.initMap = initMap; // Ensure initMap is globally accessible
+        // Mouse events for dragging
+        onMouseDown(e) {
+          e.preventDefault();
+          this.dragging = true;
+          this.offsetX =
+            e.clientX - this.circle.svgElement.getBoundingClientRect().left;
+          this.offsetY =
+            e.clientY - this.circle.svgElement.getBoundingClientRect().top;
+        }
+
+        onMouseMove(e) {
+          if (!this.dragging) return;
+
+          const projection = this.getProjection();
+          const mouseLatLng = projection.fromDivPixelToLatLng({
+            x: e.clientX - this.offsetX,
+            y: e.clientY - this.offsetY,
+          });
+
+          // Update circle's position
+          this.circle.lat = mouseLatLng.lat();
+          this.circle.lng = mouseLatLng.lng();
+
+          this.draw(); // Redraw the circle at new position
+        }
+
+        onMouseUp() {
+          this.dragging = false;
+          alert("Circle clicked or moved!");
+        }
+      }
+
+      window.initMap = initMap; // Ensure initMap is globally accessible
     </script>
-</body>
+  </body>
 </html>

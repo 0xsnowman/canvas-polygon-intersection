@@ -1,161 +1,158 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8">
-    <title>Canvas Demo Knockout</title>
+    <meta charset="utf-8" />
+    <title>Draggable Shapes on Canvas</title>
     <style>
       body {
         font-family: sans-serif;
         color: #555;
       }
       canvas {
-        /* Uncomment to make the overlayer transparent for mouse events */
-        /*pointer-events: none;*/
         position: absolute;
         top: 0;
-        opacity: 0.6;
-        pointer-events: none;
+        left: 0;
+        pointer-events: auto;
       }
       #mapDiv {
         position: absolute;
         top: 0;
         width: 100%;
-        height: 320px;
+        height: 100%;
       }
     </style>
   </head>
   <body>
     <div id="mapDiv"></div>
   </body>
-  <script src="https://maps.googleapis.com/maps/api/js?libraries=places"></script>
+  <!-- <script src="https://maps.googleapis.com/maps/api/js?libraries=places"></script> -->
+  <script
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD4osxhfNtaLK3w-YiNpsM6aTznfajuAUk&callback=initMap"
+    async
+    defer
+  ></script>
   <script>
-
-    // Degrees to radians helper
     function radians(degrees) {
-      return Math.PI * degrees/180;
+      return (Math.PI * degrees) / 180;
+    }
+    let shapes = [];
+
+    window.initMap = initMap; // Ensure initMap is globally accessible
+
+    // Initialize Google Map
+    function initMap() {
+      const map = new google.maps.Map(document.getElementById("mapDiv"), {
+        center: { lat: 42.3643, lng: -71.1913 },
+        zoom: 10,
+      });
+
+      const overlayer = new Overlayer(document.body);
+      const cartesia = new Cartesia(map);
+
+
+      google.maps.event.addListenerOnce(map, "idle", function () {
+        const mapDiv = map.getDiv();
+        overlayer.resize(mapDiv.offsetWidth, mapDiv.offsetHeight);
+
+        const rect = { x: 100, y: 100, width: 60, height: 60, type: "rect" };
+        const circle = { x: 200, y: 200, radius: 30, type: "circle" };
+
+        shapes.push(rect, circle);
+        overlayer.drawShapes(shapes);
+      });
     }
 
-    // Create a Google Map to draw on
-    var map =
-    new google.maps.Map(document.getElementById("mapDiv"), {
-      center: {lat: 42.364328640614794, lng: -71.19130934804345},
-      zoom: 10
-    });
-
-    // setup the inital canvas overlay
-    overlayer = new Overlayer(document.body);
-
-    cartesia = new Cartesia();
-
-    // Once the map is painted, kick everything off
-    google.maps.event.addListenerOnce(map, 'idle', function(){
-      // bind the up the coordinates helper to the current map
-      cartesia.setMap(map);
-
-      // size the overlay to fit the map
-      var mapDiv = map.getDiv();
-      overlayer.resize(mapDiv.offsetWidth, mapDiv.offsetHeight);
-
-      // punch a square hole in the overlay
-      var nwPoint = new google.maps.LatLng(42.42500028269842, -71.27370680898093); // pretend this came from a location request
-      // convert the map coordindates to pixel coordindates
-      var nwPointPx = cartesia.latLngToPxPoint(nwPoint);
-      overlayer.punch(nwPointPx.x, nwPointPx.y, 60, 60);
-
-      // punch a circular hole in the map
-      var sePoint = new google.maps.LatLng(42.323531264744396, -71.13637770741843); // pretend this came from a location request
-      // convert the map coordindates to pixel coordindates
-      var sePointPx = cartesia.latLngToPxPoint(sePoint);
-      overlayer.punch(sePointPx.x , sePointPx.y, 60, 60, "circle");
-    });
-
     function Overlayer(element) {
-      this.canvas = document.createElement("canvas"),
-      this.draw = function() {
-        var c = this.canvas,
-            ctx = this.context;
-        // fill the canvas with a solid color
-        ctx.fillStyle = "transparent";
-        ctx.fillRect(-c.width/2, - c.height/2, c.width, c.height);
+      this.canvas = document.createElement("canvas");
+      this.context = this.canvas.getContext("2d");
+
+      let draggingShape = null;
+      let offsetX, offsetY;
+
+      this.resize = function (width, height) {
+        this.canvas.width = width;
+        this.canvas.height = height;
+        element.appendChild(this.canvas);
       };
 
-      this.reset =  function() {
-        this.draw(); // alias
-      };
-      this.resize = function(width, height) {
-        var c = this.canvas;
-        c.width = width;
-        c.height = height;
-        // change the origin point of the canvas so we can use a
-        // centered Cartesian layout
-        this.context.translate(c.width/2, c.height/2);
-        this.reset();
-      };
-      this.punch = function(x, y, width, height, shape) {
-        var c = this.canvas,
-        ctx = this.context;
-        
-        switch (shape) {
-          case "circle":
-            ctx.globalCompositeOperation = "destination-over";
-            ctx.fillStyle = "#000000";
+      this.drawShapes = function (shapes) {
+        const ctx = this.context;
+        ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        shapes.forEach((shape) => {
+          ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
+          if (shape.type === "rect") {
+            ctx.fillRect(shape.x, shape.y, shape.width, shape.height);
+          } else if (shape.type === "circle") {
             ctx.beginPath();
-            ctx.arc(x - c.width/2, y - c.height/2, width/2, 0, radians(360), false);
-            ctx.closePath();
+            ctx.arc(shape.x, shape.y, shape.radius, 0, Math.PI * 2);
             ctx.fill();
-            ctx.globalCompositeOperation = "source-over";
-            break;
-          default:
-            ctx.globalCompositeOperation = "destination-over";
-            ctx.fillStyle = "#000000";
-            ctx.fillRect(x - c.width/2 - width/2, y - c.height/2 - height/2, width,height);
-            ctx.globalCompositeOperation = "source-over";
-        }
+          }
+        });
       };
 
-      // set up the overlay, attaching it to a dom element
-      var c = this.canvas;
-      this.context = c.getContext("2d");
+      this.findShape = function (x, y) {
+        for (let i = shapes.length - 1; i >= 0; i--) {
+          const shape = shapes[i];
+          if (
+            shape.type === "rect" &&
+            x >= shape.x &&
+            x <= shape.x + shape.width &&
+            y >= shape.y &&
+            y <= shape.y + shape.height
+          ) {
+            return shape;
+          } else if (shape.type === "circle") {
+            const dx = x - shape.x;
+            const dy = y - shape.y;
+            if (Math.sqrt(dx * dx + dy * dy) <= shape.radius) {
+              return shape;
+            }
+          }
+        }
+        return null;
+      };
 
-      // Uncomment to set the initial size of the overlay (not really needed)
-      // this.resize(320, 320);
+      document.addEventListener("mousedown", (e) => {
+        const rect = this.canvas.getBoundingClientRect();
+        const mouseX = e.clientX - rect.left;
+        const mouseY = e.clientY - rect.top;
+        const shape = this.findShape(mouseX, mouseY);
 
-      element.appendChild(c);
-    };
+        if (shape) {
+          draggingShape = shape;
+          offsetX = mouseX - (shape.type === "rect" ? shape.x : shape.x);
+          offsetY = mouseY - (shape.type === "rect" ? shape.y : shape.y);
+          this.canvas.style.pointerEvents = "auto"; // Ensure canvas is active when clicking shapes
+        } else {
+          this.canvas.style.pointerEvents = "none"; // Disable pointer events if clicking outside
+        }
+      });
 
+      this.canvas.addEventListener("mousemove", (e) => {
+        if (!draggingShape) return;
+        const rect = this.canvas.getBoundingClientRect();
+        const mouseX = e.clientX - rect.left;
+        const mouseY = e.clientY - rect.top;
+        if (draggingShape.type === "rect") {
+          draggingShape.x = mouseX - offsetX;
+          draggingShape.y = mouseY - offsetY;
+        } else if (draggingShape.type === "circle") {
+          draggingShape.x = mouseX;
+          draggingShape.y = mouseY;
+        }
+        this.drawShapes(shapes);
+      });
+
+      this.canvas.addEventListener("mouseup", () => {
+        draggingShape = null;
+      });
+    }
 
     function Cartesia(map) {
-      // map is assumed to be a Google Map V3 API object
-      this.mapValue = function(val, min, max, newMin, newMax) {
-        return (((val - min) * (newMax - newMin)) / (max - min)) + newMin;
+      this.map = map;
+      this.mapValue = function (val, min, max, newMin, newMax) {
+        return ((val - min) * (newMax - newMin)) / (max - min) + newMin;
       };
-
-      this.sizeToBounds = function() {
-        var mapBounds = this.map.getBounds();
-        var ne = mapBounds.getNorthEast();
-        var sw = mapBounds.getSouthWest();
-        this.mapOrigin = new google.maps.LatLng(ne.lat(), sw.lng());
-        this.mapNadir = new google.maps.LatLng(sw.lat(), ne.lng());
-      };
-
-      this.setMap = function(map) {
-        this.map = map;
-        if (this.map) {
-          this.sizeToBounds();
-        }
-      };
-
-      this.pxToLatLng = function(x,y) {
-        return new google.maps.LatLng(this.mapValue(x, 0, 320, this.mapOrigin.lat(), this.mapNadir.lat()), this.mapValue(x, 0, 320, this.mapOrigin.lng(), this.mapNadir.lng()));
-      };
-
-      this.latLngToPxPoint = function(latLng) {
-        var x = this.mapValue(latLng.lat(), this.mapOrigin.lat(), this.mapNadir.lat(), 0, 320);
-        var y = this.mapValue(latLng.lng(), this.mapOrigin.lng(), this.mapNadir.lng(), 0, 320);
-        return {x: x, y: y};
-      };
-
-      this.setMap(map);
-    };
+    }
   </script>
 </html>
