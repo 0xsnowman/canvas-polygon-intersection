@@ -41,6 +41,10 @@ class DraggablePolygon {
   }
 
   drawCameraName() {
+    this.ctx.save();
+    this.ctx.translate(originX, originY);
+    this.ctx.scale(scale, scale);
+
     // Set font properties
     this.ctx.font = "20px Arial";
     this.ctx.fillStyle = "blue"; // Text color
@@ -54,6 +58,8 @@ class DraggablePolygon {
     this.ctx.strokeStyle = "blue"; // Outline color
     this.ctx.lineWidth = 2; // Outline width
     this.ctx.strokeText(this.cameraName, this.center.x, this.center.y - 30);
+
+    this.ctx.restore();
   }
 
   updatePoints(points) {
@@ -71,6 +77,11 @@ class DraggablePolygon {
 
   drawPointsAndLines() {
     // Draw polygon
+
+    this.ctx.save();
+    this.ctx.translate(originX, originY);
+    this.ctx.scale(scale, scale);
+
     this.ctx.beginPath();
     this.ctx.moveTo(this.points[0].x, this.points[0].y);
     for (let i = 1; i < this.points.length; i++) {
@@ -85,6 +96,8 @@ class DraggablePolygon {
     this.ctx.fillStyle = "rgba(0, 0, 255, 0.2)";
     this.ctx.fill();
 
+    this.ctx.restore();
+
     // Draw draggable points
     this.points.forEach((point, index) => {
       point.draw(this.ctx, index);
@@ -94,7 +107,7 @@ class DraggablePolygon {
   }
 
   onMouseDown(event) {
-  const { x, y } = this.getMousePosition(event);
+    const { x, y } = getMousePosition(event);
     const dragPointIndex = this.points.findIndex((point) =>
       this.isPointClicked(point, x, y)
     );
@@ -132,7 +145,7 @@ class DraggablePolygon {
   }
 
   onMouseMove(event) {
-    const { x, y } = this.getMousePosition(event);
+    const { x, y } = getMousePosition(event);
 
     if (is_index_valid(this.draggingPointIndex)) {
       this.points[this.draggingPointIndex].x = x;
@@ -415,14 +428,6 @@ class DraggablePolygon {
       }
     }
     return { edge: [], index: -1 };
-  }
-
-  getMousePosition(event) {
-    const rect = this.canvas.getBoundingClientRect();
-    return {
-      x: event.clientX - rect.left,
-      y: event.clientY - rect.top,
-    };
   }
 
   isPointClicked(point, x, y) {

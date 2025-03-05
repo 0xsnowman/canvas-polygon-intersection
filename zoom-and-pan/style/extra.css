@@ -168,3 +168,7 @@ label > input {
 #cameraListPanel.hidden {
   right: -450px !important;
 }
+
+#cameraListPanel h3 {
+  padding-left: 40px;
+}

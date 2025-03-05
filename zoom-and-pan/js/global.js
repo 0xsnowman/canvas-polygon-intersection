@@ -87,15 +87,15 @@ Array.from(elements_by_class("btn_add_zoom")).forEach((btn) => {
 element_by_id("finalCanvas").addEventListener("click", (event) => {
   event.stopPropagation();
 
-  const { offsetX, offsetY } = event;
+  const { x, y } = getMousePosition(event);
 
   if (firstScalePoint == null) {
-    firstScalePoint = { x: offsetX, y: offsetY };
+    firstScalePoint = { x: x, y: y };
 
     drawCircleToCanvas(element_by_id("finalCanvas"), firstScalePoint, 6, "red");
   } else {
     if (secondScalePoint == null) {
-      secondScalePoint = { x: offsetX, y: offsetY };
+      secondScalePoint = { x: x, y: y };
       var ctx = element_by_id("finalCanvas").getContext("2d");
 
       ctx.beginPath();
@@ -149,7 +149,7 @@ element_by_id("finalCanvas").addEventListener("click", (event) => {
       if (btn.id == "f_12mp_btn") cam_type = "12mp";
       if (btn.id == "f_125mp_btn") cam_type = "125mp";
 
-      var newFisheyeCam = new Camera("fisheye-" + cam_type, offsetX, offsetY);
+      var newFisheyeCam = new Camera("fisheye-" + cam_type, x, y);
       globalCameras.push(newFisheyeCam);
 
       const li = document.createElement("li");
@@ -223,7 +223,7 @@ element_by_id("finalCanvas").addEventListener("click", (event) => {
       if (btn.id == "4mp_btn") cam_type = "4mp";
       if (btn.id == "8mp_btn") cam_type = "8mp";
 
-      var newZoomCam = new Camera("zoom-" + cam_type, offsetX, offsetY);
+      var newZoomCam = new Camera("zoom-" + cam_type, x, y);
       globalCameras.push(newZoomCam);
 
       const li = document.createElement("li");

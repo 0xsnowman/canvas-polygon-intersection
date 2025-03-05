@@ -49,6 +49,11 @@ function drawPolygonToCanvas(
   isRealRelated = false
 ) {
   var ctx = canvas.getContext("2d");
+
+  ctx.save();
+  ctx.translate(originX, originY);
+  ctx.scale(scale, scale);
+
   ctx.beginPath();
   ctx.moveTo(points[0].x, points[0].y);
   for (let i = 1; i < points.length; i++) {
@@ -59,6 +64,8 @@ function drawPolygonToCanvas(
   ctx.closePath();
   ctx.fillStyle = fillStyle;
   ctx.fill();
+
+  ctx.restore();
 }
 
 function _drawDirectlyToMainCanvas(
@@ -68,7 +75,6 @@ function _drawDirectlyToMainCanvas(
   innerFillStyle2
 ) {
   var finalCanvas = element_by_id(canvasId);
-
   drawImageOnCanvas(finalCanvas, imgURL, () => {
     globalCameras.forEach((cam) => {
       if (cam.visibility_of_in1) {
@@ -123,6 +129,11 @@ function _drawDirectlyToMainCanvas(
 
 function drawCircleToCanvas(canvas, center, radius, color = "blue") {
   const ctx = canvas.getContext("2d");
+
+  ctx.save();
+  ctx.translate(originX, originY);
+  ctx.scale(scale, scale);
+
   ctx.beginPath();
   ctx.arc(center.x, center.y, radius, 0, Math.PI * 2);
   ctx.fillStyle = color;
@@ -131,4 +142,6 @@ function drawCircleToCanvas(canvas, center, radius, color = "blue") {
   ctx.stroke();
   ctx.fill();
   ctx.closePath();
+
+  ctx.restore();
 }

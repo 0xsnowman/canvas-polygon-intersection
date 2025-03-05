@@ -1,7 +1,7 @@
 // Show the menu at the click position
 function showMenu(menu, x, y, cameraID, type) {
-  menu.style.left = `${x}px`;
-  menu.style.top = `${y}px`;
+  menu.style.left = `${x + originX}px`;
+  menu.style.top = `${y + originY}px`;
   menu.style.display = "block";
   lastSelectedCameraID = cameraID;
 }

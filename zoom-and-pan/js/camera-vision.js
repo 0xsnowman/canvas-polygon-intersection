@@ -85,13 +85,13 @@ class CameraVision {
   }
 
   _onMouseDown(event) {
-    const { offsetX, offsetY } = event;
+    const { x, y } = getMousePosition(event);
     const rect = element_by_id("finalCanvas").getBoundingClientRect();
 
     // Check necessity to rotate first
-    if (this._isInRotatorHandle(offsetX, offsetY)) {
+    if (this._isInRotatorHandle(x, y)) {
       // Calculate initial angle based on mouse click position
-      this.initialMousePosition = { x: offsetX, y: offsetY };
+      this.initialMousePosition = { x: x, y: y };
       if (
         this.type == "fisheye-8mp" ||
         this.type == "fisheye-12mp" ||
@@ -99,16 +99,16 @@ class CameraVision {
       ) {
         showMenu(
           fisheye_menu,
-          offsetX + rect.left,
-          offsetY + rect.top,
+          x + rect.left,
+          y + rect.top,
           this.cameraID,
           this.type
         );
       } else {
         showMenu(
           zoom_menu,
-          offsetX + rect.left,
-          offsetY + rect.top,
+          x + rect.left,
+          y + rect.top,
           this.cameraID,
           this.type
         );
@@ -120,7 +120,7 @@ class CameraVision {
 
     // Check necessity to drag after
     this.selectedPoint = this._getClickedPoint(
-      { x: offsetX, y: offsetY },
+      { x: x, y: y },
       this.outer_polygon
     );
 
@@ -132,21 +132,21 @@ class CameraVision {
     }
 
     if (
-      this._isPointInPolygon({ x: offsetX, y: offsetY }, this.outer_polygon)
+      this._isPointInPolygon({ x: x, y: y }, this.outer_polygon)
     ) {
       if (isReplaceAllowed) {
         this.isDragging = true;
-        this.dragStart = new Point(offsetX, offsetY, true);
+        this.dragStart = new Point(x, y, true);
       }
     }
   }
 
   _onMouseMove(event) {
-    const { offsetX, offsetY } = event;
+    const { x, y } = getMousePosition(event);
 
     if (this.selectedPoint) {
-      this.selectedPoint.x = event.offsetX;
-      this.selectedPoint.y = event.offsetY;
+      this.selectedPoint.x = event.x;
+      this.selectedPoint.y = event.y;
       this._draw();
       return;
     }
@@ -155,24 +155,24 @@ class CameraVision {
     if (this.initialMousePosition && isRotationAllowed) {
       const angleChange = this._calcAngleChangeFromMousePosition(
         this.initialMousePosition,
-        { x: offsetX, y: offsetY }
+        { x: x, y: y }
       );
       this.rotate(angleChange);
-      this.initialMousePosition = { x: offsetX, y: offsetY }; // Update the initial position for next move
+      this.initialMousePosition = { x: x, y: y }; // Update the initial position for next move
       return;
     }
 
     if (!this.isDragging) return;
 
-    const dx = offsetX - this.dragStart.x;
-    const dy = offsetY - this.dragStart.y;
+    const dx = x - this.dragStart.x;
+    const dy = y - this.dragStart.y;
 
     this.center_point.x += dx;
     this.center_point.y += dy;
     this.outer_polygon = this._translatePolygon(this.outer_polygon, dx, dy);
     this.inner_polygon1 = this._translatePolygon(this.inner_polygon1, dx, dy);
     this.inner_polygon2 = this._translatePolygon(this.inner_polygon2, dx, dy);
-    this.dragStart = new Point(offsetX, offsetY, true);
+    this.dragStart = new Point(x, y, true);
     this._drawSketch();
   }
 

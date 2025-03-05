@@ -41,3 +41,10 @@ function elements_by_class(className) {
 function is_index_valid(index) {
     return (index && index != undefined && index >= 0);
 }
+
+function getMousePosition(event) {
+    return {
+        x: event.clientX - originX,
+        y: event.clientY - originY,
+    };
+}
