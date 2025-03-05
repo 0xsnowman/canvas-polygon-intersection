@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Canvas Demo Knockout</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        color: #555;
+      }
+      canvas {
+        /* Uncomment to make the overlayer transparent for mouse events */
+        /*pointer-events: none;*/
+        position: absolute;
+        top: 0;
+        opacity: 0.6;
+        pointer-events: none;
+      }
+      #mapDiv {
+        position: absolute;
+        top: 0;
+        width: 100%;
+        height: 320px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="mapDiv"></div>
+  </body>
+  <script src="https://maps.googleapis.com/maps/api/js?libraries=places"></script>
+  <script>
+
+    // Degrees to radians helper
+    function radians(degrees) {
+      return Math.PI * degrees/180;
+    }
+
+    // Create a Google Map to draw on
+    var map =
+    new google.maps.Map(document.getElementById("mapDiv"), {
+      center: {lat: 42.364328640614794, lng: -71.19130934804345},
+      zoom: 10
+    });
+
+    // setup the inital canvas overlay
+    overlayer = new Overlayer(document.body);
+
+    cartesia = new Cartesia();
+
+    // Once the map is painted, kick everything off
+    google.maps.event.addListenerOnce(map, 'idle', function(){
+      // bind the up the coordinates helper to the current map
+      cartesia.setMap(map);
+
+      // size the overlay to fit the map
+      var mapDiv = map.getDiv();
+      overlayer.resize(mapDiv.offsetWidth, mapDiv.offsetHeight);
+
+      // punch a square hole in the overlay
+      var nwPoint = new google.maps.LatLng(42.42500028269842, -71.27370680898093); // pretend this came from a location request
+      // convert the map coordindates to pixel coordindates
+      var nwPointPx = cartesia.latLngToPxPoint(nwPoint);
+      overlayer.punch(nwPointPx.x, nwPointPx.y, 60, 60);
+
+      // punch a circular hole in the map
+      var sePoint = new google.maps.LatLng(42.323531264744396, -71.13637770741843); // pretend this came from a location request
+      // convert the map coordindates to pixel coordindates
+      var sePointPx = cartesia.latLngToPxPoint(sePoint);
+      overlayer.punch(sePointPx.x , sePointPx.y, 60, 60, "circle");
+    });
+
+    function Overlayer(element) {
+      this.canvas = document.createElement("canvas"),
+      this.draw = function() {
+        var c = this.canvas,
+            ctx = this.context;
+        // fill the canvas with a solid color
+        ctx.fillStyle = "transparent";
+        ctx.fillRect(-c.width/2, - c.height/2, c.width, c.height);
+      };
+
+      this.reset =  function() {
+        this.draw(); // alias
+      };
+      this.resize = function(width, height) {
+        var c = this.canvas;
+        c.width = width;
+        c.height = height;
+        // change the origin point of the canvas so we can use a
+        // centered Cartesian layout
+        this.context.translate(c.width/2, c.height/2);
+        this.reset();
+      };
+      this.punch = function(x, y, width, height, shape) {
+        var c = this.canvas,
+        ctx = this.context;
+        
+        switch (shape) {
+          case "circle":
+            ctx.globalCompositeOperation = "destination-over";
+            ctx.fillStyle = "#000000";
+            ctx.beginPath();
+            ctx.arc(x - c.width/2, y - c.height/2, width/2, 0, radians(360), false);
+            ctx.closePath();
+            ctx.fill();
+            ctx.globalCompositeOperation = "source-over";
+            break;
+          default:
+            ctx.globalCompositeOperation = "destination-over";
+            ctx.fillStyle = "#000000";
+            ctx.fillRect(x - c.width/2 - width/2, y - c.height/2 - height/2, width,height);
+            ctx.globalCompositeOperation = "source-over";
+        }
+      };
+
+      // set up the overlay, attaching it to a dom element
+      var c = this.canvas;
+      this.context = c.getContext("2d");
+
+      // Uncomment to set the initial size of the overlay (not really needed)
+      // this.resize(320, 320);
+
+      element.appendChild(c);
+    };
+
+
+    function Cartesia(map) {
+      // map is assumed to be a Google Map V3 API object
+      this.mapValue = function(val, min, max, newMin, newMax) {
+        return (((val - min) * (newMax - newMin)) / (max - min)) + newMin;
+      };
+
+      this.sizeToBounds = function() {
+        var mapBounds = this.map.getBounds();
+        var ne = mapBounds.getNorthEast();
+        var sw = mapBounds.getSouthWest();
+        this.mapOrigin = new google.maps.LatLng(ne.lat(), sw.lng());
+        this.mapNadir = new google.maps.LatLng(sw.lat(), ne.lng());
+      };
+
+      this.setMap = function(map) {
+        this.map = map;
+        if (this.map) {
+          this.sizeToBounds();
+        }
+      };
+
+      this.pxToLatLng = function(x,y) {
+        return new google.maps.LatLng(this.mapValue(x, 0, 320, this.mapOrigin.lat(), this.mapNadir.lat()), this.mapValue(x, 0, 320, this.mapOrigin.lng(), this.mapNadir.lng()));
+      };
+
+      this.latLngToPxPoint = function(latLng) {
+        var x = this.mapValue(latLng.lat(), this.mapOrigin.lat(), this.mapNadir.lat(), 0, 320);
+        var y = this.mapValue(latLng.lng(), this.mapOrigin.lng(), this.mapNadir.lng(), 0, 320);
+        return {x: x, y: y};
+      };
+
+      this.setMap(map);
+    };
+  </script>
+</html>
